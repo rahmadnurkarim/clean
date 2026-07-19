@@ -75,7 +75,7 @@
                 </div>
                 <div>
                     <h1 class="font-serif font-bold text-xl tracking-tight text-textMain flex items-center gap-2">
-                        InstaClean <span class="font-sans text-[10px] uppercase font-extrabold tracking-widest bg-amberBrand/20 text-amberBrand px-2 py-0.5 rounded border border-amberBrand/30">v2.0</span>
+                        InstaClean <span class="font-sans text-[10px] uppercase font-extrabold tracking-widest bg-amberBrand/20 text-amberBrand px-2 py-0.5 rounded border border-amberBrand/30">v2.1</span>
                     </h1>
                     <p class="text-[11px] text-mutedMain">Mutual Clean-up & Account Auditor</p>
                 </div>
@@ -83,7 +83,7 @@
 
             <div class="flex items-center gap-3">
                 <button onclick="openModal('import-modal')" class="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-amberBrand/30 hover:bg-amberBrand/10 text-xs font-semibold text-textMain transition duration-150 flex items-center gap-2">
-                    <i data-lucide="import" class="w-4 h-4"></i> Impor JSON Instagram
+                    <i data-lucide="import" class="w-4 h-4"></i> Impor Berkas (.json)
                 </button>
                 <button onclick="openModal('whitelist-modal')" class="relative px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-amberBrand/40 hover:bg-white/10 text-xs font-semibold text-textMain transition duration-150 flex items-center gap-2">
                     <i data-lucide="star" class="w-4 h-4 text-amberBrand fill-amberBrand"></i> Whitelist
@@ -99,7 +99,7 @@
                 <i data-lucide="users" class="w-4 h-4 text-amberBrand"></i> 1. Audit & Filter Akun
             </button>
             <button onclick="switchTab('scraper-tab')" id="btn-scraper-tab" class="tab-btn px-5 py-3 border-b-2 border-transparent font-medium text-sm text-mutedMain flex items-center gap-2 transition duration-200 hover:text-textMain">
-                <i data-lucide="terminal" class="w-4 h-4"></i> 2. Skrip Scanner (Instagram Console)
+                <i data-lucide="terminal" class="w-4 h-4"></i> 2. Skrip Scanner Ganda (Instagram Console)
             </button>
             <button onclick="switchTab('executor-tab')" id="btn-executor-tab" class="tab-btn px-5 py-3 border-b-2 border-transparent font-medium text-sm text-mutedMain flex items-center gap-2 transition duration-200 hover:text-textMain">
                 <i data-lucide="play-circle" class="w-4 h-4"></i> 3. Generator Eksekutor Unfollow
@@ -128,31 +128,40 @@
 
                     <div class="space-y-3 bg-black/20 p-4 rounded-xl border border-white/5">
                         <p class="text-[10px] font-extrabold text-mutedMain tracking-wider uppercase">Filter Relasi</p>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-1 gap-2.5">
                             <label class="flex items-center gap-2 text-xs text-textMain cursor-pointer select-none">
                                 <input type="checkbox" id="filter-not-back" onchange="applyFilters()" checked class="w-4 h-4 accent-amberBrand rounded">
-                                Tidak Follback
+                                <span class="px-2 py-0.5 bg-roseBrand/10 text-roseBrand border border-roseBrand/20 rounded text-[10px] font-bold">Tidak Follback</span>
                             </label>
                             <label class="flex items-center gap-2 text-xs text-textMain cursor-pointer select-none">
                                 <input type="checkbox" id="filter-mutual" onchange="applyFilters()" checked class="w-4 h-4 accent-amberBrand rounded">
-                                Saling Ikuti
+                                <span class="px-2 py-0.5 bg-greenBrand/10 text-greenBrand border border-greenBrand/20 rounded text-[10px] font-bold">Saling Ikuti</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-xs text-textMain cursor-pointer select-none">
+                                <input type="checkbox" id="filter-fans" onchange="applyFilters()" checked class="w-4 h-4 accent-amberBrand rounded">
+                                <span class="px-2 py-0.5 bg-cyanBrand/10 text-cyanBrand border border-cyanBrand/20 rounded text-[10px] font-bold">Hanya Pengikut</span>
                             </label>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-3">
-                        <div class="bg-black/30 border border-white/5 rounded-xl p-3 text-center">
-                            <span class="text-[9px] text-mutedMain block font-extrabold uppercase tracking-wide">Follback</span>
-                            <strong id="stat-mutual-count" class="text-base text-greenBrand">0</strong>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="bg-black/30 border border-white/5 rounded-xl p-2.5 text-center">
+                            <span class="text-[8px] text-mutedMain block font-extrabold uppercase tracking-wide">Mutual</span>
+                            <strong id="stat-mutual-count" class="text-sm text-greenBrand">0</strong>
                         </div>
-                        <div class="bg-black/30 border border-white/5 rounded-xl p-3 text-center">
-                            <span class="text-[9px] text-mutedMain block font-extrabold uppercase tracking-wide">Egois</span>
-                            <strong id="stat-notback-count" class="text-base text-roseBrand">0</strong>
+                        <div class="bg-black/30 border border-white/5 rounded-xl p-2.5 text-center">
+                            <span class="text-[8px] text-mutedMain block font-extrabold uppercase tracking-wide">Egois</span>
+                            <strong id="stat-notback-count" class="text-sm text-roseBrand">0</strong>
                         </div>
-                        <div class="bg-black/30 border border-white/5 rounded-xl p-3 text-center">
-                            <span class="text-[9px] text-mutedMain block font-extrabold uppercase tracking-wide">Terpilih</span>
-                            <strong id="stat-selected-count" class="text-base text-cyanBrand">0</strong>
+                        <div class="bg-black/30 border border-white/5 rounded-xl p-2.5 text-center">
+                            <span class="text-[8px] text-mutedMain block font-extrabold uppercase tracking-wide">Fans</span>
+                            <strong id="stat-fans-count" class="text-sm text-cyanBrand">0</strong>
                         </div>
+                    </div>
+
+                    <div class="bg-black/20 p-3 rounded-xl border border-white/5 flex justify-between items-center">
+                        <span class="text-[11px] text-mutedMain">Terpilih Untuk Unfollow:</span>
+                        <strong id="stat-selected-count" class="text-sm text-amberBrand font-bold">0</strong>
                     </div>
 
                     <!-- Generate Execution button -->
@@ -194,41 +203,41 @@
         <div id="scraper-tab" class="hidden max-w-4xl mx-auto space-y-6">
             <div class="bg-gradient-to-r from-amberBrand/10 to-cyanBrand/10 border border-amberBrand/30 rounded-2xl p-6 shadow-xl space-y-4">
                 <h4 class="font-serif font-bold text-lg text-amberBrand flex items-center gap-2">
-                    <i data-lucide="terminal" class="w-5 h-5 text-cyanBrand"></i> Langkah 1: Ekstrak Data dari Instagram Web
+                    <i data-lucide="terminal" class="w-5 h-5 text-cyanBrand"></i> Langkah 1: Ekstrak Data Pengikut & Diikuti (Dual-Scan)
                 </h4>
                 <p class="text-xs text-textMain leading-relaxed">
-                    Skrip GraphQL di bawah ini berjalan langsung di browser Anda menggunakan session token aman Anda. Tidak ada data sandi yang dikirimkan ke luar.
+                    Skrip ini berjalan langsung di browser Anda untuk mengunduh daftar **Pengikut** (*Followers*) dan **Diikuti** (*Following*) secara bersamaan, kemudian menggabungkannya ke dalam satu file terstruktur.
                 </p>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
                     <div class="bg-black/40 border border-white/5 rounded-xl p-4 text-xs">
-                        <span class="font-bold text-cyanBrand block uppercase mb-1">1. Buka Instagram</span>
-                        <p class="text-mutedMain">Buka Instagram Desktop di browser Anda, masuk ke profil Anda sendiri.</p>
+                        <span class="font-bold text-cyanBrand block uppercase mb-1">1. Buka Instagram Web</span>
+                        <p class="text-mutedMain">Masuk ke profil Instagram Anda menggunakan Google Chrome atau Edge di Laptop/PC.</p>
                     </div>
                     <div class="bg-black/40 border border-white/5 rounded-xl p-4 text-xs">
-                        <span class="font-bold text-cyanBrand block uppercase mb-1">2. Buka Console</span>
-                        <p class="text-mutedMain">Tekan <kbd class="px-1 py-0.5 bg-white/10 rounded">F12</kbd> (Inspect) -> klik Tab **Console**.</p>
+                        <span class="font-bold text-cyanBrand block uppercase mb-1">2. Buka Console Browser</span>
+                        <p class="text-mutedMain">Tekan tombol <kbd class="px-1 py-0.5 bg-white/10 rounded">F12</kbd> di keyboard Anda lalu klik tab **Console**.</p>
                     </div>
                     <div class="bg-black/40 border border-white/5 rounded-xl p-4 text-xs">
                         <span class="font-bold text-cyanBrand block uppercase mb-1">3. Tempel & Jalankan</span>
-                        <p class="text-mutedMain">Salin skrip di bawah ini, tempel di console, tekan **Enter**. File JSON otomatis terunduh.</p>
+                        <p class="text-mutedMain">Salin skrip di bawah ini, tempelkan di area Console, lalu tekan **Enter**. Berkas JSON terunduh otomatis.</p>
                     </div>
                 </div>
             </div>
 
             <div class="bg-black border border-white/10 rounded-2xl shadow-xl overflow-hidden flex flex-col">
                 <div class="px-6 py-4 bg-white/5 border-b border-white/10 flex justify-between items-center">
-                    <span class="text-xs font-mono text-mutedMain">Instagram GraphQL Scraper Script (Query 3dec7e2c)</span>
+                    <span class="text-xs font-mono text-mutedMain">Instagram Dual GraphQL Scraper (Following & Followers)</span>
                     <button onclick="copyToClipboard('graphql-extractor-code')" class="px-3.5 py-1.5 bg-amberBrand hover:bg-amber-500 font-extrabold text-xs text-black rounded-lg transition duration-150 flex items-center gap-1">
                         <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin Skrip Scanner
                     </button>
                 </div>
                 <pre class="p-6 overflow-x-auto text-xs font-mono text-greenBrand leading-relaxed max-h-[350px]" id="graphql-extractor-code">
 /* =========================================================================
- * INSTACLEAN WEB-CONNS GRAPHQL SCANNER
+ * INSTACLEAN WEB DUAL-SCANNER (FOLLOWERS & FOLLOWING)
  * Jalankan ini di console profil Instagram Anda
  * ========================================================================= */
 (async () => {
-    console.log("%c[InstaClean Scanner] Menghubungi server GraphQL Instagram...", "color: #e0a33a; font-weight: bold; font-size: 14px;");
+    console.log("%c[InstaClean Scanner] Menghubungi GraphQL Instagram...", "color: #e0a33a; font-weight: bold; font-size: 14px;");
     
     const getCookie = (name) => {
         const value = `; ${document.cookie}`;
@@ -239,63 +248,124 @@
 
     const targetUserId = getCookie("ds_user_id");
     if (!targetUserId) {
-        console.error("%c[Error] Session ID tidak ditemukan. Harap login kembali di Instagram!", "color: #ef6a62; font-weight: bold;");
+        console.error("%c[Error] Sesi login tidak ditemukan. Harap login kembali di Instagram!", "color: #ef6a62; font-weight: bold;");
         return;
     }
 
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+    
     let followingList = [];
-    let endCursor = '';
+    let followersList = [];
+    
+    // 1. SCAN FOLLOWING (DIKUTI)
+    console.log("%c[Scan 1/2] Memulai Pemindaian Daftar Diikuti (Following)...", "color: #62d6d0; font-weight: bold;");
     let hasNextPage = true;
-    let pageCount = 0;
-
+    let endCursor = '';
+    let page = 0;
+    
     while (hasNextPage) {
-        pageCount++;
-        const variables = {
-            id: targetUserId,
-            include_reel: true,
-            fetch_mutual: false,
-            first: 50,
-            after: endCursor
-        };
-
+        page++;
+        const variables = { id: targetUserId, include_reel: false, fetch_mutual: false, first: 50, after: endCursor };
         const queryHash = '3dec7e2c57367ef3da3d987d89f9dbc8';
         const url = `https://www.instagram.com/graphql/query/?query_hash=${queryHash}&variables=${encodeURIComponent(JSON.stringify(variables))}`;
 
         try {
-            const response = await fetch(url).then(res => res.json());
-            const data = response.data.user.edge_follow;
-            const edges = data.edges;
-
-            edges.forEach(edge => {
+            const res = await fetch(url).then(r => r.json());
+            const data = res.data.user.edge_follow;
+            data.edges.forEach(edge => {
                 followingList.push({
                     id: edge.node.id,
                     username: edge.node.username,
                     full_name: edge.node.full_name || '',
                     profile_pic_url: edge.node.profile_pic_url,
                     is_private: edge.node.is_private,
-                    is_verified: edge.node.is_verified,
-                    follows_viewer: edge.node.follows_viewer || false // Status apakah dia follback Anda
+                    is_verified: edge.node.is_verified
                 });
             });
-
-            console.log(`[Scan Page ${pageCount}] Mengambil ${edges.length} pertemanan. Total data: ${followingList.length}`);
-            
+            console.log(` -> Memuat ${data.edges.length} Following. Total: ${followingList.length}`);
             hasNextPage = data.page_info.has_next_page;
             endCursor = data.page_info.end_cursor;
-
-            // Random delay anti-block
-            await new Promise(r => setTimeout(r, Math.floor(Math.random() * 1000) + 1000));
+            await sleep(1000 + Math.random() * 1000);
         } catch (err) {
-            console.error("[Scanner] Error fetching GraphQL:", err);
+            console.error("Gagal memuat Following:", err);
             break;
         }
     }
 
-    console.log("%c[Sukses] Mengunduh berkas instaclean_export.json...", "color: #8ccf7e; font-weight: bold;");
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(followingList, null, 2));
+    // 2. SCAN FOLLOWERS (PENGIKUT)
+    console.log("%c[Scan 2/2] Memulai Pemindaian Daftar Pengikut (Followers)...", "color: #62d6d0; font-weight: bold;");
+    hasNextPage = true;
+    endCursor = '';
+    page = 0;
+
+    while (hasNextPage) {
+        page++;
+        const variables = { id: targetUserId, include_reel: false, fetch_mutual: false, first: 50, after: endCursor };
+        const queryHash = 'cda12ee004c5e15607b140bf1d3c01c0';
+        const url = `https://www.instagram.com/graphql/query/?query_hash=${queryHash}&variables=${encodeURIComponent(JSON.stringify(variables))}`;
+
+        try {
+            const res = await fetch(url).then(r => r.json());
+            const data = res.data.user.edge_followed_by;
+            data.edges.forEach(edge => {
+                followersList.push({
+                    id: edge.node.id,
+                    username: edge.node.username
+                });
+            });
+            console.log(` -> Memuat ${data.edges.length} Followers. Total: ${followersList.length}`);
+            hasNextPage = data.page_info.has_next_page;
+            endCursor = data.page_info.end_cursor;
+            await sleep(1000 + Math.random() * 1000);
+        } catch (err) {
+            console.error("Gagal memuat Followers:", err);
+            break;
+        }
+    }
+
+    // 3. MERGE & CROSS-REFERENCE
+    console.log("%c[Scan Selesai] Melakukan Sinkronisasi Hubungan Teman...", "color: #8ccf7e; font-weight: bold;");
+    const followerIds = new Set(followersList.map(f => f.id));
+    const followingIds = new Set(followingList.map(f => f.id));
+
+    // Gabungkan list unik
+    const allUsersMap = new Map();
+    
+    followingList.forEach(u => {
+        allUsersMap.set(u.id, {
+            ...u,
+            is_following: true,
+            is_follower: followerIds.has(u.id)
+        });
+    });
+
+    followersList.forEach(u => {
+        if (!allUsersMap.has(u.id)) {
+            // Jika dia follower tapi kita tidak following
+            allUsersMap.set(u.id, {
+                id: u.id,
+                username: u.username,
+                full_name: '',
+                profile_pic_url: '',
+                is_private: false,
+                is_verified: false,
+                is_following: false,
+                is_follower: true
+            });
+        } else {
+            const existing = allUsersMap.get(u.id);
+            existing.is_follower = true;
+            allUsersMap.set(u.id, existing);
+        }
+    });
+
+    const finalOutput = Array.from(allUsersMap.values());
+    console.log(`%c[Sukses] Berhasil memetakan total ${finalOutput.length} relasi unik!`, "color: #8ccf7e; font-weight: bold;");
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(finalOutput, null, 2));
     const dlAnchor = document.createElement('a');
     dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `instaclean_gql_${targetUserId}.json`);
+    dlAnchor.setAttribute("download", `instaclean_dual_${targetUserId}.json`);
     document.body.appendChild(dlAnchor);
     dlAnchor.click();
     dlAnchor.remove();
@@ -340,10 +410,26 @@
             <h3 class="font-serif font-bold text-lg text-textMain flex items-center gap-2">
                 <i data-lucide="import" class="w-5 h-5 text-cyanBrand"></i> Impor Berkas JSON Instagram
             </h3>
-            <p class="text-xs text-mutedMain">
-                Buka file JSON hasil scan yang berhasil diunduh dari Instagram, salin seluruh isinya, dan tempelkan (*paste*) di bawah ini:
-            </p>
-            <textarea id="import-textarea" class="w-full h-40 bg-black/40 border border-white/10 rounded-xl p-3 text-xs font-mono text-cyanBrand focus:outline-none focus:border-cyanBrand" placeholder="Tempel teks JSON di sini..."></textarea>
+            
+            <!-- File Selector Input -->
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-textMain block">Unggah Berkas JSON Anda:</label>
+                <input type="file" id="import-file-selector" class="hidden" accept=".json" onchange="handleFileSelect(this)">
+                <div onclick="document.getElementById('import-file-selector').click()" class="border-2 border-dashed border-white/20 hover:border-cyanBrand/50 rounded-xl p-6 text-center cursor-pointer transition bg-black/20 group">
+                    <i data-lucide="upload-cloud" class="w-10 h-10 text-mutedMain group-hover:text-cyanBrand mx-auto mb-2 transition"></i>
+                    <span class="text-xs text-textMain font-semibold block">Klik untuk memilih file .json</span>
+                    <span class="text-[10px] text-mutedMain block mt-1" id="file-name-display">Atau pilih berkas hasil dual-scan</span>
+                </div>
+            </div>
+
+            <div class="relative flex py-2 items-center">
+                <div class="flex-grow border-t border-white/5"></div>
+                <span class="flex-shrink mx-4 text-mutedMain text-[9px] uppercase tracking-widest">Atau Tempel Teks Manual</span>
+                <div class="flex-grow border-t border-white/5"></div>
+            </div>
+
+            <textarea id="import-textarea" class="w-full h-24 bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] font-mono text-cyanBrand focus:outline-none focus:border-cyanBrand" placeholder="Tempel teks JSON di sini jika tidak memilih file..."></textarea>
+            
             <div class="flex justify-end gap-2.5 pt-2">
                 <button onclick="closeModal('import-modal')" class="px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-semibold rounded-xl text-textMain transition">Batal</button>
                 <button onclick="processImportJSON()" class="px-4 py-2 bg-cyanBrand hover:bg-cyanBrand/90 text-xs font-extrabold rounded-xl text-black transition">Proses Impor</button>
@@ -370,13 +456,13 @@
     </div>
 
     <script>
-        // Mock data awal untuk panduan visual
+        // Mock data awal dengan skema relasi baru: is_following & is_follower
         const MOCK_DATA = [
-            { id: "1", username: "alina.frames", full_name: "Alina Moreno", profile_pic_url: "https://placehold.co/100x100/1e2937/fff?text=AM", is_verified: true, is_private: false, follows_viewer: false },
-            { id: "2", username: "brassandbone", full_name: "Theo Walsh", profile_pic_url: "https://placehold.co/100x100/1e2937/fff?text=TW", is_verified: false, is_private: true, follows_viewer: false },
-            { id: "3", username: "citrus.archive", full_name: "Mara Kim", profile_pic_url: "https://placehold.co/100x100/1e2937/fff?text=MK", is_verified: false, is_private: false, follows_viewer: true },
-            { id: "4", username: "dawnledger", full_name: "Jon Bell", profile_pic_url: "https://placehold.co/100x100/1e2937/fff?text=JB", is_verified: false, is_private: true, follows_viewer: false },
-            { id: "5", username: "elias.market", full_name: "Elias Noor", profile_pic_url: "https://placehold.co/100x100/1e2937/fff?text=EN", is_verified: true, is_private: false, follows_viewer: true }
+            { id: "1", username: "alina.frames", full_name: "Alina Moreno", profile_pic_url: "https://placehold.co/100x100/1e2937/fff?text=AM", is_verified: true, is_private: false, is_following: true, is_follower: false },
+            { id: "2", username: "brassandbone", full_name: "Theo Walsh", profile_pic_url: "https://placehold.co/100x100/1e2937/fff?text=TW", is_verified: false, is_private: true, is_following: true, is_follower: false },
+            { id: "3", username: "citrus.archive", full_name: "Mara Kim", profile_pic_url: "https://placehold.co/100x100/1e2937/fff?text=MK", is_verified: false, is_private: false, is_following: true, is_follower: true },
+            { id: "4", username: "dawnledger", full_name: "Jon Bell", profile_pic_url: "https://placehold.co/100x100/1e2937/fff?text=JB", is_verified: false, is_private: true, is_following: true, is_follower: false },
+            { id: "5", username: "elias.market", full_name: "Elias Noor", profile_pic_url: "https://placehold.co/100x100/1e2937/fff?text=EN", is_verified: true, is_private: false, is_following: false, is_follower: true }
         ];
 
         let accounts = [...MOCK_DATA];
@@ -412,17 +498,20 @@
             const query = document.getElementById('user-search').value.toLowerCase().trim();
             const filterNotBack = document.getElementById('filter-not-back').checked;
             const filterMutual = document.getElementById('filter-mutual').checked;
+            const filterFans = document.getElementById('filter-fans').checked;
 
             filteredAccounts = accounts.filter(account => {
                 const matchSearch = account.username.toLowerCase().includes(query) || 
                                     account.full_name.toLowerCase().includes(query);
                 if (!matchSearch) return false;
 
-                const isMutual = account.follows_viewer;
-                const isNotBack = !account.follows_viewer;
+                const isMutual = account.is_following && account.is_follower;
+                const isNotBack = account.is_following && !account.is_follower;
+                const isFan = !account.is_following && account.is_follower;
 
                 if (isMutual && !filterMutual) return false;
                 if (isNotBack && !filterNotBack) return false;
+                if (isFan && !filterFans) return false;
 
                 return true;
             });
@@ -440,7 +529,7 @@
                 container.innerHTML = `
                     <div class="px-6 py-12 text-center text-mutedMain">
                         <i data-lucide="users" class="w-12 h-12 text-mutedMain/40 mx-auto mb-3"></i>
-                        <p class="text-sm">Silakan impor file data JSON Instagram Anda terlebih dahulu menggunakan tombol di atas.</p>
+                        <p class="text-sm">Silakan gunakan tab "Skrip Scanner Ganda" lalu impor berkas JSON Anda di sini.</p>
                     </div>
                 `;
                 lucide.createIcons();
@@ -455,11 +544,15 @@
             pageItems.forEach(acc => {
                 const isSelected = selectedIds.has(acc.id);
                 const isWhitelisted = whitelistedIds.has(acc.id);
-                const isMutual = acc.follows_viewer;
-
-                let relationTag = isMutual ? 
-                    `<span class="px-2 py-0.5 bg-greenBrand/15 text-greenBrand border border-greenBrand/20 text-[10px] font-bold rounded flex items-center gap-1"><i data-lucide="check-check" class="w-3 h-3"></i> Saling Ikuti</span>` :
-                    `<span class="px-2 py-0.5 bg-roseBrand/15 text-roseBrand border border-roseBrand/20 text-[10px] font-bold rounded flex items-center gap-1"><i data-lucide="x" class="w-3 h-3"></i> Tidak Follback</span>`;
+                
+                let relationTag = '';
+                if (acc.is_following && acc.is_follower) {
+                    relationTag = `<span class="px-2 py-0.5 bg-greenBrand/15 text-greenBrand border border-greenBrand/20 text-[10px] font-bold rounded flex items-center gap-1"><i data-lucide="check-check" class="w-3 h-3"></i> Saling Ikuti</span>`;
+                } else if (acc.is_following && !acc.is_follower) {
+                    relationTag = `<span class="px-2 py-0.5 bg-roseBrand/15 text-roseBrand border border-roseBrand/20 text-[10px] font-bold rounded flex items-center gap-1"><i data-lucide="x" class="w-3 h-3"></i> Tidak Follback</span>`;
+                } else if (!acc.is_following && acc.is_follower) {
+                    relationTag = `<span class="px-2 py-0.5 bg-cyanBrand/15 text-cyanBrand border border-cyanBrand/20 text-[10px] font-bold rounded flex items-center gap-1"><i data-lucide="user-plus" class="w-3 h-3"></i> Hanya Pengikut</span>`;
+                }
 
                 const verifiedBadge = acc.is_verified ? `<span class="w-4 h-4 bg-cyanBrand rounded-full flex items-center justify-center text-black font-extrabold text-[9px]">✓</span>` : '';
 
@@ -520,19 +613,22 @@
                 showNotification("info", "Proteksi Whitelist dilepas.");
             } else {
                 whitelistedIds.add(id);
-                selectedIds.delete(id); // Akun yang di-whitelist tidak bisa didelete
-                showNotification("success", "Akun berhasil masuk Whitelist!");
+                selectedIds.delete(id); // Whitelisted accounts cannot be checked for delete
+                showNotification("success", "Akun dilindungi dengan Whitelist!");
             }
             renderAccountsList();
             updateStats();
         }
 
         function updateStats() {
-            const totalMutual = accounts.filter(a => a.follows_viewer).length;
-            const totalNotBack = accounts.filter(a => !a.follows_viewer).length;
+            const totalMutual = accounts.filter(a => a.is_following && a.is_follower).length;
+            const totalNotBack = accounts.filter(a => a.is_following && !a.is_follower).length;
+            const totalFans = accounts.filter(a => !a.is_following && a.is_follower).length;
 
             document.getElementById('stat-mutual-count').textContent = totalMutual;
             document.getElementById('stat-notback-count').textContent = totalNotBack;
+            document.getElementById('stat-fans-count').textContent = totalFans;
+            
             document.getElementById('stat-selected-count').textContent = selectedIds.size;
             document.getElementById('executor-target-count').textContent = `${selectedIds.size} Akun`;
 
@@ -558,9 +654,25 @@
             }
         }
 
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            document.getElementById('file-name-display').innerHTML = `<span class="text-cyanBrand font-bold">${file.name}</span> selected`;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('import-textarea').value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+
         function processImportJSON() {
             const text = document.getElementById('import-textarea').value.trim();
-            if (!text) return;
+            if (!text) {
+                showNotification("error", "Harap unggah file atau tempel teks JSON terlebih dahulu.");
+                return;
+            }
 
             try {
                 const parsed = JSON.parse(text);
@@ -576,13 +688,14 @@
                     profile_pic_url: item.profile_pic_url || "",
                     is_private: item.is_private || false,
                     is_verified: item.is_verified || false,
-                    follows_viewer: item.follows_viewer || false
+                    is_following: item.is_following !== undefined ? item.is_following : true,
+                    is_follower: item.is_follower !== undefined ? item.is_follower : false
                 }));
 
                 selectedIds.clear();
                 applyFilters();
                 closeModal('import-modal');
-                showNotification("success", `Data Berhasil Diimpor! Berhasil memuat ${accounts.length} akun.`);
+                showNotification("success", `Impor Berhasil! Memuat ${accounts.length} akun dengan peta hubungan.`);
             } catch (err) {
                 showNotification("error", "JSON Error: " + err.message);
             }
@@ -590,7 +703,7 @@
 
         function generateExecutorScript() {
             if (selectedIds.size === 0) {
-                showNotification("warning", "Pilih minimal 1 akun untuk memulai pembersihan.");
+                showNotification("warning", "Pilih minimal 1 akun untuk melakukan pembersihan.");
                 return;
             }
 
@@ -603,18 +716,18 @@
  * ========================================================================= */
 (async () => {
     const targets = ${targetJSON};
-    console.log("%c[InstaClean Executor] Memulai proses eksekusi unfollow...", "color: #ef6a62; font-weight: bold; font-size: 14px;");
+    console.log('%c[InstaClean Executor] Memulai proses eksekusi unfollow...', 'color: #ef6a62; font-weight: bold; font-size: 14px;');
     
     const getCookie = (name) => {
-        const value = "; " + document.cookie;
-        const parts = value.split("; " + name + "=");
-        if (parts.length === 2) return parts.pop().split(";").shift();
+        const value = '; ' + document.cookie;
+        const parts = value.split('; ' + name + '=');
+        if (parts.length === 2) return parts.pop().split(';').shift();
         return null;
     };
 
-    const csrfToken = getCookie("csrftoken");
+    const csrfToken = getCookie('csrftoken');
     if (!csrfToken) {
-        console.error("CSRF Token tidak terdeteksi. Silakan muat ulang halaman Instagram!");
+        console.error('CSRF Token tidak terdeteksi. Silakan muat ulang halaman Instagram!');
         return;
     }
 
@@ -623,36 +736,34 @@
     for (let i = 0; i < targets.length; i++) {
         const user = targets[i];
         processedCount++;
-        console.log("%c[" + processedCount + "/" + targets.length + "] %cMencoba memutus hubungan dengan @" + user.username + "...", "color: #62d6d0", "color: inherit");
+        console.log('%c[' + processedCount + '/' + targets.length + '] %cMencoba memutus hubungan dengan @' + user.username + '...', 'color: #62d6d0', 'color: inherit');
 
         try {
-            // Jalankan request pemutusan pertemanan (Unfollow) langsung ke API endpoint resmi Instagram
-            const res = await fetch("https://www.instagram.com/web/friendships/" + user.id + "/unfollow/", {
+            const res = await fetch('https://www.instagram.com/web/friendships/' + user.id + '/unfollow/', {
                 headers: {
-                    "content-type": "application/x-www-form-urlencoded",
-                    "x-csrftoken": csrfToken
+                    'content-type': 'application/x-www-form-urlencoded',
+                    'x-csrftoken': csrfToken
                 },
-                method: "POST"
+                method: 'POST'
             });
 
             if (res.ok) {
-                console.log("%c[Berhasil] Hubungan dengan @" + user.username + " diputus! ✨", "color: #8ccf7e");
+                console.log('%c[Berhasil] Hubungan dengan @' + user.username + ' diputus! ✨', 'color: #8ccf7e');
             } else {
-                console.warn("[Gagal] Respons server kurang baik untuk @" + user.username + ".");
+                console.warn('[Gagal] Respons server kurang baik untuk @' + user.username + '.');
             }
         } catch (e) {
-            console.error("Gagal memproses @" + user.username + ":", e);
+            console.error('Gagal memproses @' + user.username + ':', e);
         }
 
-        // Jeda aman anti block: 15-20 detik acak
         const sleepTime = Math.floor(Math.random() * 5000) + 15000;
         if (i < targets.length - 1) {
-            console.log("[Proteksi Jeda Aman] Menunggu " + (sleepTime / 1000).toFixed(1) + " detik...");
+            console.log('[Proteksi Jeda Aman] Menunggu ' + (sleepTime / 1000).toFixed(1) + ' detik...');
             await new Promise(r => setTimeout(r, sleepTime));
         }
     }
 
-    console.log("%c[Selesai] Semua akun target berhasil dibersihkan! 🎉", "color: #8ccf7e; font-weight: bold; font-size: 14px;");
+    console.log('%c[Selesai] Semua akun target berhasil dibersihkan! 🎉', 'color: #8ccf7e; font-weight: bold; font-size: 14px;');
 })();`;
 
             document.getElementById('unfollow-executor-code').textContent = script;
