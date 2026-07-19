@@ -709,7 +709,7 @@
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
 
     <script>
-        // Secure secure proxy loader using images.weserv.nl
+        // Secure secure proxy loader
         window.getAvatarHTML = function(username, profilePicUrl, isWhitelisted, size) {
             isWhitelisted = !!isWhitelisted;
             size = size || 'normal';
@@ -734,7 +734,6 @@
             
             if (profilePicUrl && profilePicUrl.trim() !== '') {
                 var cleanUrl = profilePicUrl.replace(/^https?:\/\//i, '');
-                // Route everything through images.weserv.nl proxy to bypass 403 CDN blocks & signatures
                 finalPicUrl = 'https://images.weserv.nl/?url=' + encodeURIComponent(cleanUrl) + '&we&default=' + encodeURIComponent(unavatarUrl);
             } else {
                 var cleanBackup = unavatarUrl.replace(/^https?:\/\//i, '');
@@ -745,7 +744,7 @@
             
             var badgeHTML = '';
             if (isWhitelisted && size !== 'small') {
-                badgeHTML = '<div class="absolute -top-1 -right-1 w-5 h-5 bg-amberBrand rounded-full flex items-center justify-center border border-[#121212] shadow-lg">' +
+                badgeHTML = '<div class="absolute -top-1 -right-1 w-5 h-5 bg-amberBrand rounded-full flex items-center justify-center border border-[#1e1d1a] shadow-lg">' +
                             '<i data-lucide="star" class="w-3 h-3 text-black fill-black"></i>' +
                             '</div>';
             }
@@ -765,14 +764,14 @@
 
         // Core Alignment Mock Database with exactly the requested 5 metrics!
         const TARGET_ACCURATE_DATA = [
-            { id: "1", username: "pputriamalia20_", full_name: "putri amalia", profile_pic_url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 2200, following_count: 854, posts_count: 14 },
-            { id: "2", username: "gp.lpg", full_name: "Graduation Photographer Lampung", profile_pic_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 4500, following_count: 120, posts_count: 231 },
-            { id: "3", username: "kkn_plp_waydadi2.2026", full_name: "KKN-PLP UNILA WAYDADI2 2026", profile_pic_url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 1700, following_count: 42, posts_count: 89 },
-            { id: "4", username: "ini_megoyyy", full_name: "Mega Linda", profile_pic_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 1900, following_count: 1102, posts_count: 45 },
-            { id: "5", username: "tareemhijab", full_name: "Hijab and Distro ✨", profile_pic_url: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=150", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 2600, following_count: 1450, posts_count: 1420 },
-            { id: "6", username: "bouquetkawatbululampung_", full_name: "charadefleurs", profile_pic_url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 1200, following_count: 412, posts_count: 51 },
-            { id: "7", username: "safitry_319", full_name: "safitry_319", profile_pic_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 3100, following_count: 650, posts_count: 12 },
-            { id: "8", username: "masbay__", full_name: "Bayu Prasetio", profile_pic_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150", is_verified: false, is_private: false, is_following: true, is_follower: true, followers_count: 1604, following_count: 981, posts_count: 184 }
+            { id: "1", username: "pputriamalia20_", full_name: "putri amalia", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 2200, following_count: 854, posts_count: 14 },
+            { id: "2", username: "gp.lpg", full_name: "Graduation Photographer Lampung", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 4500, following_count: 120, posts_count: 231 },
+            { id: "3", username: "kkn_plp_waydadi2.2026", full_name: "KKN-PLP UNILA WAYDADI2 2026", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 1700, following_count: 42, posts_count: 89 },
+            { id: "4", username: "ini_megoyyy", full_name: "Mega Linda", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 1900, following_count: 1102, posts_count: 45 },
+            { id: "5", username: "tareemhijab", full_name: "Hijab and Distro ✨", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 2600, following_count: 1450, posts_count: 1420 },
+            { id: "6", username: "bouquetkawatbululampung_", full_name: "charadefleurs", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 1200, following_count: 412, posts_count: 51 },
+            { id: "7", username: "safitry_319", full_name: "safitry_319", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 3100, following_count: 650, posts_count: 12 },
+            { id: "8", username: "masbay__", full_name: "Bayu Prasetio", profile_pic_url: "", is_verified: false, is_private: false, is_following: true, is_follower: true, followers_count: 1604, following_count: 981, posts_count: 184 }
         ];
 
         let accounts = [];
@@ -1122,29 +1121,29 @@
                             </div>
                         </label>
                         
-                        \${getAvatarHTML(user.username, user.profile_pic_url, isWhitelisted, 'normal')}
+                        ${getAvatarHTML(user.username, user.profile_pic_url, isWhitelisted, 'normal')}
 
                         <div class="min-w-0 flex-grow">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <span class="font-bold text-sm text-textMain hover:underline cursor-pointer truncate" onclick="openEditModal('${user.id}')">\${user.username}</span>
-                                \${verifiedBadge}
-                                \${relationBadge}
+                                <span class="font-bold text-sm text-textMain hover:underline cursor-pointer truncate" onclick="openEditModal('${user.id}')">${user.username}</span>
+                                ${verifiedBadge}
+                                ${relationBadge}
                             </div>
-                            <span class="text-[11px] text-mutedMain block truncate mt-0.5">\${user.full_name || 'Instagram User'}</span>
+                            <span class="text-[11px] text-mutedMain block truncate mt-0.5">${user.full_name || 'Instagram User'}</span>
                             
                             <!-- Premium 5 Metrik Tracking Bar -->
                             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[10px] text-mutedMain font-medium">
                                 <div class="flex items-center gap-1">
                                     <i data-lucide="users" class="w-3.5 h-3.5 text-cyanBrand"></i>
-                                    <span><strong class="text-textMain font-bold">\${formatCount(user.followers_count)}</strong> pengikut</span>
+                                    <span><strong class="text-textMain font-bold">${formatCount(user.followers_count)}</strong> pengikut</span>
                                 </div>
                                 <div class="flex items-center gap-1 border-l border-white/10 pl-3">
                                     <i data-lucide="user-plus" class="w-3.5 h-3.5 text-amberBrand"></i>
-                                    <span><strong class="text-textMain font-bold">\${formatCount(user.following_count)}</strong> diikuti</span>
+                                    <span><strong class="text-textMain font-bold">${formatCount(user.following_count)}</strong> diikuti</span>
                                 </div>
                                 <div class="flex items-center gap-1 border-l border-white/10 pl-3">
                                     <i data-lucide="image" class="w-3.5 h-3.5 text-greenBrand"></i>
-                                    <span><strong class="text-textMain font-bold">\${formatCount(user.posts_count)}</strong> postingan</span>
+                                    <span><strong class="text-textMain font-bold">${formatCount(user.posts_count)}</strong> postingan</span>
                                 </div>
                             </div>
                         </div>
@@ -1154,8 +1153,8 @@
                         <button onclick="openEditModal('${user.id}')" class="p-2 rounded-xl bg-white/5 border border-white/5 hover:border-amberBrand/30 hover:bg-amberBrand/10 transition" title="Edit Detail Data Pengikut">
                             <i data-lucide="edit-3" class="w-4 h-4 text-mutedMain hover:text-amberBrand"></i>
                         </button>
-                        <button onclick="toggleWhitelist('${user.id}')" class="p-2 rounded-xl bg-white/5 border border-white/5 hover:border-amberBrand/30 hover:bg-amberBrand/10 transition" title="\${isWhitelisted ? 'Hapus Whitelist' : 'Amankan via Whitelist'}">
-                            <i data-lucide="star" class="w-4 h-4 \${isWhitelisted ? 'text-amberBrand fill-amberBrand' : 'text-mutedMain hover:text-textMain'}"></i>
+                        <button onclick="toggleWhitelist('${user.id}')" class="p-2 rounded-xl bg-white/5 border border-white/5 hover:border-amberBrand/30 hover:bg-amberBrand/10 transition" title="${isWhitelisted ? 'Hapus Whitelist' : 'Amankan via Whitelist'}">
+                            <i data-lucide="star" class="w-4 h-4 ${isWhitelisted ? 'text-amberBrand fill-amberBrand' : 'text-mutedMain hover:text-textMain'}"></i>
                         </button>
                     </div>
                 `;
@@ -1166,7 +1165,7 @@
             if (filteredAccounts.length > 200) {
                 const footerInfo = document.createElement('div');
                 footerInfo.className = 'p-4 text-center text-xs text-mutedMain bg-black/10 border-t border-white/5';
-                footerInfo.innerText = `Menampilkan 200 akun teratas dari total \${filteredAccounts.length.toLocaleString('id-ID')} akun terfilter.`;
+                footerInfo.innerText = `Menampilkan 200 akun teratas dari total ${filteredAccounts.length.toLocaleString('id-ID')} akun terfilter.`;
                 container.appendChild(footerInfo);
             }
 
@@ -1186,24 +1185,24 @@
                 container.className = 'flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3 px-1';
                 container.innerHTML = `
                     <div class="flex items-center gap-3 min-w-0">
-                        \${getAvatarHTML(user.username, user.profile_pic_url, false, 'small')}
+                        ${getAvatarHTML(user.username, user.profile_pic_url, false, 'small')}
                         <div class="min-w-0">
-                            <p class="text-xs font-bold text-textMain truncate">@\${user.username}</p>
-                            <p class="text-[10px] text-mutedMain truncate">\${user.full_name || 'Tanpa nama'}</p>
+                            <p class="text-xs font-bold text-textMain truncate">@${user.username}</p>
+                            <p class="text-[10px] text-mutedMain truncate">${user.full_name || 'Tanpa nama'}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 flex-wrap">
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] text-mutedMain">Pengikut:</span>
-                            <input type="number" data-bulk-id="\${user.id}" data-bulk-type="followers" value="\${user.followers_count}" class="w-16 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
+                            <input type="number" data-bulk-id="${user.id}" data-bulk-type="followers" value="${user.followers_count}" class="w-16 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
                         </div>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] text-mutedMain">Diikuti:</span>
-                            <input type="number" data-bulk-id="\${user.id}" data-bulk-type="following" value="\${user.following_count}" class="w-16 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
+                            <input type="number" data-bulk-id="${user.id}" data-bulk-type="following" value="${user.following_count}" class="w-16 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
                         </div>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] text-mutedMain">Post:</span>
-                            <input type="number" data-bulk-id="\${user.id}" data-bulk-type="posts" value="\${user.posts_count}" class="w-14 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
+                            <input type="number" data-bulk-id="${user.id}" data-bulk-type="posts" value="${user.posts_count}" class="w-14 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
                         </div>
                     </div>
                 `;
@@ -1304,7 +1303,7 @@
 
             closeModal('edit-profile-modal');
             applyFilters();
-            showToast(`Detail @\${newUsername} berhasil diperbarui!`, "success");
+            showToast(`Detail @${newUsername} berhasil diperbarui!`, "success");
         }
 
         function resetAllSelections() {
@@ -1391,13 +1390,13 @@
                     row.className = "flex items-center justify-between py-3 px-1";
                     row.innerHTML = `
                         <div class="flex items-center gap-3">
-                            \${getAvatarHTML(user.username, user.profile_pic_url, false, 'small')}
+                            ${getAvatarHTML(user.username, user.profile_pic_url, false, 'small')}
                             <div>
-                                <p class="text-xs font-bold text-textMain">\${user.username}</p>
-                                <p class="text-[10px] text-mutedMain">\${user.followers_count || 0} pengikut</p>
+                                <p class="text-xs font-bold text-textMain">${user.username}</p>
+                                <p class="text-[10px] text-mutedMain">${user.followers_count || 0} pengikut</p>
                             </div>
                         </div>
-                        <button onclick="toggleWhitelist('\${user.id}')" class="px-3 py-1.5 bg-roseBrand/10 hover:bg-roseBrand/20 text-roseBrand text-[10px] font-bold rounded-lg border border-roseBrand/20 transition">
+                        <button onclick="toggleWhitelist('${user.id}')" class="px-3 py-1.5 bg-roseBrand/10 hover:bg-roseBrand/20 text-roseBrand text-[10px] font-bold rounded-lg border border-roseBrand/20 transition">
                             Hapus
                         </button>
                     `;
@@ -1469,7 +1468,7 @@
 
                 applyFilters();
                 closeModal('import-modal');
-                showToast(`Sukses memuat \${accounts.length.toLocaleString('id-ID')} akun ke Workspace!`, "success");
+                showToast(`Sukses memuat ${accounts.length.toLocaleString('id-ID')} akun ke Workspace!`, "success");
             } catch (err) {
                 showToast("Format JSON salah! Pastikan format sesuai skema dual-scan.", "error");
                 console.error(err);
@@ -1569,7 +1568,7 @@
 "\n" +
 "        const nextDelay = 15000 + Math.random() * 7000;\n" +
 "        if (i < targets.length - 1) {\n" +
-"            console.log(\"Jeda aman " + (nextDelay/1000).toFixed(1) + " detik untuk perlindungan akun...\");\n" +
+"            console.log(\"Jeda aman \" + (nextDelay/1000).toFixed(1) + \" detik untuk perlindungan akun...\");\n" +
 "            await sleep(nextDelay);\n" +
 "        }\n" +
 "    }\n" +
