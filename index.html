@@ -271,6 +271,9 @@
 
         try {
             const res = await fetch(url).then(r => r.json());
+            if (!res.data || !res.data.user || !res.data.user.edge_follow) {
+                throw new Error("Format respons Following tidak valid.");
+            }
             const data = res.data.user.edge_follow;
             data.edges.forEach(edge => {
                 followingList.push({
@@ -300,12 +303,15 @@
 
     while (hasNextPage) {
         page++;
-        const variables = { id: targetUserId, include_reel: false, fetch_mutual: false, first: 50, after: endCursor };
-        const queryHash = 'cda12ee004c5e15607b140bf1d3c01c0';
+        const variables = { id: targetUserId, include_reel: true, fetch_mutual: true, first: 50, after: endCursor };
+        const queryHash = 'c76146de99bb02f6415203be841dd25a';
         const url = `https://www.instagram.com/graphql/query/?query_hash=${queryHash}&variables=${encodeURIComponent(JSON.stringify(variables))}`;
 
         try {
             const res = await fetch(url).then(r => r.json());
+            if (!res.data || !res.data.user || !res.data.user.edge_followed_by) {
+                throw new Error("Format respons Followers tidak valid.");
+            }
             const data = res.data.user.edge_followed_by;
             data.edges.forEach(edge => {
                 followersList.push({
