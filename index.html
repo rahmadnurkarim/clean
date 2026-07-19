@@ -606,9 +606,9 @@
     console.log("%c[InstaClean Executor] Memulai proses eksekusi unfollow...", "color: #ef6a62; font-weight: bold; font-size: 14px;");
     
     const getCookie = (name) => {
-        const value = `; \${document.cookie}`;
-        const parts = value.split(`; \${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
+        const value = "; " + document.cookie;
+        const parts = value.split("; " + name + "=");
+        if (parts.length === 2) return parts.pop().split(";").shift();
         return null;
     };
 
@@ -623,11 +623,11 @@
     for (let i = 0; i < targets.length; i++) {
         const user = targets[i];
         processedCount++;
-        console.log(\`[%c\${processedCount}/\${targets.length}%c] Mencoba memutus hubungan dengan @\${user.username}...\`, "color: #62d6d0", "color: inherit");
+        console.log("%c[" + processedCount + "/" + targets.length + "] %cMencoba memutus hubungan dengan @" + user.username + "...", "color: #62d6d0", "color: inherit");
 
         try {
             // Jalankan request pemutusan pertemanan (Unfollow) langsung ke API endpoint resmi Instagram
-            const res = await fetch(\`https://www.instagram.com/web/friendships/\${user.id}/unfollow/\`, {
+            const res = await fetch("https://www.instagram.com/web/friendships/" + user.id + "/unfollow/", {
                 headers: {
                     "content-type": "application/x-www-form-urlencoded",
                     "x-csrftoken": csrfToken
@@ -636,18 +636,18 @@
             });
 
             if (res.ok) {
-                console.log(\`%c[Berhasil] Hubungan dengan @\${user.username} diputus! ✨\`, "color: #8ccf7e");
+                console.log("%c[Berhasil] Hubungan dengan @" + user.username + " diputus! ✨", "color: #8ccf7e");
             } else {
-                console.warn(\`[Gagal] Respons server kurang baik untuk @\${user.username}.\`);
+                console.warn("[Gagal] Respons server kurang baik untuk @" + user.username + ".");
             }
         } catch (e) {
-            console.error(\`Gagal memproses @\${user.username}:\`, e);
+            console.error("Gagal memproses @" + user.username + ":", e);
         }
 
         // Jeda aman anti block: 15-20 detik acak
         const sleepTime = Math.floor(Math.random() * 5000) + 15000;
         if (i < targets.length - 1) {
-            console.log(\`[Proteksi Jeda Aman] Menunggu \${(sleepTime / 1000).toFixed(1)} detik...\`);
+            console.log("[Proteksi Jeda Aman] Menunggu " + (sleepTime / 1000).toFixed(1) + " detik...");
             await new Promise(r => setTimeout(r, sleepTime));
         }
     }
