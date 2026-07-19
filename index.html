@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <title>InstaClean - Mutual Clean-up & Audit Suite</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -553,18 +554,20 @@
 
                 const verifiedBadge = acc.is_verified ? `<span class="w-4 h-4 bg-cyanBrand rounded-full flex items-center justify-center text-black font-extrabold text-[9px]">✓</span>` : '';
 
+                // Memintas pembatasan hotlink/CORS dengan menyalurkan gambar asli melalui proxy Weserv Image CDN
+                const displayUrl = acc.profile_pic_url ? `https://images.weserv.nl/?url=${encodeURIComponent(acc.profile_pic_url)}` : '';
+
                 const row = document.createElement('div');
                 row.className = `px-6 py-4 flex items-center justify-between gap-4 transition hover:bg-white/[0.02] ${isSelected ? 'bg-amberBrand/5' : ''}`;
                 
-                // Menambahkan 'referrerpolicy="no-referrer"' agar foto profil instagram asli berhasil dimuat tanpa terblokir
                 row.innerHTML = `
                     <div class="flex items-center gap-4 min-w-0 flex-1">
                         <input type="checkbox" onchange="toggleSelectAccount('${acc.id}', this.checked)" ${isSelected ? 'checked' : ''} ${isWhitelisted ? 'disabled' : ''} class="w-4.5 h-4.5 accent-amberBrand rounded border-white/10">
                         <div class="relative w-12 h-12 flex-shrink-0 cursor-pointer bg-gradient-to-tr from-surfaceSoft to-white/10 rounded-xl flex items-center justify-center text-sm font-bold text-amberBrand border border-white/10 overflow-hidden" onclick="toggleWhitelist('${acc.id}')">
                             <!-- Inisial fallback di latar belakang -->
                             <span class="absolute uppercase pointer-events-none select-none">${firstLetter}</span>
-                            <!-- Foto profil asli di atasnya dengan no-referrer -->
-                            <img src="${acc.profile_pic_url}" referrerpolicy="no-referrer" class="absolute inset-0 w-full h-full rounded-xl object-cover border border-white/15 animate-fade-in transition-opacity duration-300" onerror="this.style.opacity='0'">
+                            <!-- Foto profil asli yang disalurkan lewat Weserv Proxy -->
+                            <img src="${displayUrl}" referrerpolicy="no-referrer" style="opacity: 0" class="absolute inset-0 w-full h-full rounded-xl object-cover border border-white/15 animate-fade-in transition-opacity duration-300" onload="this.style.opacity='1'" onerror="this.style.opacity='0'">
                             <span class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center ${isWhitelisted ? 'bg-amberBrand text-black' : 'bg-black/80 text-mutedMain border border-white/10'}">
                                 <i data-lucide="star" class="w-3 h-3 ${isWhitelisted ? 'fill-black text-black' : ''}"></i>
                             </span>
