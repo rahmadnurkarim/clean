@@ -184,7 +184,7 @@
                     </div>
                 </div>
 
-                <!-- Wadah List Jejer Kebawah scrollable, tanpa batasan halaman -->
+                <!-- Wadah List Jejer Kebawah scrollable, tanpa batasan halaman (Continuous Scroll) -->
                 <div class="flex-1 overflow-y-auto max-h-[800px] divide-y divide-white/5" id="accounts-container">
                     <!-- Dynamic Account Rows Injected Here -->
                 </div>
@@ -198,8 +198,28 @@
                     <i data-lucide="terminal" class="w-5 h-5 text-cyanBrand"></i> Langkah 1: Ekstrak Data Pengikut & Diikuti (Dual-Scan)
                 </h4>
                 <p class="text-xs text-textMain leading-relaxed">
-                    Skrip ini berjalan langsung di browser Anda untuk mengunduh daftar **Pengikut** (*Followers*) dan **Diikuti** (*Following*) secara bersamaan, kemudian menggabungkannya ke dalam satu file terstruktur.
+                    Skrip ini berjalan langsung di browser Anda untuk mengunduh daftar **Pengikut** (*Followers*) dan **Diikuti** (*Following*) secara bersamaan, kemudian menggabungkannya ke dalam satu file terkommuni.
                 </p>
+                
+                <!-- Edukasi Penanganan Error / Warning di Console (Anti-Panik) -->
+                <div class="bg-amberBrand/10 border border-amberBrand/30 rounded-xl p-5 text-xs space-y-3">
+                    <div class="flex gap-3 items-start">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-amberBrand shrink-0 mt-0.5 animate-pulse"></i>
+                        <div>
+                            <span class="font-bold text-amberBrand text-sm block mb-1">PENTING: Abaikan Pesan Error Merah/Kuning di Console!</span>
+                            <p class="text-mutedMain leading-relaxed">
+                                Selama proses pemindaian berjalan di browser, Anda mungkin melihat peringatan merah seperti:
+                                <br><code class="bg-black/60 px-1.5 py-0.5 rounded text-roseBrand font-mono text-[10px] inline-block mt-1">TRANSPORT_ESTABLISHMENT_TIMEOUT [Failed to establish lightspeed stream]</code>
+                                <br><code class="bg-black/60 px-1.5 py-0.5 rounded text-roseBrand font-mono text-[10px] inline-block mt-1">WebSocket connection failed: WebSocket is closed before the connection...</code>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="border-t border-white/10 pt-3 text-mutedMain leading-relaxed pl-8">
+                        <strong class="text-greenBrand">Kenapa ini terjadi?</strong> Error tersebut adalah gangguan internal server obrolan/DM real-time Instagram sendiri (Lightspeed Stream) di browser Laptop Anda. 
+                        <br><strong class="text-textMain">Sama sekali tidak merusak skrip InstaClean!</strong> Skrip kita berjalan menggunakan jalur API HTTPS GraphQL yang berbeda dan sangat aman. Biarkan proses pemindaian tetap berjalan sampai selesai mengunduh berkas <code class="text-cyanBrand font-mono">.json</code> secara otomatis.
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
                     <div class="bg-black/40 border border-white/5 rounded-xl p-4 text-xs">
                         <span class="font-bold text-cyanBrand block uppercase mb-1">1. Buka Instagram Web</span>
@@ -343,7 +363,6 @@
 
     followersList.forEach(u => {
         if (!allUsersMap.has(u.id)) {
-            // Jika dia follower tapi kita tidak following
             allUsersMap.set(u.id, {
                 id: u.id,
                 username: u.username,
