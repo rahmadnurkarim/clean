@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstaClean - Mutual Connection Purge & Script Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons for premium visual design -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Custom Scrollbar for modern premium look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4B5563;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf2f8',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen flex flex-col antialiased">
+
+<header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="p-2.5 bg-gradient-to-tr from-pink-500 to-amber-500 rounded-xl shadow-lg shadow-pink-500/10">
+                <i data-lucide="user-minus" class="w-6 h-6 text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-pink-500 to-amber-400 bg-clip-text text-transparent">
+                    InstaClean Automator
+                </h1>
+                <p class="text-xs text-gray-400">Mutual Purge & Safe Follower/Following Disconnector</p>
+            </div>
+        </div>
+        
+        <!-- Tab Switcher -->
+        <div class="flex bg-gray-950 p-1 rounded-xl border border-gray-800">
+            <button id="tab-btn-dashboard" onclick="switchTab('dashboard')" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-gradient-to-r from-pink-500 to-amber-500 text-white shadow-md">
+                <span class="flex items-center gap-2"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Simulator & Eksekusi</span>
+            </button>
+            <button id="tab-btn-script" onclick="switchTab('script')" class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:text-gray-200 transition-all duration-200">
+                <span class="flex items-center gap-2"><i data-lucide="code-2" class="w-4 h-4"></i> Console Script Generator</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+    <!-- INFO ALERT FOR SAFETY CONSTRAINTS -->
+    <div class="mb-6 bg-amber-500/10 border border-amber-500/20 text-amber-300 p-4 rounded-xl flex items-start gap-3">
+        <i data-lucide="alert-triangle" class="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-400"></i>
+        <div>
+            <span class="font-bold">Keamanan Akun Utama:</span> Instagram sangat sensitif terhadap bot otomatis. Selalu gunakan delay aman (minimal 15-30 detik per aksi) untuk menghindari pembatasan akses (*Action Blocked*) atau penangguhan akun.
+        </div>
+    </div>
+
+    <!-- TAB 1: SIMULATOR DASHBOARD -->
+    <div id="tab-dashboard" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- LEFT COLUMN: Control Panel & Settings -->
+        <div class="lg:col-span-4 space-y-6">
+            <!-- Configuration Card -->
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="font-bold text-gray-200 flex items-center gap-2 mb-4">
+                    <i data-lucide="sliders" class="text-pink-500 w-5 h-5"></i> Pengaturan Eksekusi
+                </h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Jenis Eksekusi</label>
+                        <select id="purge-mode" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-pink-500">
+                            <option value="both">Eksekusi Timbal Balik (Unfollow + Hapus Pengikut)</option>
+                            <option value="unfollow">Hanya Berhenti Mengikuti (Unfollow Only)</option>
+                            <option value="remove">Hanya Hapus Sebagai Pengikut (Remove Follower Only)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Delay Keamanan (Detik)</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <span class="text-[10px] text-gray-500">Jeda Min (Detik)</span>
+                                <input type="number" id="delay-min" value="15" min="5" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-sm text-center text-gray-200 focus:outline-none focus:border-pink-500">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-gray-500">Jeda Maks (Detik)</span>
+                                <input type="number" id="delay-max" value="30" min="6" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-sm text-center text-gray-200 focus:outline-none focus:border-pink-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-gray-800/60">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-400">Total Dipilih:</span>
+                            <span id="selected-count-badge" class="font-bold text-amber-400">0 Akun</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Estimasi Durasi:</span>
+                            <span id="estimated-time" class="font-bold text-gray-300">0 Menit</span>
+                        </div>
+                    </div>
+
+                    <!-- Scan and Run Buttons -->
+                    <div class="space-y-2 pt-4">
+                        <button id="btn-scan" onclick="startScanning()" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-850 hover:bg-gray-800 border border-gray-700/80 active:scale-95 transition-all text-sm font-semibold rounded-xl text-white">
+                            <i data-lucide="refresh-cw" id="scan-icon" class="w-4 h-4"></i> Gunakan Simulasi Data Mock
+                        </button>
+
+                        <button id="btn-import-toggle" onclick="toggleImportModal(true)" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-900/30 hover:bg-indigo-900/50 border border-indigo-500/30 active:scale-95 transition-all text-sm font-semibold rounded-xl text-indigo-300">
+                            <i data-lucide="import" class="w-4 h-4"></i> Impor Data Riil dari Konsol IG
+                        </button>
+                        
+                        <button id="btn-execute" onclick="startExecution()" disabled class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-pink-600 to-amber-500 hover:from-pink-500 hover:to-amber-400 disabled:from-gray-800 disabled:to-gray-800 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-all text-sm font-bold rounded-xl text-white shadow-lg shadow-pink-500/10">
+                            <i data-lucide="zap" class="w-4 h-4"></i> Mulai Pembersihan Otomatis
+                        </button>
+
+                        <button id="btn-pause" onclick="pauseExecution()" class="hidden w-full flex items-center justify-center gap-2 px-4 py-3 bg-amber-600 hover:bg-amber-500 active:scale-95 transition-all text-sm font-bold rounded-xl text-white">
+                            <i data-lucide="pause" class="w-4 h-4"></i> Jeda Eksekusi
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Running Progress Monitor -->
+            <div id="progress-card" class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-xl hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-200 flex items-center gap-2">
+                        <span class="flex h-2 w-2 relative">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        Eksekusi Berjalan...
+                    </h3>
+                    <span id="progress-percentage" class="text-xs bg-pink-500/10 text-pink-400 px-2.5 py-1 rounded-full font-bold">0%</span>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-gray-950 h-2 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-amber-400 h-full w-0 transition-all duration-300"></div>
+                    </div>
+
+                    <!-- Statistics grid -->
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-gray-950 p-2 rounded-xl border border-gray-800/80">
+                            <div id="stat-done" class="font-extrabold text-emerald-400 text-lg">0</div>
+                            <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Selesai</div>
+                        </div>
+                        <div class="bg-gray-950 p-2 rounded-xl border border-gray-800/80">
+                            <div id="stat-error" class="font-extrabold text-red-400 text-lg">0</div>
+                            <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Gagal</div>
+                        </div>
+                        <div class="bg-gray-950 p-2 rounded-xl border border-gray-800/80">
+                            <div id="stat-left" class="font-extrabold text-gray-400 text-lg">0</div>
+                            <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Tersisa</div>
+                        </div>
+                    </div>
+
+                    <div id="status-ticker" class="text-xs text-gray-400 bg-gray-950/80 p-3 rounded-xl border border-gray-850 h-20 overflow-y-auto font-mono flex flex-col gap-1">
+                        <!-- Scroll logs will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MIDDLE/RIGHT COLUMN: Filter and Account Selection Dashboard -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-xl flex-grow flex flex-col min-h-[500px]">
+                
+                <!-- Filters Bar -->
+                <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 pb-5 border-b border-gray-800">
+                    <div class="flex flex-wrap gap-2" id="filter-pills-container">
+                        <button onclick="setFilter('all')" id="filter-all" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-pink-500/10 text-pink-400 border border-pink-500/30">
+                            Semua (<span id="count-all">0</span>)
+                        </button>
+                        <button onclick="setFilter('not-mutual')" id="filter-not-mutual" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-gray-400 hover:text-gray-200 hover:bg-gray-800">
+                            Tidak Follback (<span id="count-not-mutual">0</span>)
+                        </button>
+                        <button onclick="setFilter('mutual')" id="filter-mutual" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-gray-400 hover:text-gray-200 hover:bg-gray-800">
+                            Saling Mengikuti (<span id="count-mutual">0</span>)
+                        </button>
+                        <button onclick="setFilter('only-follower')" id="filter-only-follower" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-gray-400 hover:text-gray-200 hover:bg-gray-800">
+                            Hanya Follower (<span id="count-only-follower">0</span>)
+                        </button>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="relative w-full md:w-64">
+                        <i data-lucide="search" class="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="search-input" oninput="handleSearch()" placeholder="Cari nama pengguna..." class="w-full bg-gray-950 border border-gray-800 focus:border-pink-500 focus:outline-none rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300">
+                    </div>
+                </div>
+
+                <!-- Bulk Selection Helper -->
+                <div class="flex items-center justify-between py-3 px-1 text-sm text-gray-400">
+                    <div class="flex items-center gap-3">
+                        <label class="flex items-center gap-2 cursor-pointer select-none">
+                            <input type="checkbox" id="master-checkbox" onchange="toggleSelectAll(this)" class="w-4 h-4 rounded text-pink-600 bg-gray-950 border-gray-800 focus:ring-pink-500 focus:ring-offset-gray-900 focus:ring-2">
+                            <span>Pilih Semua yang Terlihat</span>
+                        </label>
+                    </div>
+                    <div class="text-xs text-gray-500 flex gap-4">
+                        <span class="flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500"></i> Terpilih</span>
+                        <span class="flex items-center gap-1"><i data-lucide="heart" class="w-3.5 h-3.5 text-pink-500"></i> Saling Follow</span>
+                    </div>
+                </div>
+
+                <!-- Account List Scroll Area -->
+                <div class="flex-grow overflow-y-auto max-h-[420px] pr-1 space-y-2 mt-2" id="account-list-container">
+                    <!-- Accounts injected dynamically -->
+                    <div class="text-center py-12 text-gray-500 flex flex-col items-center justify-center gap-2">
+                        <i data-lucide="scan" class="w-10 h-10 animate-pulse text-gray-600"></i>
+                        <p class="text-sm">Klik tombol "Pindai Akun" terlebih dahulu untuk memuat simulasi data Instagram Anda</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TAB 2: CONSOLE SCRIPT GENERATOR -->
+    <div id="tab-script" class="hidden max-w-4xl mx-auto space-y-6">
+        
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl space-y-6">
+            <div class="flex items-center gap-3 pb-4 border-b border-gray-800">
+                <div class="p-2 bg-gradient-to-tr from-pink-500 to-amber-500 rounded-lg">
+                    <i data-lucide="terminal" class="w-5 h-5 text-white"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-gray-100 text-lg">Auto-Scroll & Scan Console Script</h3>
+                    <p class="text-xs text-gray-400">Salin skrip di bawah ini untuk mengambil daftar Followers dan Following asli secara otomatis</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <p class="text-sm text-gray-300 leading-relaxed">
+                    Skrip ini dirancang khusus untuk mendeteksi jendela modal daftar pengikut/diikuti di Instagram Web Desktop. Skrip akan menggulir (*scroll*) otomatis ke bawah sampai seluruh akun termuat, kemudian mengekstrak data nama pengguna (*username*) mereka ke dalam format JSON yang siap dimasukkan ke dasbor ini.
+                </p>
+
+                <!-- Configuration inputs for Dynamic Code generation -->
+                <div class="bg-gray-950 p-4 rounded-xl border border-gray-850 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Jeda Gulir / Scroll Delay (Milidetik)</label>
+                        <input type="number" id="script-delay-min" oninput="updateScriptCode()" value="1200" min="500" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-gray-200">
+                        <span class="text-[10px] text-gray-500">Jeda tunggu saat memuat akun berikutnya (Rekomendasi: 1000 - 1500 ms)</span>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Target Batas Maksimal Scan</label>
+                        <input type="number" id="script-limit" oninput="updateScriptCode()" value="3000" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-gray-200">
+                        <span class="text-[10px] text-gray-500">Membatasi pencarian jika daftar akun Anda sangat besar</span>
+                    </div>
+                </div>
+
+                <!-- Code Block Container -->
+                <div class="relative">
+                    <div class="absolute right-3 top-3 z-10 flex gap-2">
+                        <button onclick="copyToClipboard()" class="flex items-center gap-1.5 px-3 py-1.5 bg-pink-600 hover:bg-pink-500 active:scale-95 transition-all text-xs font-bold text-white rounded-lg shadow-md shadow-pink-500/10">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin Skrip Konsol
+                        </button>
+                    </div>
+                    
+                    <pre class="bg-gray-950 p-5 rounded-xl border border-gray-850 overflow-x-auto max-h-[350px] text-[11px] text-pink-400 font-mono" id="script-code-block">
+<!-- Script will be injected dynamically -->
+                    </pre>
+                </div>
+
+                <!-- Instruction Checklist -->
+                <div class="bg-pink-500/5 border border-pink-500/10 rounded-xl p-5 space-y-3">
+                    <h4 class="font-bold text-sm text-pink-400 flex items-center gap-2">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i> Langkah Detail Penggunaan di Instagram Desktop:
+                    </h4>
+                    <ol class="list-decimal list-inside text-sm text-gray-300 space-y-3">
+                        <li>Buka profil Instagram Anda (<code class="bg-gray-950 px-1.5 py-0.5 rounded text-pink-400 font-mono text-xs">https://instagram.com/nama_anda</code>) di browser komputer (Chrome / Edge).</li>
+                        <li>Klik tulisan <strong>"pengikut" (*followers*)</strong> atau <strong>"diikuti" (*following*)</strong> pada profil Anda hingga pop-up daftar akun muncul di tengah layar.</li>
+                        <li>Tekan <kbd class="bg-gray-800 px-1.5 py-0.5 rounded text-xs text-white">F12</kbd> (atau Klik Kanan -> klik <strong>Inspect/Periksa</strong>), lalu pilih tab <strong>Console</strong>.</li>
+                        <li>Tempelkan (*Paste*) skrip yang sudah Anda salin di atas ke dalam konsol, lalu tekan <kbd class="bg-gray-800 px-1.5 py-0.5 rounded text-xs text-white">Enter</kbd>.</li>
+                        <li>Skrip akan secara otomatis menggulir (*scrolling*) daftar pop-up tersebut sampai bawah.</li>
+                        <li>Setelah selesai, konsol akan menampilkan data JSON. **Salin baris JSON tersebut** lalu masukkan ke tombol **"Impor Data Riil"** di halaman simulator ini!</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- IMPORT REAL DATA MODAL OVERLAY -->
+<div id="import-modal" class="fixed inset-0 bg-gray-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-gray-900 border border-gray-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between border-b border-gray-850 pb-3">
+            <h3 class="font-bold text-gray-200 flex items-center gap-2">
+                <i data-lucide="import" class="text-indigo-400 w-5 h-5"></i> Impor Data dari Konsol Instagram
+            </h3>
+            <button onclick="toggleImportModal(false)" class="text-gray-400 hover:text-gray-200">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <div class="space-y-2">
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider">Tempel Hasil JSON Konsol di Sini</label>
+            <textarea id="import-json-data" placeholder='{"followers": ["akun1", "akun2"], "following": ["akun2", "akun3"]}' class="w-full h-48 bg-gray-950 border border-gray-800 rounded-xl p-3 text-xs text-emerald-400 font-mono focus:outline-none focus:border-indigo-500"></textarea>
+            <p class="text-[10px] text-gray-500">Pastikan format JSON yang Anda tempel valid (berisi daftar followers dan following yang diekstrak oleh skrip).</p>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+            <button onclick="toggleImportModal(false)" class="px-4 py-2 rounded-lg text-sm font-semibold bg-gray-800 text-gray-300 hover:bg-gray-750">Batal</button>
+            <button onclick="processImportedData()" class="px-4 py-2 rounded-lg text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-500/10">Simpan & Terapkan Data</button>
+        </div>
+    </div>
+</div>
+
+<footer class="mt-auto border-t border-gray-900 bg-gray-950 py-6 px-6 text-center text-xs text-gray-500">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <span>&copy; 2026 InstaClean Simulator & Automator Tool.</span>
+        <span>Gunakan dengan bijak untuk menjaga keamanan ekosistem akun digital Anda.</span>
+    </div>
+</footer>
+
+<!-- Toast notification system -->
+<div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+<script>
+    // Simulated database containing premium high-fidelity Instagram profile records
+    const MOCK_ACCOUNTS = [
+        { id: 1, username: 'ananda.putra', name: 'Ananda Putra', avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=60', follower: true, following: true, mutual: true, type: 'active' },
+        { id: 2, username: 'budi_hartono', name: 'Budi Hartono', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=60', follower: false, following: true, mutual: false, type: 'active' },
+        { id: 3, username: 'citra_permata', name: 'Citra Permata', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=60', follower: true, following: true, mutual: true, type: 'active' },
+        { id: 4, username: 'dimas.prasetyo', name: 'Dimas Prasetyo', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=60', follower: false, following: true, mutual: false, type: 'inactive' },
+        { id: 5, username: 'elsa.safitri', name: 'Elsa Safitri', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop&q=60', follower: true, following: false, mutual: false, type: 'active' },
+        { id: 6, username: 'fajar.ramadhan', name: 'Fajar Ramadhan', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=60', follower: true, following: true, mutual: true, type: 'active' },
+        { id: 7, username: 'gita_amalia', name: 'Gita Amalia', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&auto=format&fit=crop&q=60', follower: false, following: true, mutual: false, type: 'inactive' },
+        { id: 8, username: 'hendra.gunawan', name: 'Hendra Gunawan', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=60', follower: true, following: true, mutual: true, type: 'active' },
+        { id: 9, username: 'indri_lestari', name: 'Indri Lestari', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=60', follower: true, following: false, mutual: false, type: 'active' },
+        { id: 10, username: 'joko.susilo', name: 'Joko Susilo', avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&auto=format&fit=crop&q=60', follower: false, following: true, mutual: false, type: 'inactive' },
+        { id: 11, username: 'kevin_pratama', name: 'Kevin Pratama', avatar: 'https://images.unsplash.com/photo-1513956589380-bad6acb9b9d4?w=100&auto=format&fit=crop&q=60', follower: true, following: true, mutual: true, type: 'active' },
+        { id: 12, username: 'lilis.indriani', name: 'Lilis Indriani', avatar: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=100&auto=format&fit=crop&q=60', follower: true, following: true, mutual: true, type: 'active' },
+        { id: 13, username: 'mahendra_syah', name: 'Mahendra Syah', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=60', follower: false, following: true, mutual: false, type: 'active' },
+        { id: 14, username: 'nadia_safira', name: 'Nadia Safira', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60', follower: true, following: false, mutual: false, type: 'active' },
+        { id: 15, username: 'oki_ramadhan', name: 'Oki Ramadhan', avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=60', follower: true, following: true, mutual: true, type: 'active' }
+    ];
+
+    let accounts = [];
+    let selectedAccountIds = new Set();
+    let currentFilter = 'all';
+    let isExecuting = false;
+    let isPaused = false;
+    let executionQueue = [];
+    let currentExecutionIndex = 0;
+    let stats = { done: 0, error: 0, left: 0 };
+    let timers = [];
+
+    // Tab switching function to toggle between dashboard simulator and script generator
+    function switchTab(tabName) {
+        const tabDashboard = document.getElementById('tab-dashboard');
+        const tabScript = document.getElementById('tab-script');
+        const btnDashboard = document.getElementById('tab-btn-dashboard');
+        const btnScript = document.getElementById('tab-btn-script');
+
+        if (tabName === 'dashboard') {
+            tabDashboard.classList.remove('hidden');
+            tabScript.classList.add('hidden');
+            btnDashboard.className = "px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-gradient-to-r from-pink-500 to-amber-500 text-white shadow-md";
+            btnScript.className = "px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:text-gray-200 transition-all duration-200";
+        } else if (tabName === 'script') {
+            tabDashboard.classList.add('hidden');
+            tabScript.classList.remove('hidden');
+            btnScript.className = "px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-gradient-to-r from-pink-500 to-amber-500 text-white shadow-md";
+            btnDashboard.className = "px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:text-gray-200 transition-all duration-200";
+        }
+    }
+
+    // On Load Initialization
+    window.onload = function() {
+        lucide.createIcons();
+        updateScriptCode();
+        updateSelectionStats();
+    };
+
+    // Toggle Import Modal Visual
+    function toggleImportModal(show) {
+        const modal = document.getElementById('import-modal');
+        if (show) {
+            modal.classList.remove('hidden');
+            document.getElementById('import-json-data').value = '';
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+
+    // Process Imported JSON from real IG Web Scraper
+    function processImportedData() {
+        const rawJson = document.getElementById('import-json-data').value.trim();
+        if (!rawJson) {
+            showToast('Kotak isian data impor tidak boleh kosong!', 'error');
+            return;
+        }
+
+        try {
+            const parsed = JSON.parse(rawJson);
+            const followersList = Array.isArray(parsed.followers) ? parsed.followers : [];
+            const followingList = Array.isArray(parsed.following) ? parsed.following : [];
+
+            if (followersList.length === 0 && followingList.length === 0) {
+                showToast('Format JSON salah atau tidak berisi data followers/following.', 'error');
+                return;
+            }
+
+            // Gabungkan set unik username untuk dikonversi menjadi data profil terstruktur
+            const allUsernames = Array.from(new Set([...followersList, ...followingList]));
+            
+            // Konversi list string username ke format Object model aplikasi
+            accounts = allUsernames.map((username, index) => {
+                const isFollower = followersList.includes(username);
+                const isFollowing = followingList.includes(username);
+                const isMutual = isFollower && isFollowing;
+                
+                // Buat avatar placeholder berbasis inisial huruf username
+                const initial = username.substring(0, 2).toUpperCase();
+                const randomBg = ['f472b6', 'fb7185', '38bdf8', 'fbbf24', 'c084fc', '34d399'][index % 6];
+                const avatarUrl = `https://placehold.co/100x100/${randomBg}/ffffff?text=${initial}`;
+
+                return {
+                    id: index + 1,
+                    username: username,
+                    name: username.replace(/[\._]/g, ' '),
+                    avatar: avatarUrl,
+                    follower: isFollower,
+                    following: isFollowing,
+                    mutual: isMutual,
+                    type: 'active'
+                };
+            });
+
+            selectedAccountIds.clear();
+            
+            // Perbarui visual filter counter berdasarkan data impor baru
+            document.getElementById('count-all').innerText = accounts.length;
+            document.getElementById('count-not-mutual').innerText = accounts.filter(a => !a.mutual && a.following).length;
+            document.getElementById('count-mutual').innerText = accounts.filter(a => a.mutual).length;
+            document.getElementById('count-only-follower').innerText = accounts.filter(a => a.follower && !a.following).length;
+
+            toggleImportModal(false);
+            showToast(`Berhasil mengimpor ${accounts.length} hubungan akun nyata dari Instagram!`, 'success');
+            
+            renderAccountList();
+            updateSelectionStats();
+            document.getElementById('btn-execute').disabled = false;
+
+        } catch (err) {
+            showToast('Gagal memproses JSON. Pastikan Anda menyalin seluruh output teks dari Console dengan benar.', 'error');
+            console.error(err);
+        }
+    }
+
+    // Show Toast Notifications
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-xl border text-sm shadow-xl transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto ${
+            type === 'success' ? 'bg-emerald-950/90 border-emerald-500/30 text-emerald-300' :
+            type === 'warning' ? 'bg-amber-950/90 border-amber-500/30 text-amber-300' :
+            'bg-red-950/90 border-red-500/30 text-red-300'
+        }`;
+        
+        const icon = type === 'success' ? 'check-circle' : type === 'warning' ? 'alert-triangle' : 'alert-circle';
+        toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i> <span>${message}</span>`;
+        
+        container.appendChild(toast);
+        lucide.createIcons({ scope: toast });
+
+        // Trigger transition
+        setTimeout(() => {
+            toast.classList.remove('translate-y-2', 'opacity-0');
+        }, 10);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            toast.classList.add('translate-y-2', 'opacity-0');
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    function startScanning() {
+        const scanIcon = document.getElementById('scan-icon');
+        const accountListContainer = document.getElementById('account-list-container');
+        
+        scanIcon.classList.add('animate-spin');
+        showToast('Memulai pemindaian data follower & following...', 'success');
+        
+        accountListContainer.innerHTML = `
+            <div class="text-center py-12 text-gray-400 flex flex-col items-center justify-center gap-3">
+                <div class="h-8 w-8 rounded-full border-4 border-t-pink-500 border-r-pink-500 border-b-gray-800 border-l-gray-800 animate-spin"></div>
+                <p class="text-xs">Menganalisis relasi database akun...</p>
+            </div>
+        `;
+
+        setTimeout(() => {
+            // Load clone of mock accounts
+            accounts = JSON.parse(JSON.stringify(MOCK_ACCOUNTS));
+            selectedAccountIds.clear();
+            
+            // Populate filter counters
+            document.getElementById('count-all').innerText = accounts.length;
+            document.getElementById('count-not-mutual').innerText = accounts.filter(a => !a.mutual && a.following).length;
+            document.getElementById('count-mutual').innerText = accounts.filter(a => a.mutual).length;
+            document.getElementById('count-only-follower').innerText = accounts.filter(a => a.follower && !a.following).length;
+            
+            scanIcon.classList.remove('animate-spin');
+            showToast(`Scan sukses! Menemukan ${accounts.length} relasi akun.`, 'success');
+            
+            renderAccountList();
+            updateSelectionStats();
+            document.getElementById('btn-execute').disabled = false;
+        }, 1500);
+    }
+
+    // Get Filtered Data Subset
+    function getFilteredAccounts() {
+        const searchVal = document.getElementById('search-input').value.toLowerCase();
+        let filtered = [...accounts];
+
+        if (currentFilter === 'not-mutual') {
+            filtered = filtered.filter(a => !a.mutual && a.following);
+        } else if (currentFilter === 'mutual') {
+            filtered = filtered.filter(a => a.mutual);
+        } else if (currentFilter === 'only-follower') {
+            filtered = filtered.filter(a => a.follower && !a.following);
+        }
+
+        if (searchVal) {
+            filtered = filtered.filter(a => a.username.toLowerCase().includes(searchVal) || a.name.toLowerCase().includes(searchVal));
+        }
+
+        return filtered;
+    }
+
+    function renderAccountList() {
+        const container = document.getElementById('account-list-container');
+        const filtered = getFilteredAccounts();
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-12 text-gray-500">
+                    <p class="text-sm">Tidak ada akun yang sesuai dengan kriteria filter</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filtered.map(account => {
+            const isChecked = selectedAccountIds.has(account.id);
+            let badges = '';
+            
+            if (account.mutual) {
+                badges += `<span class="bg-gradient-to-r from-pink-500/10 to-amber-500/10 text-pink-400 border border-pink-500/20 text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-0.5"><i data-lucide="heart" class="w-3 h-3"></i> Mutual</span>`;
+            } else if (account.follower && !account.following) {
+                badges += `<span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-0.5"><i data-lucide="arrow-down-left" class="w-3 h-3"></i> Follower</span>`;
+            } else if (!account.mutual && account.following) {
+                badges += `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-0.5"><i data-lucide="arrow-up-right" class="w-3 h-3"></i> Tak Follback</span>`;
+            }
+
+            return `
+                <div class="flex items-center justify-between p-3 bg-gray-950 hover:bg-gray-900 border border-gray-850 rounded-xl transition-all ${isChecked ? 'ring-1 ring-pink-500/30 bg-pink-500/[0.02]' : ''}">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" onchange="toggleSelect(${account.id}, this)" ${isChecked ? 'checked' : ''} class="w-4.5 h-4.5 rounded text-pink-600 bg-gray-900 border-gray-800 focus:ring-pink-500 focus:ring-offset-gray-950 focus:ring-2">
+                        <img src="${account.avatar}" alt="${account.name}" class="w-10 h-10 rounded-full border border-gray-800 object-cover">
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-bold text-sm text-gray-200">@${account.username}</span>
+                                <span class="text-[10px] bg-gray-800 px-1.5 py-0.5 rounded text-gray-400 font-semibold">${account.type === 'inactive' ? 'Pasif' : 'Aktif'}</span>
+                            </div>
+                            <span class="text-xs text-gray-500">${account.name}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        ${badges}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        lucide.createIcons({ scope: container });
+        updateMasterCheckboxState();
+    }
+
+    // Toggle Single Selection
+    function toggleSelect(id, checkbox) {
+        if (checkbox.checked) {
+            selectedAccountIds.add(id);
+        } else {
+            selectedAccountIds.delete(id);
+        }
+        updateSelectionStats();
+        updateMasterCheckboxState();
+        
+        // Add highlight styling to container parent
+        const parentRow = checkbox.closest('.flex-items-center');
+        if (checkbox.checked) {
+            parentRow?.classList.add('ring-1', 'ring-pink-500/30', 'bg-pink-500/[0.02]');
+        } else {
+            parentRow?.classList.remove('ring-1', 'ring-pink-500/30', 'bg-pink-500/[0.02]');
+        }
+    }
+
+    // Toggle Bulk Master Checkbox Selection
+    function toggleSelectAll(masterCheckbox) {
+        const filtered = getFilteredAccounts();
+        filtered.forEach(account => {
+            if (masterCheckbox.checked) {
+                selectedAccountIds.add(account.id);
+            } else {
+                selectedAccountIds.delete(account.id);
+            }
+        });
+        renderAccountList();
+        updateSelectionStats();
+    }
+
+    // Update state of Top Master checkbox based on current view selected ratio
+    function updateMasterCheckboxState() {
+        const master = document.getElementById('master-checkbox');
+        const filtered = getFilteredAccounts();
+        if (filtered.length === 0) {
+            master.checked = false;
+            master.disabled = true;
+            return;
+        }
+        master.disabled = false;
+        const allSelected = filtered.every(a => selectedAccountIds.has(a.id));
+        master.checked = allSelected;
+    }
+
+    // Filter Navigation buttons
+    function setFilter(filter) {
+        currentFilter = filter;
+        
+        // Reset styles for all pills
+        const pills = document.getElementById('filter-pills-container').children;
+        for (let pill of pills) {
+            pill.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-gray-400 hover:text-gray-200 hover:bg-gray-800";
+        }
+        
+        // Highlight active pill
+        const activePill = document.getElementById(`filter-${filter}`);
+        activePill.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-pink-500/10 text-pink-400 border border-pink-500/30";
+        
+        renderAccountList();
+    }
+
+    function handleSearch() {
+        renderAccountList();
+    }
+
+    // Update Statistics Badge Elements
+    function updateSelectionStats() {
+        const count = selectedAccountIds.size;
+        document.getElementById('selected-count-badge').innerText = `${count} Akun`;
+        
+        // Estimated execution time calc: (min_delay + max_delay) / 2 per action
+        const minDelay = parseInt(document.getElementById('delay-min').value) || 15;
+        const maxDelay = parseInt(document.getElementById('delay-max').value) || 30;
+        const averageDelay = (minDelay + maxDelay) / 2;
+        const estimatedSeconds = count * averageDelay;
+        const minutes = Math.floor(estimatedSeconds / 60);
+        const seconds = Math.floor(estimatedSeconds % 60);
+
+        let timeStr = '0 Detik';
+        if (minutes > 0) {
+            timeStr = `${minutes} Menit ${seconds} Detik`;
+        } else if (seconds > 0) {
+            timeStr = `${seconds} Detik`;
+        }
+        document.getElementById('estimated-time').innerText = timeStr;
+    }
+
+    function startExecution() {
+        if (selectedAccountIds.size === 0) {
+            showToast('Silakan pilih minimal satu akun dari daftar sebelum memulai pembersihan.', 'error');
+            return;
+        }
+
+        const mode = document.getElementById('purge-mode').value;
+        const minDelay = parseInt(document.getElementById('delay-min').value) || 15;
+        const maxDelay = parseInt(document.getElementById('delay-max').value) || 30;
+
+        isExecuting = true;
+        isPaused = false;
+        
+        document.getElementById('btn-execute').classList.add('hidden');
+        document.getElementById('btn-pause').classList.remove('hidden');
+        document.getElementById('progress-card').classList.remove('hidden');
+
+        // Setup Queue
+        executionQueue = Array.from(selectedAccountIds);
+        currentExecutionIndex = 0;
+        
+        stats = {
+            done: 0,
+            error: 0,
+            left: executionQueue.length
+        };
+
+        updateProgressUI();
+        
+        const logTicker = document.getElementById('status-ticker');
+        logTicker.innerHTML = `<div class="text-amber-400">[SYSTEM] Memulai rangkaian eksekusi otomatis...</div>`;
+
+        // Start processing queue
+        processNextInQueue();
+    }
+
+    // Processing sequence logic with Safe-Delay
+    function processNextInQueue() {
+        if (!isExecuting) return;
+        if (isPaused) {
+            logToTicker('[SYSTEM] Alur eksekusi ditangguhkan / dijeda oleh pengguna.', 'text-amber-400');
+            return;
+        }
+
+        if (currentExecutionIndex >= executionQueue.length) {
+            // Queue complete
+            logToTicker('[COMPLETED] Rangkaian pembersihan akun selesai dijalankan.', 'text-emerald-400 font-bold');
+            showToast('Pembersihan timbal balik selesai diproses!', 'success');
+            resetExecutionState();
+            return;
+        }
+
+        const accountId = executionQueue[currentExecutionIndex];
+        const account = accounts.find(a => a.id === accountId);
+        const mode = document.getElementById('purge-mode').value;
+
+        if (!account) {
+            stats.error++;
+            stats.left--;
+            currentExecutionIndex++;
+            updateProgressUI();
+            processNextInQueue();
+            return;
+        }
+
+        logToTicker(`[PROSES] Menghubungkan ke API target @${account.username}...`, 'text-gray-400');
+
+        // Simulate Action Delay representing standard network handshake and deletion execution
+        setTimeout(() => {
+            let statusLog = '';
+            if (mode === 'both') {
+                statusLog = `Sukses unfollow dan hapus pengikut @${account.username}.`;
+                account.following = false;
+                account.follower = false;
+                account.mutual = false;
+            } else if (mode === 'unfollow') {
+                statusLog = `Sukses berhenti mengikuti @${account.username}.`;
+                account.following = false;
+                account.mutual = false;
+            } else {
+                statusLog = `Sukses menghapus @${account.username} dari daftar pengikut.`;
+                account.follower = false;
+                account.mutual = false;
+            }
+
+            logToTicker(`[SUKSES] ${statusLog}`, 'text-emerald-400');
+            
+            // Remove from local list & selection set
+            selectedAccountIds.delete(accountId);
+            stats.done++;
+            stats.left--;
+            currentExecutionIndex++;
+            
+            updateProgressUI();
+            renderAccountList();
+            updateSelectionStats();
+
+            // Calculate next safe random delay within specified boundaries
+            const minDelay = parseInt(document.getElementById('delay-min').value) || 15;
+            const maxDelay = parseInt(document.getElementById('delay-max').value) || 30;
+            const nextDelaySeconds = Math.floor(Math.random() * (maxDelay - minDelay + 1)) + minDelay;
+            
+            if (currentExecutionIndex < executionQueue.length) {
+                logToTicker(`[DELAY] Menunggu jeda aman selama ${nextDelaySeconds} detik sebelum aksi berikutnya...`, 'text-amber-500/80');
+                
+                const timerId = setTimeout(() => {
+                    processNextInQueue();
+                }, nextDelaySeconds * 1000);
+                timers.push(timerId);
+            } else {
+                // If last action, proceed immediately
+                processNextInQueue();
+            }
+
+        }, 1800); // UI visual loading action time
+    }
+
+    // Pause Control Handler
+    function pauseExecution() {
+        isPaused = true;
+        document.getElementById('btn-pause').classList.add('hidden');
+        document.getElementById('btn-execute').classList.remove('hidden');
+        document.getElementById('btn-execute').innerText = 'Lanjutkan Pembersihan';
+        showToast('Eksekusi otomatis dijeda sementara.', 'warning');
+    }
+
+    // Helper functions for UI Progress logging
+    function logToTicker(text, classStyle = '') {
+        const logTicker = document.getElementById('status-ticker');
+        const stamp = new Date().toLocaleTimeString('id-ID');
+        logTicker.innerHTML += `<div class="${classStyle}">[${stamp}] ${text}</div>`;
+        logTicker.scrollTop = logTicker.scrollHeight;
+    }
+
+    function updateProgressUI() {
+        document.getElementById('stat-done').innerText = stats.done;
+        document.getElementById('stat-error').innerText = stats.error;
+        document.getElementById('stat-left').innerText = stats.left;
+
+        const total = executionQueue.length;
+        const progressPercentage = total > 0 ? Math.round((stats.done / total) * 100) : 0;
+        
+        document.getElementById('progress-percentage').innerText = `${progressPercentage}%`;
+        document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+    }
+
+    function resetExecutionState() {
+        isExecuting = false;
+        isPaused = false;
+        timers.forEach(clearTimeout);
+        timers = [];
+        
+        document.getElementById('btn-execute').classList.remove('hidden');
+        document.getElementById('btn-execute').innerText = 'Mulai Pembersihan Otomatis';
+        document.getElementById('btn-pause').classList.add('hidden');
+    }
+
+    // DYNAMIC JAVASCRIPT EXECUTABLE GENERATOR
+    function updateScriptCode() {
+        const scrollDelay = document.getElementById('script-delay-min').value || 1200;
+        const maxLimit = document.getElementById('script-limit').value || 3000;
+
+        const scriptTemplate = `/**
+ * INSTACLEAN AUTOMATIC PORTABLE SCANNER (IG CONSOLE SCRAPER)
+ * Cara Penggunaan:
+ * 1. Buka profil Instagram Anda di PC (Chrome/Edge).
+ * 2. Klik pop-up "pengikut" (Followers) atau "diikuti" (Following) agar jendelanya muncul.
+ * 3. Buka F12 -> Console -> Tempel kode ini -> Enter.
+ */
+
+(async function startInstagramScanner() {
+    console.log("%c[InstaClean Scanner] Memulai pendeteksian jendela daftar...", "color: #db2777; font-size: 14px; font-weight: bold;");
+    
+    const SCROLL_DELAY_MS = ${scrollDelay}; 
+    const MAX_ACCOUNTS = ${maxLimit};
+    
+    // Mencari kontainer dialog gulir Instagram
+    const scrollContainer = document.querySelector('div._aano');
+    if (!scrollContainer) {
+        console.error("%c[Error] Jendela modal Followers / Following tidak terdeteksi terbuka di layar!", "color: #ef4444; font-weight: bold;");
+        console.log("Silakan klik jumlah 'pengikut' atau 'diikuti' pada profil Anda terlebih dahulu.");
+        return;
+    }
+
+    console.log("%c[Sukses] Jendela terdeteksi. Memulai proses auto-scroll...", "color: #10b981;");
+    console.log("Jangan pindahkan tab atau menutup popup sampai pemindaian selesai.");
+
+    let lastHeight = scrollContainer.scrollHeight;
+    let currentScraped = 0;
+    let noChangeCounter = 0;
+
+    const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+    while (currentScraped < MAX_ACCOUNTS) {
+        // Gulir ke bawah kontainer dialog
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        await sleep(SCROLL_DELAY_MS);
+
+        // Ambil elemen link profil yang sudah termuat
+        const links = Array.from(scrollContainer.querySelectorAll('a[role="link"]'));
+        const usernames = [...new Set(links.map(el => el.textContent.trim()).filter(name => name && !name.includes('\\n') && !name.includes(' ')))] ;
+        
+        currentScraped = usernames.length;
+        console.log(\`[Scanning] Berhasil mengidentifikasi \${currentScraped} akun...\`);
+
+        let newHeight = scrollContainer.scrollHeight;
+        if (newHeight === lastHeight) {
+            noChangeCounter++;
+            if (noChangeCounter >= 3) { // Berhenti jika 3 kali scroll tidak menambah tinggi halaman (ujung akhir daftar)
+                break;
+            }
+        } else {
+            noChangeCounter = 0;
+            lastHeight = newHeight;
+        }
+    }
+
+    // Ekstraksi final usernames
+    const finalLinks = Array.from(scrollContainer.querySelectorAll('a[role="link"]'));
+    const finalUsernames = [...new Set(finalLinks.map(el => el.textContent.trim()).filter(name => name && !name.includes('\\n') && !name.includes(' ')))];
+
+    console.clear();
+    console.log("%c[SCAN SELESAI] Silakan SALIN seluruh teks JSON di bawah ini:", "color: #10b981; font-size: 14px; font-weight: bold;");
+    
+    // Deteksi tipe daftar untuk menyusun output JSON secara cerdas
+    const isFollowersTab = document.querySelector('span[id*="followers"]') || document.title.toLowerCase().includes('pengikut') || window.location.href.includes('followers');
+    
+    let outputData = {};
+    if (confirm("Apakah yang Anda scan saat ini adalah daftar 'pengikut' (Followers)? Klik 'OK' jika Followers, klik 'Cancel' jika ini list 'diikuti' (Following).")) {
+        outputData = { followers: finalUsernames, following: [] };
+    } else {
+        outputData = { followers: [], following: finalUsernames };
+    }
+
+    console.log(JSON.stringify(outputData));
+    console.log("%c--------------------------------------------------------", "color: #374151;");
+    console.log("Tips: Salin baris teks JSON di atas, lalu masukkan ke dalam tombol 'Impor Data Riil' di Dasbor InstaClean!");
+})();`;
+
+        document.getElementById('script-code-block').textContent = scriptTemplate;
+    }
+
+    function copyToClipboard() {
+        const text = document.getElementById('script-code-block').textContent;
+        // Gunakan document.execCommand fallback jika navigator.clipboard terhalang di iframe
+        try {
+            const tempEl = document.createElement('textarea');
+            tempEl.value = text;
+            document.body.appendChild(tempEl);
+            tempEl.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempEl);
+            showToast('Kode berhasil disalin ke clipboard!', 'success');
+        } catch (err) {
+            showToast('Gagal menyalin kode otomatis.', 'error');
+        }
+    }
+</script>
+</body>
+</html>
