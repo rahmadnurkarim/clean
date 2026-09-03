@@ -104,7 +104,6 @@
         <div id="global-progress" class="h-full bg-gradient-to-r from-amberBrand via-cyanBrand to-roseBrand transition-all duration-300" style="width: 0%"></div>
     </div>
 
-    <!-- Header Navigation -->
     <header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-xl border-b border-white/10 w-full transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between flex-wrap gap-3">
             <div class="flex items-center gap-3.5">
@@ -138,7 +137,6 @@
         </div>
     </header>
 
-    <!-- Main Navigation Tabs -->
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
         <div class="flex border-b border-white/10 gap-2 overflow-x-auto no-scrollbar">
             <button onclick="switchTab('audit-tab')" id="btn-audit-tab" class="tab-btn px-5 py-3.5 border-b-2 border-amberBrand font-bold text-sm text-textMain flex items-center gap-2 transition duration-200 shrink-0">
@@ -156,7 +154,6 @@
         </div>
     </nav>
 
-    <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
         <!-- ================= TAB 1: AUDIT & FILTER CENTER ================= -->
@@ -598,36 +595,36 @@
 
                 <div class="flex items-center justify-between flex-wrap gap-2 border-b border-white/10 pb-3">
                     <h4 class="font-serif font-bold text-lg text-roseBrand flex items-center gap-2">
-                        <i data-lucide="shield-alert" class="w-5 h-5 text-roseBrand"></i> Proteksi Anti-Action Block (Anti Error 400 feedback_required)
+                        <i data-lucide="shield-alert" class="w-5 h-5 text-roseBrand"></i> Proteksi Anti-Action Block & HTML Response Fixer
                     </h4>
                     <span class="text-[10px] font-extrabold uppercase bg-roseBrand/20 text-roseBrand px-3 py-1 rounded-full border border-roseBrand/30">
-                        PERBAIKAN RATE LIMIT INSTAGRAM
+                        VERSI TERPERBAIKI v3.5 (MULTI-ENDPOINT)
                     </span>
                 </div>
 
                 <p class="text-xs text-textMain leading-relaxed">
-                    Error <strong>HTTP 400 Bad Request (feedback_required / Coba Lagi Nanti)</strong> seperti pada gambar console terjadi karena Instagram mendeteksi pengiriman request unfollow berturut-turut tanpa jeda manusia atau header aplikasi resmi. 
+                    Masalah <strong>"Respon HTML/Non-JSON diterima (HTTP Status: 200)"</strong> terjadi jika request `fetch()` tidak membawa header kredensial sesi (`credentials: 'include'`), sehingga Instagram mengalihkan request ke halaman HTML login. Skrip pembersih di bawah telah diperbaiki dengan pengiriman cookie sesi resmi, fallback ganda endpoint, dan penangan CSRF otomatis.
                 </p>
 
                 <!-- Explanation Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                     <div class="bg-black/50 border border-white/10 rounded-xl p-3.5 space-y-1">
                         <span class="text-amberBrand font-bold block text-[11px] flex items-center gap-1">
-                            <i data-lucide="clock" class="w-3.5 h-3.5"></i> 1. Randomization & Pause
+                            <i data-lucide="key-round" class="w-3.5 h-3.5"></i> 1. Session Credentials & Cookie
                         </span>
-                        <p class="text-[10px] text-mutedMain">Skrip kini menggunakan jeda acak 22 - 45 detik antar-unfollow + jeda istirahat 3-5 menit tiap 5 akun.</p>
+                        <p class="text-[10px] text-mutedMain">Menyertakan `credentials: 'include'` agar cookie `sessionid` dan `ds_user_id` dikirim dengan benar tanpa teredireksi ke HTML.</p>
                     </div>
                     <div class="bg-black/50 border border-white/10 rounded-xl p-3.5 space-y-1">
                         <span class="text-cyanBrand font-bold block text-[11px] flex items-center gap-1">
-                            <i data-lucide="cpu" class="w-3.5 h-3.5"></i> 2. Endpoint REST Web API v1
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 2. Dual Endpoint Fallback
                         </span>
-                        <p class="text-[10px] text-mutedMain">Menggunakan endpoint API v1 resmi (`friendships/destroy/`) lengkap dengan header `x-ig-app-id` dan `x-asbd-id`.</p>
+                        <p class="text-[10px] text-mutedMain">Secara otomatis beralih ke endpoint `/web/friendships/{id}/unfollow/` jika REST API v1 utama memberikan respon HTML.</p>
                     </div>
                     <div class="bg-black/50 border border-white/10 rounded-xl p-3.5 space-y-1">
                         <span class="text-greenBrand font-bold block text-[11px] flex items-center gap-1">
-                            <i data-lucide="pause-circle" class="w-3.5 h-3.5"></i> 3. Auto-Pause Recovery
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> 3. Smart CSRF Extraction
                         </span>
-                        <p class="text-[10px] text-mutedMain">Jika `feedback_required` terdeteksi, skrip otomatis jeda 10 menit tanpa memblokir akun Anda.</p>
+                        <p class="text-[10px] text-mutedMain">Mengekstrak CSRF token secara cerdas dari cookie, `_sharedData`, `__initialData`, atau meta tag HTML.</p>
                     </div>
                 </div>
 
@@ -645,7 +642,7 @@
                         <span class="text-xs font-mono text-mutedMain">InstaClean Anti-Block Unfollow Executor v3.5</span>
                     </div>
                     <button onclick="copyToClipboard('unfollow-executor-code')" class="px-4 py-2 bg-gradient-to-r from-roseBrand to-amberBrand hover:opacity-90 font-extrabold text-xs text-black rounded-xl transition duration-150 flex items-center gap-1.5 shadow">
-                        <i data-lucide="copy" class="w-4 h-4"></i> Salin Skrip Anti-Block
+                        <i data-lucide="copy" class="w-4 h-4"></i> Salin Skrip Anti-Block (Terperbaiki)
                     </button>
                 </div>
                 <pre class="p-6 overflow-x-auto text-xs font-mono text-cyanBrand leading-relaxed max-h-[400px] no-scrollbar select-all" id="unfollow-executor-code">
@@ -983,7 +980,6 @@
 
         var getAvatarHTML = window.getAvatarHTML;
 
-        // Accurate Seed Accounts Data
         const TARGET_ACCURATE_DATA = [
             { id: "1", username: "pputriamalia20_", full_name: "putri amalia", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 2200, following_count: 854, posts_count: 14 },
             { id: "2", username: "gp.lpg", full_name: "Graduation Photographer Lampung", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 4500, following_count: 120, posts_count: 231 },
@@ -1717,7 +1713,6 @@
             if (!element) return;
             const textToCopy = element.innerText || element.textContent;
 
-            // Create temporary textarea element for execCommand fallback inside restricted iFrames
             const textarea = document.createElement('textarea');
             textarea.value = textToCopy;
             textarea.style.position = 'fixed';
@@ -1761,14 +1756,14 @@
             const listDataStr = JSON.stringify(selectedAccounts.map(u => ({ id: u.id, username: u.username })), null, 2);
 
             const generatedCode = `/* =========================================================================
- * INSTACLEAN ANTI-BLOCK UNFOLLOW EXECUTOR (FIXED HTTP 400 feedback_required)
- * Skrip Pembersih Aman dengan Proteksi Adaptive Rate-Limit
+ * INSTACLEAN ANTI-BLOCK UNFOLLOW EXECUTOR v3.6 (ULTRA STABLE WEB ENGINE)
+ * Skrip Pembersih Presisi Tinggi - Menggunakan Direct Web Friendship API
  * Total Target: ${selectedAccounts.length} Akun
  * Parameter: Min Delay ${safetyMinDelay}s | Max Delay ${safetyMaxDelay}s | Istirahat tiap ${safetyBatchSize} akun
  * ========================================================================= */
 (async () => {
     const targets = ${listDataStr};
-    console.log('%c[InstaClean Shield] Mulai eksekusi unfollow aman untuk ' + targets.length + ' akun target...', 'color: #ef4444; font-weight: bold; font-size: 14px;');
+    console.log('%c[InstaClean Shield v3.6] Memulai eksekusi unfollow stabil untuk ' + targets.length + ' akun target...', 'color: #06b6d4; font-weight: bold; font-size: 14px;');
 
     const getCookie = (name) => {
         const value = '; ' + document.cookie;
@@ -1777,57 +1772,111 @@
         return null;
     };
 
-    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-    const csrfToken = getCookie("csrftoken");
+    // Ekstraksi CSRF Token secara cerdas
+    let csrfToken = getCookie("csrftoken") || 
+                    (window._sharedData && window._sharedData.config && window._sharedData.config.csrf_token) ||
+                    (window.__initialData && window.__initialData.csrf_token);
 
     if (!csrfToken) {
-        console.error('[Error] Token CSRF tidak ditemukan. Pastikan Anda sudah login di Instagram Web.');
+        const metaCsrf = document.querySelector('meta[name="csrf-token"]');
+        if (metaCsrf) csrfToken = metaCsrf.getAttribute('content');
+    }
+
+    if (!csrfToken) {
+        console.error('%c[ERROR] CSRF Token tidak ditemukan! Pastikan Anda menjalankan skrip di Console tab Instagram Web yang sudah LOGIN.', 'color: #ef4444; font-weight: bold;');
         return;
     }
 
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
     let successCount = 0;
     let failedCount = 0;
+
+    // Fungsi Unfollow dengan Direct Web Endpoint Sebagai Utamanya
+    const performUnfollow = async (user) => {
+        const endpoints = [
+            {
+                // Web Friendship Endpoint (Sangat Stabil di Browser PC/Laptop)
+                url: \`https://www.instagram.com/web/friendships/\${user.id}/unfollow/\`,
+                name: 'Web Friendship API'
+            },
+            {
+                // API v1 Web Sub-Endpoint
+                url: \`https://www.instagram.com/api/v1/web/friendships/\${user.id}/unfollow/\`,
+                name: 'Web API v1 Unfollow'
+            },
+            {
+                // REST API v1 Fallback
+                url: \`https://www.instagram.com/api/v1/friendships/destroy/\${user.id}/\`,
+                name: 'REST API v1'
+            }
+        ];
+
+        for (let epIndex = 0; epIndex < endpoints.length; epIndex++) {
+            const ep = endpoints[epIndex];
+            try {
+                const response = await fetch(ep.url, {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "X-CSRFToken": csrfToken,
+                        "X-IG-App-ID": "936619743392459",
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-ASBD-ID": "198387",
+                        "X-Instagram-AJAX": window._sharedData?.rollout_hash || "1008000000",
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: "container_module=profile"
+                });
+
+                const contentType = response.headers.get("content-type") || "";
+
+                if (contentType.includes("text/html")) {
+                    continue;
+                }
+
+                const resJson = await response.json();
+
+                if (response.ok && (resJson.status === "ok" || resJson.friendship_status)) {
+                    return { success: true, message: "Berhasil Unfollow" };
+                } else if (resJson.message === "feedback_required" || response.status === 400 || response.status === 429) {
+                    return { 
+                        success: false, 
+                        rateLimited: true, 
+                        message: resJson.feedback_message || resJson.message || "Action Block / Rate limit" 
+                    };
+                }
+            } catch (err) {
+                // Abaikan error individual dan coba endpoint berikutnya
+            }
+        }
+
+        return { success: false, message: "Gagal pada seluruh endpoint. Silakan refresh halaman Instagram." };
+    };
 
     for (let i = 0; i < targets.length; i++) {
         const user = targets[i];
         console.log(\`[\${i + 1}/\${targets.length}] Unfollowing @\${user.username}...\`);
 
-        try {
-            // Menggunakan Endpoint REST API v1 Resmi dengan Header Lengkap
-            const response = await fetch(\`https://www.instagram.com/api/v1/friendships/destroy/\${user.id}/\`, {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": csrfToken,
-                    "X-IG-App-ID": "936619743392459",
-                    "X-Requested-With": "XMLHttpRequest",
-                    "X-ASBD-ID": "198387",
-                    "Content-Type": "application/x-www-form-urlencoded"
-                }
-            });
+        const result = await performUnfollow(user);
 
-            const resJson = await response.json();
-
-            if (response.ok && resJson.status === "ok") {
-                successCount++;
-                console.log("%c -> BERHASIL Unfollow @" + user.username, 'color: #10b981; font-weight: bold;');
-            } else if (resJson.message === "feedback_required" || response.status === 400 || response.status === 429) {
-                failedCount++;
-                console.warn("%c -> RATE LIMIT / ACTION BLOCK TERDETEKSI! (@" + user.username + ")", 'color: #f59e0b; font-weight: bold;');
-                console.warn("Pesan Instagram:", resJson.feedback_message || resJson.message);
-                console.log("%c -> Mengaktifkan istirahat darurat 10 menit untuk keamanan akun...", 'color: #ef4444;');
-                await sleep(10 * 60 * 1000); // 10 menit cooldown
-            } else {
-                failedCount++;
-                console.warn(" -> Gagal Unfollow @" + user.username + ":", resJson);
-            }
-        } catch (err) {
+        if (result.success) {
+            successCount++;
+            console.log("%c -> BERHASIL Unfollow @" + user.username, 'color: #10b981; font-weight: bold;');
+        } else if (result.rateLimited) {
             failedCount++;
-            console.error(" -> Kesalahan Jaringan @" + user.username + ":", err);
+            console.warn("%c -> RATE LIMIT / ACTION BLOCK TERDETEKSI! (@" + user.username + ")", 'color: #f59e0b; font-weight: bold;');
+            console.warn("Pesan Instagram:", result.message);
+            console.log("%c -> Mengaktifkan istirahat darurat 10 menit untuk keamanan akun...", 'color: #ef4444; font-weight: bold;');
+            await sleep(10 * 60 * 1000);
+        } else {
+            failedCount++;
+            console.error("%c -> Gagal Unfollow @" + user.username + ": " + result.message, 'color: #ef4444;');
         }
 
-        // Adaptive Batch Pause
+        // Adaptive Batch Pause & Random Delay
         if ((i + 1) % ${safetyBatchSize} === 0 && i < targets.length - 1) {
-            console.log("%cIstirahat Batch ${safetyBreakTime} menit untuk mensimulasikan perilaku manusia...", "color: #06b6d4; font-weight: bold;");
+            console.log("%cIstirahat Batch ${safetyBreakTime} menit untuk keamanan...", "color: #06b6d4; font-weight: bold;");
             await sleep(${safetyBreakTime} * 60 * 1000);
         } else if (i < targets.length - 1) {
             const nextDelay = Math.floor(Math.random() * (${safetyMaxDelay} - ${safetyMinDelay} + 1) + ${safetyMinDelay}) * 1000;
@@ -1836,12 +1885,12 @@
         }
     }
 
-    console.log(\`%c[Selesai] Eksekusi Selesai! Berhasil: \${successCount} | Gagal/Blocked: \${failedCount}\`, 'color: #10b981; font-weight: bold; font-size: 14px;');
+    console.log(\`%c[Selesai] Eksekusi Pembersihan Selesai! Berhasil: \${successCount} | Gagal/Blocked: \${failedCount}\`, 'color: #10b981; font-weight: bold; font-size: 14px;');
 })();`;
 
             document.getElementById('unfollow-executor-code').innerText = generatedCode;
             switchTab('executor-tab');
-            showToast("Skrip eksekutor pembersih siap disalin di Step 3!", "success");
+            showToast("Skrip eksekutor pembersih v3.6 siap disalin di Step 3!", "success");
         }
     </script>
 </body>
