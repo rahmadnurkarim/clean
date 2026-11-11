@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>InstaClean Pro v3.5 SUPER PREMIUM - Anti-Block Unfollow & Real-Time Account Auditor</title>
+    <title>InstaClean Pro v4.0 — Scanner Update - Anti-Block Unfollow & Real-Time Account Auditor</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -113,7 +113,7 @@
                 </div>
                 <div>
                     <h1 class="font-serif font-bold text-xl tracking-tight text-textMain flex items-center gap-2">
-                        InstaClean <span class="font-sans text-[10px] uppercase font-extrabold tracking-widest bg-gradient-to-r from-amberBrand/20 to-cyanBrand/20 text-amberBrand px-2.5 py-0.5 rounded-full border border-amberBrand/30 shadow-sm">v3.5 SUPER PREMIUM</span>
+                        InstaClean <span class="font-sans text-[10px] uppercase font-extrabold tracking-widest bg-gradient-to-r from-amberBrand/20 to-cyanBrand/20 text-amberBrand px-2.5 py-0.5 rounded-full border border-amberBrand/30 shadow-sm">v4.0 SCANNER UPDATE</span>
                     </h1>
                     <p class="text-[11px] text-mutedMain font-medium">Anti-Block Unfollow Engine & Real-Time Account Auditor</p>
                 </div>
@@ -334,10 +334,10 @@
                 <div class="absolute -right-10 -top-10 w-40 h-40 bg-amberBrand/10 rounded-full filter blur-3xl pointer-events-none"></div>
                 
                 <h4 class="font-serif font-bold text-lg text-amberBrand flex items-center gap-2">
-                    <i data-lucide="terminal" class="w-5 h-5 text-amberBrand"></i> Skrip Scanner & Penyelarasan API Instagram
+                    <i data-lucide="terminal" class="w-5 h-5 text-amberBrand"></i> Skrip Scanner & Penyelarasan Data Instagram
                 </h4>
                 <p class="text-xs text-textMain leading-relaxed">
-                    Instagram membatasi akses detail hubungan pertemanan di aplikasi seluler. Salin salah satu skrip scanner di bawah ini dan jalankan di konsol Google Chrome / Browser pada halaman Profil Instagram Web Anda untuk mengekstrak data hubungan secara akurat.
+                    Jalankan scanner saat membuka instagram.com dan sudah login ke akun sendiri. Scanner memakai endpoint web internal Instagram yang dapat berubah atau dibatasi sewaktu-waktu. Jika Instagram menolak permintaan, gunakan fitur unduh informasi akun resmi Instagram; scanner tidak dapat melewati verifikasi atau pembatasan akun.
                 </p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
@@ -360,8 +360,8 @@
             <div class="bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
                 <div class="px-6 py-4 bg-white/5 border-b border-white/10 flex justify-between items-center flex-wrap gap-2">
                     <div>
-                        <span class="text-xs font-mono text-amberBrand font-bold">Metode 1: Instagram Dual GraphQL Scraper (Followers & Following)</span>
-                        <p class="text-[10px] text-mutedMain mt-0.5">Ekstraksi relasi cepat langsung ke format JSON InstaClean</p>
+                        <span class="text-xs font-mono text-amberBrand font-bold">Metode 1: Instagram Dual Scanner (Followers & Following)</span>
+                        <p class="text-[10px] text-mutedMain mt-0.5">Mengambil daftar relasi dan menyimpan hasil ke JSON InstaClean</p>
                     </div>
                     <button onclick="copyToClipboard('graphql-extractor-code')" class="px-3.5 py-1.5 bg-amberBrand hover:bg-amber-500 font-extrabold text-xs text-black rounded-lg transition duration-150 flex items-center gap-1 shrink-0">
                         <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin Skrip GraphQL
@@ -369,141 +369,165 @@
                 </div>
                 <pre class="p-6 overflow-x-auto text-xs font-mono text-greenBrand leading-relaxed max-h-[280px] no-scrollbar select-all" id="graphql-extractor-code">
 /* =========================================================================
- * INSTACLEAN WEB DUAL-SCANNER (FOLLOWERS & FOLLOWING)
- * Jalankan ini di console profil Instagram Anda (F12 -> Console)
+ * INSTACLEAN DUAL SCANNER v4.0 — FOLLOWERS & FOLLOWING
+ * Jalankan di instagram.com saat login ke akun milik sendiri.
+ * Menggunakan endpoint web internal; Instagram dapat mengubah/membatasi endpoint.
  * ========================================================================= */
 (async () => {
-    console.log("%c[InstaClean Scanner] Menghubungi GraphQL Instagram...", "color: #f59e0b; font-weight: bold; font-size: 14px;");
-    
-    const getCookie = (name) => {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-        return null;
+    const log = (msg, color = "#06b6d4") =>
+        console.log(`%c[InstaClean] ${msg}`, `color:${color};font-weight:bold`);
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    const getCookie = name => {
+        const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
+        return match ? decodeURIComponent(match[1]) : null;
     };
 
-    const targetUserId = getCookie("ds_user_id");
-    if (!targetUserId) {
-        console.error("%c[Error] Sesi login tidak ditemukan. Harap login kembali di Instagram!", "color: #ef4444; font-weight: bold;");
+    const userId = getCookie("ds_user_id");
+    const csrf = getCookie("csrftoken");
+    if (!userId) {
+        log("Cookie ds_user_id tidak ditemukan. Buka instagram.com dan pastikan sudah login.", "#ef4444");
         return;
     }
 
-    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-    
-    let followingList = [];
-    let followersList = [];
-    
-    // 1. SCAN FOLLOWING (DIKUTI)
-    console.log("%c[Scan 1/2] Memulai Pemindaian Daftar Diikuti (Following)...", "color: #06b6d4; font-weight: bold;");
-    let hasNextPage = true;
-    let endCursor = '';
-    
-    while (hasNextPage) {
-        const variables = { id: targetUserId, include_reel: false, fetch_mutual: false, first: 50, after: endCursor };
-        const queryHash = '3dec7e2c57367ef3da3d987d89f9dbc8';
-        const url = `https://www.instagram.com/graphql/query/?query_hash=${queryHash}&variables=${encodeURIComponent(JSON.stringify(variables))}`;
+    const headers = {
+        "Accept": "application/json, text/plain, */*",
+        "X-IG-App-ID": "936619743392459",
+        "X-Requested-With": "XMLHttpRequest"
+    };
+    if (csrf) headers["X-CSRFToken"] = csrf;
 
-        try {
-            const res = await fetch(url).then(r => r.json());
-            if (!res.data || !res.data.user || !res.data.user.edge_follow) throw new Error("Format respons tidak valid.");
-            const data = res.data.user.edge_follow;
-            data.edges.forEach(edge => {
-                followingList.push({
-                    id: edge.node.id,
-                    username: edge.node.username,
-                    full_name: edge.node.full_name || '',
-                    profile_pic_url: edge.node.profile_pic_url,
-                    is_private: edge.node.is_private,
-                    is_verified: edge.node.is_verified
-                });
-            });
-            console.log(` -> Memuat ${data.edges.length} Following. Total: ${followingList.length}`);
-            hasNextPage = data.page_info.has_next_page;
-            endCursor = data.page_info.end_cursor;
-            await sleep(800 + Math.random() * 800);
-        } catch (err) {
-            console.error("Gagal memuat Following:", err);
-            break;
-        }
-    }
+    async function requestPage(kind, cursor) {
+        const params = new URLSearchParams({ count: "200" });
+        if (cursor) params.set("max_id", cursor);
+        const url = `https://www.instagram.com/api/v1/friendships/${userId}/${kind}/?${params}`;
 
-    // 2. SCAN FOLLOWERS (PENGIKUT)
-    console.log("%c[Scan 2/2] Memulai Pemindaian Daftar Pengikut (Followers)...", "color: #06b6d4; font-weight: bold;");
-    hasNextPage = true;
-    endCursor = '';
-
-    while (hasNextPage) {
-        const variables = { id: targetUserId, include_reel: true, fetch_mutual: true, first: 50, after: endCursor };
-        const queryHash = 'c76146de99bb02f6415203be841dd25a';
-        const url = `https://www.instagram.com/graphql/query/?query_hash=${queryHash}&variables=${encodeURIComponent(JSON.stringify(variables))}`;
-
-        try {
-            const res = await fetch(url).then(r => r.json());
-            if (!res.data || !res.data.user || !res.data.user.edge_followed_by) throw new Error("Format respons tidak valid.");
-            const data = res.data.user.edge_followed_by;
-            data.edges.forEach(edge => {
-                followersList.push({
-                    id: edge.node.id,
-                    username: edge.node.username,
-                    full_name: edge.node.full_name || '',
-                    profile_pic_url: edge.node.profile_pic_url,
-                    is_private: edge.node.is_private,
-                    is_verified: edge.node.is_verified
-                });
-            });
-            console.log(` -> Memuat ${data.edges.length} Followers. Total: ${followersList.length}`);
-            hasNextPage = data.page_info.has_next_page;
-            endCursor = data.page_info.end_cursor;
-            await sleep(800 + Math.random() * 800);
-        } catch (err) {
-            console.error("Gagal memuat Followers:", err);
-            break;
-        }
-    }
-
-    // 3. MERGE & CROSS-REFERENCE
-    console.log("%c[Scan Selesai] Menggabungkan Relasi Pertemanan...", "color: #10b981; font-weight: bold;");
-    const followerIds = new Set(followersList.map(f => f.id));
-    const allUsersMap = new Map();
-
-    followingList.forEach(u => {
-        allUsersMap.set(u.id, {
-            ...u,
-            is_following: true,
-            is_follower: followerIds.has(u.id)
+        const response = await fetch(url, {
+            method: "GET",
+            credentials: "include",
+            headers,
+            cache: "no-store"
         });
-    });
 
-    followersList.forEach(u => {
-        if (!allUsersMap.has(u.id)) {
-            allUsersMap.set(u.id, {
-                id: u.id,
-                username: u.username,
-                full_name: u.full_name || '',
-                profile_pic_url: u.profile_pic_url || '',
-                is_private: u.is_private || false,
-                is_verified: u.is_verified || false,
-                is_following: false,
-                is_follower: true
-            });
-        } else {
-            const existing = allUsersMap.get(u.id);
-            existing.is_follower = true;
-            allUsersMap.set(u.id, existing);
+        const contentType = response.headers.get("content-type") || "";
+        const body = await response.text();
+
+        if (response.redirected || /text\/html/i.test(contentType) ||
+            /^\s*(<!doctype html|<html)/i.test(body)) {
+            throw new Error("Instagram mengembalikan halaman HTML, bukan JSON. Sesi mungkin kedaluwarsa atau akses sedang dibatasi. Login ulang dan coba lagi.");
         }
-    });
+        if (response.status === 401) throw new Error("HTTP 401: sesi login tidak valid. Login ulang ke Instagram.");
+        if (response.status === 403) throw new Error("HTTP 403: Instagram menolak permintaan. Coba lagi nanti atau gunakan ekspor data resmi Instagram.");
+        if (response.status === 429) throw new Error("HTTP 429: permintaan terlalu sering. Hentikan pemindaian dan coba lagi setelah beberapa waktu.");
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 
-    const finalOutput = Array.from(allUsersMap.values());
-    console.log(`%c[Sukses] Berhasil memetakan ${finalOutput.length} relasi unik!`, "color: #10b981; font-weight: bold;");
+        let json;
+        try { json = JSON.parse(body); }
+        catch { throw new Error(`Respons bukan JSON yang valid (Content-Type: ${contentType || "tidak diketahui"}).`); }
 
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(finalOutput, null, 2));
-    const dlAnchor = document.createElement('a');
-    dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `instaclean_dual_${targetUserId}.json`);
-    document.body.appendChild(dlAnchor);
-    dlAnchor.click();
-    dlAnchor.remove();
-})();</pre>
+        if (json.status && json.status !== "ok") {
+            throw new Error(json.message || `Instagram mengirim status: ${json.status}`);
+        }
+        if (!Array.isArray(json.users)) {
+            throw new Error(json.message || "Struktur respons tidak berisi daftar users. Endpoint Instagram mungkin telah berubah.");
+        }
+        return json;
+    }
+
+    async function scan(kind, label) {
+        const collected = new Map();
+        let cursor = null;
+        let page = 0;
+        let more = true;
+
+        while (more) {
+            page++;
+            if (page > 500) throw new Error("Batas pengaman 500 halaman tercapai; pemindaian dihentikan.");
+            const data = await requestPage(kind, cursor);
+
+            for (const u of data.users) {
+                if (!u || !u.pk || !u.username) continue;
+                const id = String(u.pk);
+                collected.set(id, {
+                    id,
+                    username: u.username,
+                    full_name: u.full_name || "",
+                    profile_pic_url: u.profile_pic_url || "",
+                    is_private: Boolean(u.is_private),
+                    is_verified: Boolean(u.is_verified)
+                });
+            }
+
+            log(`${label}: halaman ${page}, ${data.users.length} akun diterima; total ${collected.size}.`);
+            const nextCursor = data.next_max_id || null;
+            more = Boolean(data.has_more && nextCursor && nextCursor !== cursor);
+            cursor = nextCursor;
+
+            if (more) await sleep(1800 + Math.floor(Math.random() * 1200));
+        }
+        return [...collected.values()];
+    }
+
+    let followingList, followersList;
+    try {
+        log("Memulai pemindaian Following…");
+        followingList = await scan("following", "Following");
+        log(`Following selesai: ${followingList.length} akun.`, "#10b981");
+
+        log("Memulai pemindaian Followers…");
+        followersList = await scan("followers", "Followers");
+        log(`Followers selesai: ${followersList.length} akun.`, "#10b981");
+    } catch (error) {
+        log(`PEMINDAIAN GAGAL: ${error.message}`, "#ef4444");
+        console.error(error);
+        log("Tidak ada file hasil yang dibuat agar data gagal tidak dianggap sebagai hasil lengkap.", "#f59e0b");
+        return;
+    }
+
+    const followerIds = new Set(followersList.map(u => u.id));
+    const allUsers = new Map();
+
+    for (const u of followingList) {
+        allUsers.set(u.id, { ...u, is_following: true, is_follower: followerIds.has(u.id) });
+    }
+    for (const u of followersList) {
+        if (allUsers.has(u.id)) {
+            allUsers.get(u.id).is_follower = true;
+        } else {
+            allUsers.set(u.id, { ...u, is_following: false, is_follower: true });
+        }
+    }
+
+    const result = [...allUsers.values()];
+    if (followingList.length + followersList.length === 0) {
+        log("Tidak ada akun yang diterima. File tidak dibuat; periksa akses dan sesi Instagram.", "#ef4444");
+        return;
+    }
+
+    const summary = {
+        account_id: userId,
+        scanned_at: new Date().toISOString(),
+        following_count: followingList.length,
+        followers_count: followersList.length,
+        unique_relations: result.length,
+        accounts: result
+    };
+
+    const blob = new Blob([JSON.stringify(summary, null, 2)], { type: "application/json" });
+    const link = document.createElement("a");
+    const objectUrl = URL.createObjectURL(blob);
+    link.href = objectUrl;
+    link.download = `instaclean_relations_${userId}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(objectUrl);
+
+    log(`SELESAI: ${result.length} relasi unik; ${followingList.length} Following dan ${followersList.length} Followers.`, "#10b981");
+    log("Impor file JSON ini melalui menu Impor JSON InstaClean.", "#10b981");
+})();
+</pre>
             </div>
 
             <!-- SCRIPTS SECTION: Profile Sync Scraper Script -->
@@ -603,7 +627,7 @@
                 </div>
 
                 <p class="text-xs text-textMain leading-relaxed">
-                    Masalah <strong>"Respon HTML/Non-JSON diterima (HTTP Status: 200)"</strong> terjadi jika request `fetch()` tidak membawa header kredensial sesi (`credentials: 'include'`), sehingga Instagram mengalihkan request ke halaman HTML login. Skrip pembersih di bawah telah diperbaiki dengan pengiriman cookie sesi resmi, fallback ganda endpoint, dan penangan CSRF otomatis.
+                    Respons <strong>HTML saat skrip mengharapkan JSON</strong> tidak selalu disebabkan cookie yang hilang. Instagram dapat mengirim halaman login, verifikasi, pembatasan sementara, atau mengubah endpoint internal meskipun HTTP berstatus 200. `credentials: 'include'` hanya mengirim sesi yang tersedia; pengaturan ini tidak dapat melewati verifikasi atau pembatasan Instagram.
                 </p>
 
                 <!-- Explanation Cards -->
@@ -1665,20 +1689,26 @@
         function parseAndLoadJSON(rawText) {
             try {
                 const parsed = JSON.parse(rawText);
-                if (!Array.isArray(parsed)) throw new Error("Struktur JSON wajib berupa Array.");
+                // Mendukung format array lama dan format objek hasil Dual Scanner v4.
+                const rows = Array.isArray(parsed) ? parsed : parsed && Array.isArray(parsed.accounts) ? parsed.accounts : null;
+                if (!rows) throw new Error("JSON harus berupa array akun atau objek dengan properti accounts[].");
+                if (rows.some(user => !user || !user.username)) {
+                    throw new Error("Ada baris akun yang tidak memiliki username.");
+                }
 
-                accounts = parsed.map(user => ({
-                    id: user.id || Math.random().toString(),
-                    username: user.username || 'unknown',
+                accounts = rows.map((user, index) => ({
+                    id: String(user.id || `import-${index}-${user.username}`),
+                    username: user.username,
                     full_name: user.full_name || '',
                     profile_pic_url: user.profile_pic_url || '',
-                    is_private: !!user.is_private,
-                    is_verified: !!user.is_verified,
-                    is_following: user.is_following !== undefined ? !!user.is_following : true,
-                    is_follower: user.is_follower !== undefined ? !!user.is_follower : false,
-                    followers_count: parseInt(user.followers_count || user.follower_count || 1200),
-                    following_count: parseInt(user.following_count || 800),
-                    posts_count: parseInt(user.posts_count || 100)
+                    is_private: Boolean(user.is_private),
+                    is_verified: Boolean(user.is_verified),
+                    is_following: user.is_following !== undefined ? Boolean(user.is_following) : true,
+                    is_follower: user.is_follower !== undefined ? Boolean(user.is_follower) : false,
+                    // Jangan mengarang angka metrik jika file hasil scan tidak memuatnya.
+                    followers_count: Number.isFinite(Number(user.followers_count ?? user.follower_count)) ? Number(user.followers_count ?? user.follower_count) : 0,
+                    following_count: Number.isFinite(Number(user.following_count)) ? Number(user.following_count) : 0,
+                    posts_count: Number.isFinite(Number(user.posts_count)) ? Number(user.posts_count) : 0
                 }));
 
                 selectedIds.clear();
@@ -1689,7 +1719,8 @@
                 closeModal('import-modal');
                 showToast(`Memuat ${accounts.length.toLocaleString('id-ID')} akun!`, "success");
             } catch (err) {
-                showToast("Format JSON tidak valid!", "error");
+                console.error("[InstaClean Import]", err);
+                showToast(err.message || "Format JSON tidak valid!", "error");
             }
         }
 
