@@ -143,7 +143,7 @@
                 <i data-lucide="users" class="w-4 h-4 text-amberBrand"></i> 1. Audit & Filter Akun
             </button>
             <button onclick="switchTab('scraper-tab')" id="btn-scraper-tab" class="tab-btn px-5 py-3.5 border-b-2 border-transparent font-medium text-sm text-mutedMain flex items-center gap-2 transition duration-200 hover:text-textMain shrink-0">
-                <i data-lucide="terminal" class="w-4 h-4"></i> 2. Skrip Scanner Ganda
+                <i data-lucide="terminal" class="w-4 h-4"></i> 2. Scanner Terpadu
             </button>
             <button onclick="switchTab('executor-tab')" id="btn-executor-tab" class="tab-btn px-5 py-3.5 border-b-2 border-transparent font-medium text-sm text-mutedMain flex items-center gap-2 transition duration-200 hover:text-textMain shrink-0">
                 <i data-lucide="shield-zap" class="w-4 h-4 text-roseBrand"></i> 3. Eksekutor Unfollow (Anti-Block)
@@ -262,12 +262,12 @@
                     <div class="bg-gradient-to-b from-black/50 to-surfaceSoft border border-amberBrand/30 rounded-xl p-4 space-y-3 relative overflow-hidden">
                         <div class="flex items-center justify-between">
                             <span class="text-[10px] font-extrabold text-amberBrand tracking-wider uppercase flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-amberBrand animate-ping"></span> Live Meta Sync Engine
+                                <span class="w-2 h-2 rounded-full bg-amberBrand animate-ping"></span> Profile Sync Terpadu
                             </span>
                             <span class="text-[9px] text-mutedMain">Real-Time Metrik</span>
                         </div>
                         <p class="text-[10px] text-mutedMain leading-relaxed">
-                            Secara otomatis memperbarui detail pengikut, diikuti, dan jumlah postingan dari server Meta API untuk seluruh akun di workspace Anda.
+                            Sinkronisasi profil dijalankan bersama pemindaian Followers dan Following pada Tab 2. Nilai yang tidak tersedia tidak akan dibuat-buat.
                         </p>
                         
                         <div id="sync-terminal" class="hidden bg-black/90 rounded-lg p-2 font-mono text-[9px] text-greenBrand border border-white/10 max-h-[110px] overflow-y-auto space-y-0.5 shadow-inner">
@@ -275,7 +275,7 @@
                         </div>
 
                         <button id="btn-simulate-sync" onclick="startSimulatedApiSync()" class="w-full bg-amberBrand/10 hover:bg-amberBrand/20 border border-amberBrand/40 text-amberBrand hover:text-white transition font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 shadow">
-                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Sinkronisasi Data Real-Time
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Buka Scanner Terpadu
                         </button>
                     </div>
 
@@ -327,285 +327,222 @@
             </div>
         </div>
 
-        <!-- ================= TAB 2: DUAL SCANNER & SCRAPER SUITE ================= -->
+        <!-- ================= TAB 2: UNIFIED SCANNER ================= -->
         <div id="scraper-tab" class="hidden max-w-4xl mx-auto space-y-6">
-            
             <div class="glass-panel border-amberBrand/30 rounded-2xl p-6 shadow-2xl space-y-4 relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-40 h-40 bg-amberBrand/10 rounded-full filter blur-3xl pointer-events-none"></div>
-                
                 <h4 class="font-serif font-bold text-lg text-amberBrand flex items-center gap-2">
-                    <i data-lucide="terminal" class="w-5 h-5 text-amberBrand"></i> Skrip Scanner & Penyelarasan Data Instagram
+                    <i data-lucide="terminal" class="w-5 h-5"></i> InstaClean Unified Scanner
                 </h4>
                 <p class="text-xs text-textMain leading-relaxed">
-                    Jalankan scanner saat membuka instagram.com dan sudah login ke akun sendiri. Scanner memakai endpoint web internal Instagram yang dapat berubah atau dibatasi sewaktu-waktu. Jika Instagram menolak permintaan, gunakan fitur unduh informasi akun resmi Instagram; scanner tidak dapat melewati verifikasi atau pembatasan akun.
+                    Satu skrip untuk memindai Followers dan Following, menyinkronkan informasi serta metrik profil akun sendiri jika endpoint mengizinkan, menghitung relasi, lalu mengunduh satu file <strong>instaclean_data.json</strong>.
                 </p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                    <div class="bg-black/40 border border-white/10 rounded-xl p-4 text-xs space-y-1">
-                        <span class="font-bold text-amberBrand block uppercase flex items-center gap-1.5">
-                            <i data-lucide="database" class="w-3.5 h-3.5"></i> 1. Extraktor Dual GraphQL
-                        </span>
-                        <p class="text-mutedMain text-[11px]">Memindai seluruh daftar Followers dan Following Anda secara cepat dalam hitungan detik.</p>
-                    </div>
-                    <div class="bg-black/40 border border-white/10 rounded-xl p-4 text-xs space-y-1">
-                        <span class="font-bold text-cyanBrand block uppercase flex items-center gap-1.5">
-                            <i data-lucide="zap" class="w-3.5 h-3.5"></i> 2. Real-Time Profile Sync Scraper
-                        </span>
-                        <p class="text-mutedMain text-[11px]">Mengambil metrik terkini (Followers, Following, Jumlah Post) langsung dari endpoint web resmi Meta.</p>
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-amberBrand block mb-1">1. Dual Scanner</b><span class="text-mutedMain">Followers + Following</span></div>
+                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-cyanBrand block mb-1">2. Profile Sync</b><span class="text-mutedMain">Info profil dan metrik yang tersedia</span></div>
+                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-greenBrand block mb-1">3. Single JSON</b><span class="text-mutedMain">Seluruh hasil dalam satu file</span></div>
                 </div>
+                <p class="text-[11px] text-mutedMain leading-relaxed">
+                    Cara pakai: buka instagram.com, login ke akun sendiri, tekan F12 → Console, tempel seluruh skrip di bawah, lalu Enter. Endpoint internal Instagram dapat berubah atau dibatasi. Skrip tidak melewati verifikasi maupun rate limit.
+                </p>
             </div>
-
-            <!-- SCRIPTS SECTION: Dual GraphQL Scraper -->
-            <div class="bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
                 <div class="px-6 py-4 bg-white/5 border-b border-white/10 flex justify-between items-center flex-wrap gap-2">
                     <div>
-                        <span class="text-xs font-mono text-amberBrand font-bold">Metode 1: Instagram Dual Scanner (Followers & Following)</span>
-                        <p class="text-[10px] text-mutedMain mt-0.5">Mengambil daftar relasi dan menyimpan hasil ke JSON InstaClean</p>
+                        <span class="text-xs font-mono text-amberBrand font-bold">ONE SCRIPT — FOLLOWERS + FOLLOWING + PROFILE + JSON</span>
+                        <p class="text-[10px] text-mutedMain mt-0.5">Salin satu skrip terpadu, bukan dua skrip terpisah</p>
                     </div>
-                    <button onclick="copyToClipboard('graphql-extractor-code')" class="px-3.5 py-1.5 bg-amberBrand hover:bg-amber-500 font-extrabold text-xs text-black rounded-lg transition duration-150 flex items-center gap-1 shrink-0">
-                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin Skrip GraphQL
+                    <button onclick="copyToClipboard('unified-scanner-code')" class="px-3.5 py-1.5 bg-amberBrand hover:bg-amber-500 font-extrabold text-xs text-black rounded-lg transition flex items-center gap-1">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin Skrip Terpadu
                     </button>
                 </div>
-                <pre class="p-6 overflow-x-auto text-xs font-mono text-greenBrand leading-relaxed max-h-[280px] no-scrollbar select-all" id="graphql-extractor-code">
-/* =========================================================================
- * INSTACLEAN DUAL SCANNER v4.0 — FOLLOWERS & FOLLOWING
+                <pre class="p-6 overflow-x-auto text-xs font-mono text-greenBrand leading-relaxed max-h-[560px] no-scrollbar select-all" id="unified-scanner-code">/* =========================================================================
+ * INSTACLEAN PRO v4.1 — UNIFIED SCANNER
  * Jalankan di instagram.com saat login ke akun milik sendiri.
- * Menggunakan endpoint web internal; Instagram dapat mengubah/membatasi endpoint.
+ * Menggabungkan Followers, Following, Profile Sync, dan satu JSON export.
+ * Tidak melewati login, challenge, rate limit, atau pembatasan Instagram.
  * ========================================================================= */
-(async () => {
-    const log = (msg, color = "#06b6d4") =>
-        console.log(`%c[InstaClean] ${msg}`, `color:${color};font-weight:bold`);
-    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+(async () =&gt; {
+  const PREFIX = "[InstaClean]";
+  const log = (message, color = "#06b6d4") =&gt;
+    console.log(`%c${PREFIX} ${message}`, `color:${color};font-weight:bold`);
+  const sleep = ms =&gt; new Promise(resolve =&gt; setTimeout(resolve, ms));
+  const headers = {
+    "Accept": "application/json, text/plain, */*",
+    "X-IG-App-ID": "936619743392459",
+    "X-Requested-With": "XMLHttpRequest"
+  };
+  const csrf = document.cookie.match(/(?:^|; )csrftoken=([^;]+)/)?.[1];
+  if (csrf) headers["X-CSRFToken"] = decodeURIComponent(csrf);
 
-    const getCookie = name => {
-        const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
-        return match ? decodeURIComponent(match[1]) : null;
-    };
-
-    const userId = getCookie("ds_user_id");
-    const csrf = getCookie("csrftoken");
-    if (!userId) {
-        log("Cookie ds_user_id tidak ditemukan. Buka instagram.com dan pastikan sudah login.", "#ef4444");
-        return;
+  const getJson = async url =&gt; {
+    const response = await fetch(url, {
+      method: "GET", credentials: "include", cache: "no-store", headers
+    });
+    const contentType = response.headers.get("content-type") || "";
+    const body = await response.text();
+    const finalUrl = response.url || url;
+    if (response.redirected || /text\/html/i.test(contentType) ||
+        /^\s*&lt;!doctype\s+html|^\s*&lt;html/i.test(body) ||
+        /\/(accounts\/login|challenge|checkpoint)(\/|\?|$)/i.test(finalUrl)) {
+      throw new Error(`Instagram mengirim halaman HTML/verifikasi (HTTP ${response.status}). Login atau selesaikan verifikasi secara normal; scanner tidak melewatinya.`);
     }
+    if (response.status === 401) throw new Error("Sesi tidak terautentikasi (401). Login ulang secara normal.");
+    if (response.status === 403) throw new Error("Permintaan ditolak (403). Gunakan Unduh Informasi Anda dari Accounts Center.");
+    if (response.status === 429) throw new Error("Rate limit (429). Pemindaian dihentikan; jangan langsung mengulang.");
+    if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    let data;
+    try { data = JSON.parse(body); }
+    catch { throw new Error("Respons Instagram bukan JSON yang valid."); }
+    return data;
+  };
 
-    const headers = {
-        "Accept": "application/json, text/plain, */*",
-        "X-IG-App-ID": "936619743392459",
-        "X-Requested-With": "XMLHttpRequest"
-    };
-    if (csrf) headers["X-CSRFToken"] = csrf;
+  const cookie = document.cookie.match(/(?:^|; )ds_user_id=([^;]+)/);
+  if (!cookie) {
+    log("Cookie akun tidak ditemukan. Buka instagram.com dan pastikan login.", "#ef4444");
+    return;
+  }
+  const accountId = decodeURIComponent(cookie[1]);
+  const pageSize = 200;
 
-    async function requestPage(kind, cursor) {
-        const params = new URLSearchParams({ count: "200" });
-        if (cursor) params.set("max_id", cursor);
-        const url = `https://www.instagram.com/api/v1/friendships/${userId}/${kind}/?${params}`;
-
-        const response = await fetch(url, {
-            method: "GET",
-            credentials: "include",
-            headers,
-            cache: "no-store"
+  async function scanRelations(kind, label) {
+    const users = new Map();
+    let cursor = null, page = 0, hasMore = true;
+    while (hasMore) {
+      if (++page &gt; 500) throw new Error(`Batas pengaman halaman ${label} tercapai.`);
+      const params = new URLSearchParams({ count: String(pageSize) });
+      if (cursor) params.set("max_id", cursor);
+      const data = await getJson(`https://www.instagram.com/api/v1/friendships/${accountId}/${kind}/?${params}`);
+      if (!Array.isArray(data.users)) throw new Error(`Format daftar ${label} tidak dikenali; endpoint mungkin berubah.`);
+      for (const user of data.users) {
+        if (!user?.pk || !user?.username) continue;
+        const id = String(user.pk);
+        users.set(id, {
+          id, username: user.username, full_name: user.full_name || "",
+          profile_pic_url: user.profile_pic_url || "",
+          is_private: Boolean(user.is_private), is_verified: Boolean(user.is_verified)
         });
+      }
+      log(`${label}: halaman ${page}, total ${users.size} akun.`);
+      const next = data.next_max_id || null;
+      hasMore = Boolean(data.has_more &amp;&amp; next &amp;&amp; next !== cursor);
+      cursor = next;
+      if (hasMore) await sleep(1800);
+    }
+    return [...users.values()];
+  }
 
-        const contentType = response.headers.get("content-type") || "";
-        const body = await response.text();
+  try {
+    log("Memulai pemindaian Following…");
+    const following = await scanRelations("following", "Following");
+    log(`Following selesai: ${following.length}.`, "#10b981");
 
-        if (response.redirected || /text\/html/i.test(contentType) ||
-            /^\s*(<!doctype html|<html)/i.test(body)) {
-            throw new Error("Instagram mengembalikan halaman HTML, bukan JSON. Sesi mungkin kedaluwarsa atau akses sedang dibatasi. Login ulang dan coba lagi.");
-        }
-        if (response.status === 401) throw new Error("HTTP 401: sesi login tidak valid. Login ulang ke Instagram.");
-        if (response.status === 403) throw new Error("HTTP 403: Instagram menolak permintaan. Coba lagi nanti atau gunakan ekspor data resmi Instagram.");
-        if (response.status === 429) throw new Error("HTTP 429: permintaan terlalu sering. Hentikan pemindaian dan coba lagi setelah beberapa waktu.");
-        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    log("Memulai pemindaian Followers…");
+    const followers = await scanRelations("followers", "Followers");
+    log(`Followers selesai: ${followers.length}.`, "#10b981");
 
-        let json;
-        try { json = JSON.parse(body); }
-        catch { throw new Error(`Respons bukan JSON yang valid (Content-Type: ${contentType || "tidak diketahui"}).`); }
+    const followerIds = new Set(followers.map(user =&gt; user.id));
+    const followingIds = new Set(following.map(user =&gt; user.id));
+    const combined = new Map();
 
-        if (json.status && json.status !== "ok") {
-            throw new Error(json.message || `Instagram mengirim status: ${json.status}`);
-        }
-        if (!Array.isArray(json.users)) {
-            throw new Error(json.message || "Struktur respons tidak berisi daftar users. Endpoint Instagram mungkin telah berubah.");
-        }
-        return json;
+    for (const user of following) {
+      combined.set(user.id, { ...user, is_following: true, is_follower: followerIds.has(user.id) });
+    }
+    for (const user of followers) {
+      if (combined.has(user.id)) combined.get(user.id).is_follower = true;
+      else combined.set(user.id, { ...user, is_following: false, is_follower: true });
     }
 
-    async function scan(kind, label) {
-        const collected = new Map();
-        let cursor = null;
-        let page = 0;
-        let more = true;
-
-        while (more) {
-            page++;
-            if (page > 500) throw new Error("Batas pengaman 500 halaman tercapai; pemindaian dihentikan.");
-            const data = await requestPage(kind, cursor);
-
-            for (const u of data.users) {
-                if (!u || !u.pk || !u.username) continue;
-                const id = String(u.pk);
-                collected.set(id, {
-                    id,
-                    username: u.username,
-                    full_name: u.full_name || "",
-                    profile_pic_url: u.profile_pic_url || "",
-                    is_private: Boolean(u.is_private),
-                    is_verified: Boolean(u.is_verified)
-                });
-            }
-
-            log(`${label}: halaman ${page}, ${data.users.length} akun diterima; total ${collected.size}.`);
-            const nextCursor = data.next_max_id || null;
-            more = Boolean(data.has_more && nextCursor && nextCursor !== cursor);
-            cursor = nextCursor;
-
-            if (more) await sleep(1800 + Math.floor(Math.random() * 1200));
-        }
-        return [...collected.values()];
-    }
-
-    let followingList, followersList;
+    // Sinkronisasi profil akun sendiri: metrik yang tidak tersedia tetap null, bukan angka rekaan.
+    let profile = {
+      id: accountId,
+      username: document.querySelector('meta[property="og:title"]')?.content?.match(/@([A-Za-z0-9._]+)/)?.[1] || null,
+      full_name: null, profile_pic_url: null, followers_count: null,
+      following_count: null, posts_count: null, is_verified: null
+    };
     try {
-        log("Memulai pemindaian Following…");
-        followingList = await scan("following", "Following");
-        log(`Following selesai: ${followingList.length} akun.`, "#10b981");
-
-        log("Memulai pemindaian Followers…");
-        followersList = await scan("followers", "Followers");
-        log(`Followers selesai: ${followersList.length} akun.`, "#10b981");
+      const selfData = await getJson("https://www.instagram.com/api/v1/accounts/current_user/?edit=true");
+      const self = selfData?.user;
+      if (self) {
+        profile = {
+          ...profile,
+          username: self.username || profile.username,
+          full_name: self.full_name ?? null,
+          profile_pic_url: self.profile_pic_url ?? null,
+          is_verified: typeof self.is_verified === "boolean" ? self.is_verified : null
+        };
+      }
     } catch (error) {
-        log(`PEMINDAIAN GAGAL: ${error.message}`, "#ef4444");
-        console.error(error);
-        log("Tidak ada file hasil yang dibuat agar data gagal tidak dianggap sebagai hasil lengkap.", "#f59e0b");
-        return;
+      log(`Info dasar profil tidak tersedia: ${error.message}`, "#f59e0b");
     }
 
-    const followerIds = new Set(followersList.map(u => u.id));
-    const allUsers = new Map();
-
-    for (const u of followingList) {
-        allUsers.set(u.id, { ...u, is_following: true, is_follower: followerIds.has(u.id) });
-    }
-    for (const u of followersList) {
-        if (allUsers.has(u.id)) {
-            allUsers.get(u.id).is_follower = true;
-        } else {
-            allUsers.set(u.id, { ...u, is_following: false, is_follower: true });
+    // Coba ambil metrik profil akun sendiri melalui endpoint web profile info.
+    if (profile.username) {
+      try {
+        const profileData = await getJson(`https://www.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(profile.username)}`);
+        const self = profileData?.data?.user;
+        if (self) {
+          profile.followers_count = Number.isFinite(self.edge_followed_by?.count) ? self.edge_followed_by.count : null;
+          profile.following_count = Number.isFinite(self.edge_follow?.count) ? self.edge_follow.count : null;
+          profile.posts_count = Number.isFinite(self.edge_owner_to_timeline_media?.count) ? self.edge_owner_to_timeline_media.count : null;
+          profile.full_name = self.full_name || profile.full_name;
+          profile.profile_pic_url = self.profile_pic_url || profile.profile_pic_url;
+          profile.is_verified = Boolean(self.is_verified);
         }
+      } catch (error) {
+        log(`Metrik profil tidak tersedia: ${error.message}`, "#f59e0b");
+      }
     }
 
-    const result = [...allUsers.values()];
-    if (followingList.length + followersList.length === 0) {
-        log("Tidak ada akun yang diterima. File tidak dibuat; periksa akses dan sesi Instagram.", "#ef4444");
-        return;
-    }
+    const accounts = [...combined.values()];
+    const notFollowingBack = accounts.filter(user =&gt; user.is_following &amp;&amp; !user.is_follower);
+    const fans = accounts.filter(user =&gt; !user.is_following &amp;&amp; user.is_follower);
+    const mutual = accounts.filter(user =&gt; user.is_following &amp;&amp; user.is_follower);
 
-    const summary = {
-        account_id: userId,
-        scanned_at: new Date().toISOString(),
-        following_count: followingList.length,
-        followers_count: followersList.length,
-        unique_relations: result.length,
-        accounts: result
+    // "Unfollowers" memerlukan riwayat snapshot. Tidak dapat disimpulkan dari satu kali scan.
+    const output = {
+      profile: {
+        ...profile,
+        followers: followers.length,
+        following: following.length
+      },
+      followers,
+      following,
+      unfollowers: [],
+      not_following_back: notFollowingBack,
+      accounts,
+      summary: {
+        followers_count: followers.length,
+        following_count: following.length,
+        mutual_count: mutual.length,
+        not_following_back_count: notFollowingBack.length,
+        fans_count: fans.length,
+        unique_relations: accounts.length
+      },
+      metadata: {
+        scan_date: new Date().toISOString(),
+        account_id: accountId,
+        status: "completed",
+        note: "unfollowers kosong karena perubahan followers membutuhkan perbandingan dengan snapshot sebelumnya."
+      }
     };
 
-    const blob = new Blob([JSON.stringify(summary, null, 2)], { type: "application/json" });
-    const link = document.createElement("a");
+    const blob = new Blob([JSON.stringify(output, null, 2)], { type: "application/json;charset=utf-8" });
     const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
     link.href = objectUrl;
-    link.download = `instaclean_relations_${userId}.json`;
+    link.download = "instaclean_data.json";
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(objectUrl);
+    setTimeout(() =&gt; URL.revokeObjectURL(objectUrl), 1500);
 
-    log(`SELESAI: ${result.length} relasi unik; ${followingList.length} Following dan ${followersList.length} Followers.`, "#10b981");
-    log("Impor file JSON ini melalui menu Impor JSON InstaClean.", "#10b981");
-})();
-</pre>
-            </div>
-
-            <!-- SCRIPTS SECTION: Profile Sync Scraper Script -->
-            <div class="bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-                <div class="px-6 py-4 bg-white/5 border-b border-white/10 flex justify-between items-center flex-wrap gap-2">
-                    <div>
-                        <span class="text-xs font-mono text-cyanBrand font-bold">Metode 2: Real-Time Profile Metrik Sync Scraper</span>
-                        <p class="text-[10px] text-mutedMain mt-0.5">Memperbarui followers_count, following_count, dan posts_count</p>
-                    </div>
-                    <button onclick="copyToClipboard('sync-scraper-code')" class="px-3.5 py-1.5 bg-cyanBrand hover:bg-cyan-500 font-extrabold text-xs text-black rounded-lg transition duration-150 flex items-center gap-1 shrink-0">
-                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin Skrip Sync
-                    </button>
-                </div>
-                <pre class="p-6 overflow-x-auto text-xs font-mono text-cyanBrand leading-relaxed max-h-[280px] no-scrollbar select-all" id="sync-scraper-code">
-/* =========================================================================
- * INSTACLEAN REAL-TIME FOLLOWERS, FOLLOWING & POSTS SYNC SCRIPT
- * Tempel isi file JSON Anda pada variabel 'workspaceData' di bawah
- * ========================================================================= */
-(async () => {
-    const workspaceData = []; // Tempel array JSON Anda di sini
-
-    if (workspaceData.length === 0) {
-        console.error("%c[Error] Silakan tempel data JSON ke dalam variabel 'workspaceData'!", "color: #ef4444; font-weight: bold;");
-        return;
-    }
-
-    console.log(`%c[InstaClean Sync] Memulai penarikan metrik untuk ${workspaceData.length} akun...`, "color: #f59e0b; font-weight: bold;");
-    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-    const finalData = [];
-
-    for (let i = 0; i < workspaceData.length; i++) {
-        let user = workspaceData[i];
-        console.log(`[${i+1}/${workspaceData.length}] Mengambil detail @${user.username}...`);
-        
-        try {
-            const res = await fetch(`https://www.instagram.com/api/v1/users/web_profile_info/?username=${user.username}`, {
-                headers: { 
-                    "x-ig-app-id": "936619743392459",
-                    "x-requested-with": "XMLHttpRequest"
-                }
-            }).then(r => r.json());
-            
-            if (res.data && res.data.user) {
-                const igUser = res.data.user;
-                finalData.push({
-                    ...user,
-                    followers_count: igUser.edge_followed_by.count,
-                    following_count: igUser.edge_follow.count,
-                    posts_count: igUser.edge_owner_to_timeline_media.count,
-                    full_name: igUser.full_name || user.full_name,
-                    profile_pic_url: igUser.profile_pic_url || user.profile_pic_url,
-                    is_verified: igUser.is_verified || user.is_verified
-                });
-                console.log(`%c   -> SUKSES! ${igUser.edge_followed_by.count} Followers | ${igUser.edge_follow.count} Following | ${igUser.edge_owner_to_timeline_media.count} Posts`, "color: #10b981;");
-            } else {
-                throw new Error("Invalid response structure");
-            }
-        } catch (err) {
-            console.warn(`%c   -> Gunakan data perkiraan untuk @${user.username}`, "color: #f59e0b;");
-            finalData.push({
-                ...user,
-                followers_count: user.followers_count || 1200,
-                following_count: user.following_count || 850,
-                posts_count: user.posts_count || 120
-            });
-        }
-
-        await sleep(2000 + Math.random() * 1500);
-    }
-
-    console.log("%c[Sukses] Sinkronisasi selesai! Mengunduh berkas...", "color: #10b981; font-weight: bold;");
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(finalData, null, 2));
-    const dlAnchor = document.createElement('a');
-    dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `instaclean_realtime_synchronized.json`);
-    document.body.appendChild(dlAnchor);
-    dlAnchor.click();
-    dlAnchor.remove();
+    log(`SELESAI: ${followers.length} Followers, ${following.length} Following, ${notFollowingBack.length} tidak follow back.`, "#10b981");
+    log("Satu file instaclean_data.json berhasil disiapkan.", "#10b981");
+  } catch (error) {
+    log(`PEMINDAIAN DIHENTIKAN: ${error.message}`, "#ef4444");
+    console.error(error);
+    log("Tidak ada file ekspor yang dibuat agar hasil parsial tidak dianggap lengkap.", "#f59e0b");
+  }
 })();</pre>
             </div>
         </div>
@@ -1101,73 +1038,8 @@
         };
 
         function startSimulatedApiSync() {
-            const terminal = document.getElementById('sync-terminal');
-            const button = document.getElementById('btn-simulate-sync');
-            
-            terminal.classList.remove('hidden');
-            button.disabled = true;
-            button.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Membaca API Meta...`;
-            lucide.createIcons();
-            
-            terminal.innerHTML = `<p class="text-cyanBrand">> Memulai Kueri Massal (${accounts.length} total akun)...</p>`;
-            
-            let currentStep = 0;
-            const logSteps = [];
-
-            accounts.forEach((u, i) => {
-                if (i < 20) {
-                    logSteps.push({
-                        text: `> Endpoint Meta: @${u.username}...`,
-                        delay: 80,
-                        action: () => {
-                            if (u.username === 'masbay__') {
-                                u.followers_count = 1604;
-                                u.following_count = 981;
-                                u.posts_count = 184;
-                            }
-                        }
-                    });
-                    logSteps.push({
-                        text: `   -> [OK] @${u.username} (${u.followers_count} Followers | ${u.following_count} Following)`,
-                        style: "color: #10b981; padding-left: 10px;",
-                        delay: 40
-                    });
-                }
-            });
-
-            logSteps.push({ text: `> Menyinkronkan sisa ${accounts.length - 20} akun...`, delay: 300 });
-            logSteps.push({ text: `> Sukses memperbarui total database ${accounts.length} akun!`, delay: 400, style: "color: #10b981; font-weight: bold;" });
-
-            function runStep() {
-                if (currentStep < logSteps.length) {
-                    const step = logSteps[currentStep];
-                    if (step.action) step.action();
-
-                    const p = document.createElement('p');
-                    if (step.style) p.style.cssText = step.style;
-                    p.innerText = step.text;
-                    
-                    terminal.appendChild(p);
-                    terminal.scrollTop = terminal.scrollHeight;
-                    
-                    currentStep++;
-                    setTimeout(runStep, step.delay);
-                } else {
-                    button.disabled = false;
-                    button.innerHTML = `<i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-greenBrand"></i> Sinkron Selesai!`;
-                    lucide.createIcons();
-                    
-                    applyFilters();
-                    showToast("Sinkronisasi Meta API sukses!", "success");
-                    
-                    setTimeout(() => {
-                        button.innerHTML = `<i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Sinkronisasi Data Real-Time`;
-                        lucide.createIcons();
-                    }, 4000);
-                }
-            }
-            
-            runStep();
+            showToast("Gunakan Skrip Scanner Terpadu pada Tab 2 untuk mengambil data profil yang tersedia. Sinkronisasi demo tidak dijalankan.", "info");
+            switchTab('scraper-tab');
         }
 
         function showToast(message, type = 'info') {
