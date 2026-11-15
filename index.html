@@ -344,6 +344,30 @@
                     <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-cyanBrand block mb-1">2. Profile Sync</b><span class="text-mutedMain">Mempertahankan informasi profil/metadata jika tersedia dalam file yang diimpor.</span></div>
                     <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-greenBrand block mb-1">3. Single JSON</b><span class="text-mutedMain">Ekspor akun, relasi, whitelist, metadata, dan ringkasan dalam satu file.</span></div>
                 </div>
+                <div class="rounded-xl border border-amberBrand/25 bg-amberBrand/5 p-4 space-y-3">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="text-xs font-extrabold text-amberBrand">TEMPEL JSON DARI INSPECT ELEMENT</div>
+                        <span class="text-[10px] text-mutedMain">Network → Fetch/XHR → Response → Copy response</span>
+                    </div>
+                    <p class="text-[11px] text-mutedMain leading-relaxed">Salin respons JSON Followers dan Following dari Network Instagram, lalu tempel masing-masing pada kotak yang sesuai. Proses berjalan lokal di browser. Tempel hanya isi Response JSON, bukan Request Headers, cookie, token, atau informasi sesi.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <label class="block space-y-1.5">
+                            <span class="text-[11px] font-bold text-amberBrand">JSON FOLLOWERS</span>
+                            <textarea id="inspect-followers-json" rows="7" spellcheck="false" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-[10px] font-mono text-textMain focus:outline-none focus:border-amberBrand" placeholder="Tempel JSON response Followers di sini..."></textarea>
+                        </label>
+                        <label class="block space-y-1.5">
+                            <span class="text-[11px] font-bold text-cyanBrand">JSON FOLLOWING</span>
+                            <textarea id="inspect-following-json" rows="7" spellcheck="false" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-[10px] font-mono text-textMain focus:outline-none focus:border-cyanBrand" placeholder="Tempel JSON response Following di sini..."></textarea>
+                        </label>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="processInspectJSON()" class="px-4 py-3 rounded-xl bg-amberBrand hover:bg-amber-500 text-black text-xs font-extrabold flex items-center gap-2"><i data-lucide="scan" class="w-4 h-4"></i> Proses JSON Inspect</button>
+                        <button onclick="clearInspectJSON()" class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-textMain text-xs font-bold">Bersihkan</button>
+                    </div>
+                    <p id="inspect-import-status" class="text-[11px] text-mutedMain">Belum ada respons Inspect yang diproses.</p>
+                    <p class="text-[10px] text-mutedMain">Catatan: beberapa respons hanya memuat sebagian daftar atau struktur berbeda. Jika jumlah tidak sesuai, kumpulkan respons halaman/segmen lain yang tersedia dan tempelkan setelah menggabungkannya ke dalam satu JSON yang valid, atau gunakan ekspor resmi Instagram.</p>
+                </div>
+
                 <div class="rounded-xl border border-cyanBrand/25 bg-cyanBrand/5 p-4 space-y-3">
                     <div class="text-xs font-bold text-cyanBrand">IMPOR ARSIP RESMI INSTAGRAM</div>
                     <ol class="list-decimal pl-5 space-y-1.5 text-[11px] text-mutedMain leading-relaxed">
@@ -1420,6 +1444,111 @@
             } finally {
                 input.value = '';
             }
+        }
+
+        function extractInspectUsernames(payload) {
+            const found = new Map();
+            const valid = value => typeof value === 'string' && /^[A-Za-z0-9._]{1,30}$/.test(value);
+            const add = value => {
+                if (!valid(value)) return;
+                const key = value.toLowerCase();
+                if (!found.has(key)) found.set(key, {
+                    username: value,
+                    profile_url: `https://www.instagram.com/${value}/`
+                });
+            };
+            const visited = new WeakSet();
+            const walk = (value, depth = 0) => {
+                if (!value || typeof value !== 'object' || depth > 35 || visited.has(value)) return;
+                visited.add(value);
+                if (Array.isArray(value)) {
+                    value.forEach(item => walk(item, depth + 1));
+                    return;
+                }
+                // Common Instagram GraphQL/JSON account objects.
+                if (valid(value.username)) add(value.username);
+                if (valid(value.user_name)) add(value.user_name);
+                if (valid(value.value) && (value.timestamp !== undefined || value.href || value.type === 'user')) add(value.value);
+                if (Array.isArray(value.string_list_data)) {
+                    value.string_list_data.forEach(item => {
+                        if (item && valid(item.value)) add(item.value);
+                        if (item && typeof item.href === 'string') {
+                            const match = item.href.match(/instagram\.com\/([A-Za-z0-9._]{1,30})\/?(?:\?|$)/i);
+                            if (match) add(match[1]);
+                        }
+                    });
+                }
+                for (const child of Object.values(value)) walk(child, depth + 1);
+            };
+            walk(payload);
+            return [...found.values()];
+        }
+
+        function processInspectJSON() {
+            const followerText = document.getElementById('inspect-followers-json').value.trim();
+            const followingText = document.getElementById('inspect-following-json').value.trim();
+            const status = document.getElementById('inspect-import-status');
+            if (!followerText && !followingText) {
+                showToast('Tempel minimal satu JSON Followers atau Following.', 'error');
+                return;
+            }
+            try {
+                const followerRows = followerText ? extractInspectUsernames(JSON.parse(followerText)) : [];
+                const followingRows = followingText ? extractInspectUsernames(JSON.parse(followingText)) : [];
+                if (!followerRows.length && !followingRows.length) {
+                    throw new Error('Username tidak ditemukan. Pastikan yang ditempel adalah JSON Response daftar akun, bukan Request Headers atau Preview teks biasa.');
+                }
+                const combined = new Map();
+                const addRows = (rows, relation) => rows.forEach(row => {
+                    const key = row.username.toLowerCase();
+                    const prior = combined.get(key) || {
+                        id: `inspect-${key}`, username: row.username, full_name: '', profile_pic_url: '',
+                        is_private: false, is_verified: false, followers_count: null, following_count: null,
+                        posts_count: null, is_follower: false, is_following: false
+                    };
+                    if (relation === 'followers') prior.is_follower = true;
+                    if (relation === 'following') prior.is_following = true;
+                    combined.set(key, prior);
+                });
+                addRows(followerRows, 'followers');
+                addRows(followingRows, 'following');
+
+                // Merge with the current workspace instead of discarding existing imported records.
+                const existing = new Map((accounts || []).map(user => [String(user.username || '').toLowerCase(), { ...user }]));
+                for (const [key, row] of combined) {
+                    const prior = existing.get(key) || row;
+                    prior.username = row.username;
+                    prior.is_follower = Boolean(prior.is_follower || row.is_follower);
+                    prior.is_following = Boolean(prior.is_following || row.is_following);
+                    if (!prior.id) prior.id = row.id;
+                    existing.set(key, prior);
+                }
+                accounts = [...existing.values()].filter(user => user.username);
+                workspacePayload = {
+                    ...(workspacePayload && !Array.isArray(workspacePayload) ? workspacePayload : {}),
+                    source: 'Instagram Inspect Network Response',
+                    imported_at: new Date().toISOString(),
+                    inspect_counts: { followers: followerRows.length, following: followingRows.length }
+                };
+                selectedIds.clear();
+                applyFilters();
+                updateAnalytics();
+                updateScannerSummary();
+                const badge = document.getElementById('whitelist-badge');
+                if (badge) badge.innerText = whitelistedIds.size.toLocaleString('id-ID');
+                status.textContent = `Berhasil diproses: ${followerRows.length.toLocaleString('id-ID')} Followers • ${followingRows.length.toLocaleString('id-ID')} Following • ${accounts.length.toLocaleString('id-ID')} akun unik di workspace.`;
+                showToast('JSON Inspect berhasil digabungkan ke InstaClean.', 'success');
+            } catch (error) {
+                console.error('[InstaClean Inspect Import]', error);
+                status.textContent = `Gagal memproses JSON: ${error.message}`;
+                showToast(error.message || 'JSON Inspect tidak dapat diproses.', 'error');
+            }
+        }
+
+        function clearInspectJSON() {
+            document.getElementById('inspect-followers-json').value = '';
+            document.getElementById('inspect-following-json').value = '';
+            document.getElementById('inspect-import-status').textContent = 'Kotak JSON Inspect sudah dibersihkan.';
         }
 
         function updateScannerSummary() {
