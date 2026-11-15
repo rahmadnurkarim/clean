@@ -330,39 +330,52 @@
 
         <!-- ================= TAB 2: UNIFIED SCANNER ================= -->
         <div id="scraper-tab" class="hidden max-w-4xl mx-auto space-y-6">
-            <div class="glass-panel border-amberBrand/30 rounded-2xl p-6 shadow-2xl space-y-4 relative overflow-hidden">
-                <h4 class="font-serif font-bold text-lg text-amberBrand flex items-center gap-2">
-                    <i data-lucide="terminal" class="w-5 h-5"></i> InstaClean Unified Scanner
-                </h4>
-                <p class="text-xs text-textMain leading-relaxed">
-                    Impor data Followers dan Following dari arsip resmi Instagram, tinjau relasi akun, lalu simpan seluruh workspace dalam satu file <strong>instaclean_data.json</strong>.
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-amberBrand block mb-1">1. Dual Scanner</b><span class="text-mutedMain">Followers + Following</span></div>
-                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-cyanBrand block mb-1">2. Profile Sync</b><span class="text-mutedMain">Info profil dan metrik yang tersedia</span></div>
-                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-greenBrand block mb-1">3. Single JSON</b><span class="text-mutedMain">Seluruh hasil dalam satu file</span></div>
+            <div class="glass-panel border-amberBrand/30 rounded-2xl p-6 shadow-2xl space-y-5 relative overflow-hidden">
+                <div>
+                    <h4 class="font-serif font-bold text-lg text-amberBrand flex items-center gap-2">
+                        <i data-lucide="scan-search" class="w-5 h-5"></i> InstaClean Unified Scanner
+                    </h4>
+                    <p class="text-xs text-textMain leading-relaxed mt-2">
+                        Impor arsip resmi Instagram untuk menggabungkan Followers dan Following, menghitung relasi akun, lalu menyimpan seluruh workspace sebagai <strong>instaclean_data.json</strong>.
+                    </p>
                 </div>
-                <p class="text-[11px] text-mutedMain leading-relaxed">
-                    Cara pakai: buka instagram.com, login ke akun sendiri, tekan F12 → Console, tempel seluruh skrip di bawah, lalu Enter. Endpoint internal Instagram dapat berubah atau dibatasi. Skrip tidak melewati verifikasi maupun rate limit.
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-amberBrand block mb-1">1. Dual Scanner</b><span class="text-mutedMain">Membaca seluruh bagian Followers dan Following, termasuk followers_1.json dan seterusnya.</span></div>
+                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-cyanBrand block mb-1">2. Profile Sync</b><span class="text-mutedMain">Mempertahankan informasi profil/metadata jika tersedia dalam file yang diimpor.</span></div>
+                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-greenBrand block mb-1">3. Single JSON</b><span class="text-mutedMain">Ekspor akun, relasi, whitelist, metadata, dan ringkasan dalam satu file.</span></div>
+                </div>
+                <div class="rounded-xl border border-cyanBrand/25 bg-cyanBrand/5 p-4 space-y-3">
+                    <div class="text-xs font-bold text-cyanBrand">IMPOR ARSIP RESMI INSTAGRAM</div>
+                    <ol class="list-decimal pl-5 space-y-1.5 text-[11px] text-mutedMain leading-relaxed">
+                        <li>Buka Instagram → Pusat Akun (Accounts Center).</li>
+                        <li>Pilih Informasi dan izin Anda → Unduh informasi Anda.</li>
+                        <li>Pilih akun Instagram dan kategori <b>Followers and following</b>. Sertakan informasi profil bila diperlukan.</li>
+                        <li>Pilih format <b>JSON</b>, rentang waktu yang diinginkan, lalu buat unduhan.</li>
+                        <li>Ekstrak ZIP. Pilih semua file JSON Followers dan file Following yang relevan di bawah ini.</li>
+                    </ol>
+                    <input type="file" id="scanner-archive-input" class="hidden" accept=".json,application/json" multiple onchange="handleScannerArchive(this)">
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="document.getElementById('scanner-archive-input').click()" class="px-4 py-3 rounded-xl bg-cyanBrand hover:bg-cyan-500 text-black text-xs font-extrabold flex items-center gap-2">
+                            <i data-lucide="folder-open" class="w-4 h-4"></i> Pilih File Arsip JSON
+                        </button>
+                        <button onclick="exportWorkspaceJSON()" class="px-4 py-3 rounded-xl bg-greenBrand/15 border border-greenBrand/30 hover:bg-greenBrand/25 text-greenBrand text-xs font-bold flex items-center gap-2">
+                            <i data-lucide="download" class="w-4 h-4"></i> Ekspor instaclean_data.json
+                        </button>
+                    </div>
+                    <p id="scanner-import-status" class="text-[11px] text-mutedMain">Belum ada arsip yang diimpor. Anda dapat memilih beberapa file sekaligus.</p>
+                </div>
+                <p class="text-[10px] text-mutedMain leading-relaxed">
+                    Pemrosesan dilakukan lokal di browser. Aplikasi tidak meminta kata sandi, membaca cookie/sesi, mengakses endpoint privat, atau melakukan unfollow otomatis. Metrik profil yang tidak tersedia dalam arsip akan dibiarkan kosong.
                 </p>
             </div>
-            <div class="bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-                <div class="px-6 py-4 bg-white/5 border-b border-white/10 flex justify-between items-center flex-wrap gap-2">
-                    <div>
-                        <span class="text-xs font-mono text-amberBrand font-bold">OFFICIAL DATA EXPORT — FOLLOWERS + FOLLOWING + JSON</span>
-                        <p class="text-[10px] text-mutedMain mt-0.5">Gunakan Accounts Center, lalu impor file JSON ke aplikasi</p>
-                    </div>
-                    
+            <div class="glass-panel border-white/10 rounded-2xl p-5 space-y-3">
+                <h5 class="text-xs font-bold text-textMain">HASIL PEMINDAIAN</h5>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="bg-black/30 rounded-xl p-3"><span class="text-[10px] text-mutedMain block">Followers</span><strong id="scan-followers-count" class="text-xl text-amberBrand">0</strong></div>
+                    <div class="bg-black/30 rounded-xl p-3"><span class="text-[10px] text-mutedMain block">Following</span><strong id="scan-following-count" class="text-xl text-cyanBrand">0</strong></div>
+                    <div class="bg-black/30 rounded-xl p-3"><span class="text-[10px] text-mutedMain block">Mutual</span><strong id="scan-mutual-count" class="text-xl text-greenBrand">0</strong></div>
+                    <div class="bg-black/30 rounded-xl p-3"><span class="text-[10px] text-mutedMain block">Tidak follow back</span><strong id="scan-notback-count" class="text-xl text-roseBrand">0</strong></div>
                 </div>
-                <pre class="p-6 overflow-x-auto text-xs font-mono text-greenBrand leading-relaxed max-h-[560px] no-scrollbar select-all" id="unified-scanner-code">PANDUAN IMPOR DATA RESMI INSTAGRAM
-1. Buka Instagram → Accounts Center / Pusat Akun.
-2. Pilih Your information and permissions → Download your information.
-3. Pilih akun Instagram, lalu pilih Followers and following (serta data profil bila diperlukan).
-4. Pilih format JSON dan rentang waktu yang diinginkan, lalu minta unduhan.
-5. Setelah arsip tersedia, ekstrak file JSON dan impor ke InstaClean melalui tombol Impor JSON.
-
-InstaClean tidak mengakses endpoint internal, cookie, sesi login, atau melakukan scraping otomatis.
-Pemindaian real-time melalui endpoint privat tidak disediakan. Data yang tidak ada di file sumber tidak akan direka.</pre>
             </div>
         </div>
 
@@ -520,11 +533,11 @@ Pemindaian real-time melalui endpoint privat tidak disediakan. Data yang tidak a
             
             <div class="space-y-2">
                 <label class="text-xs font-semibold text-textMain block">Unggah Berkas JSON Anda:</label>
-                <input type="file" id="import-file-selector" class="hidden" accept=".json" onchange="handleFileSelect(this)">
+                <input type="file" id="import-file-selector" class="hidden" accept=".json,application/json" multiple onchange="handleFileSelect(this)">
                 <div onclick="document.getElementById('import-file-selector').click()" class="border-2 border-dashed border-white/20 hover:border-cyanBrand/50 rounded-xl p-6 text-center cursor-pointer transition bg-black/30 group">
                     <i data-lucide="upload-cloud" class="w-10 h-10 text-mutedMain group-hover:text-cyanBrand mx-auto mb-2 transition"></i>
-                    <span class="text-xs text-textMain font-semibold block">Klik untuk memilih file .json</span>
-                    <span class="text-[10px] text-mutedMain block mt-1" id="file-name-display">Mendukung format InstaClean Dual & Sync</span>
+                    <span class="text-xs text-textMain font-semibold block">Klik untuk memilih satu atau beberapa file .json</span>
+                    <span class="text-[10px] text-mutedMain block mt-1" id="file-name-display">Pilih beberapa file JSON dari arsip resmi Instagram sekaligus</span>
                 </div>
             </div>
 
@@ -1215,44 +1228,222 @@ Pemindaian real-time melalui endpoint privat tidak disediakan. Data yang tidak a
         }
 
         function handleFileSelect(input) {
-            if (input.files && input.files[0]) {
-                document.getElementById('file-name-display').innerText = input.files[0].name;
+            if (input.files && input.files.length) {
+                const names = [...input.files].map(file => file.name);
+                document.getElementById('file-name-display').innerText =
+                    `${names.length} file dipilih: ${names.slice(0, 2).join(', ')}${names.length > 2 ? ' …' : ''}`;
             }
+        }
+
+        function instagramEntry(entry) {
+            if (!entry || typeof entry !== 'object') return null;
+            const listItem = Array.isArray(entry.string_list_data) ? entry.string_list_data[0] : null;
+            const username = entry.username || entry.title || listItem?.value || entry.value;
+            if (typeof username !== 'string' || !username.trim()) return null;
+            const clean = username.trim().replace(/^@/, '');
+            return {
+                id: String(entry.id || clean),
+                username: clean,
+                full_name: entry.full_name || entry.name || '',
+                profile_url: listItem?.href || entry.profile_url || `https://www.instagram.com/${encodeURIComponent(clean)}/`,
+                timestamp: listItem?.timestamp || entry.timestamp || null,
+                profile_pic_url: entry.profile_pic_url || '',
+                is_private: Boolean(entry.is_private),
+                is_verified: Boolean(entry.is_verified),
+                followers_count: finiteOrNull(entry.followers_count ?? entry.follower_count),
+                following_count: finiteOrNull(entry.following_count),
+                posts_count: finiteOrNull(entry.posts_count)
+            };
+        }
+
+        function findInstagramRelationshipArrays(data, relation) {
+            const found = [];
+            const wanted = relation === 'followers'
+                ? /^(relationships_followers|followers|followers_\\d+)$/i
+                : /^(relationships_following|following)$/i;
+
+            function walk(node) {
+                if (!node || typeof node !== 'object') return;
+                if (Array.isArray(node)) {
+                    node.forEach(item => {
+                        if (item && typeof item === 'object') walk(item);
+                    });
+                    return;
+                }
+                for (const [key, value] of Object.entries(node)) {
+                    if (wanted.test(key) && Array.isArray(value)) found.push(...value);
+                    else if (value && typeof value === 'object') walk(value);
+                }
+            }
+            walk(data);
+            return found;
+        }
+
+        function collectProfileMetadata(data) {
+            if (!data || typeof data !== 'object') return null;
+            if (data.profile && typeof data.profile === 'object') return data.profile;
+            if (data.profile_user && typeof data.profile_user === 'object') return data.profile_user;
+            if (data.user && typeof data.user === 'object' &&
+                (data.user.username || data.user.full_name || data.user.biography)) return data.user;
+            return null;
+        }
+
+        function buildAccountRows(documents) {
+            const combined = new Map();
+            let profile = null;
+            const report = [];
+
+            const add = (entry, relation) => {
+                const normalized = instagramEntry(entry);
+                if (!normalized) return;
+                const key = normalized.username.toLowerCase();
+                const existing = combined.get(key) || {
+                    ...normalized, is_following: false, is_follower: false
+                };
+                if (relation === 'followers') existing.is_follower = true;
+                if (relation === 'following') existing.is_following = true;
+                Object.keys(normalized).forEach(k => {
+                    if ((existing[k] === '' || existing[k] === null || existing[k] === undefined) &&
+                        normalized[k] !== '' && normalized[k] !== null && normalized[k] !== undefined) {
+                        existing[k] = normalized[k];
+                    }
+                });
+                combined.set(key, existing);
+            };
+
+            for (const doc of documents) {
+                const data = doc.data;
+                const filename = (doc.name || '').toLowerCase();
+                const profileData = collectProfileMetadata(data);
+                if (profileData) profile = { ...(profile || {}), ...profileData };
+
+                const followingRows = findInstagramRelationshipArrays(data, 'following');
+                const followerRows = findInstagramRelationshipArrays(data, 'followers');
+
+                if (Array.isArray(data)) {
+                    if (/follow(er|ers)/i.test(filename) && !/following/i.test(filename)) {
+                        data.forEach(row => add(row, 'followers'));
+                    } else if (/following/i.test(filename)) {
+                        data.forEach(row => add(row, 'following'));
+                    } else {
+                        data.forEach(row => add(row, row.is_follower ? 'followers' : 'following'));
+                    }
+                }
+
+                followingRows.forEach(row => add(row, 'following'));
+                followerRows.forEach(row => add(row, 'followers'));
+
+                // Supports InstaClean workspace exports and common flat archive variants.
+                if (!Array.isArray(data) && Array.isArray(data.accounts)) {
+                    data.accounts.forEach(row => {
+                        const normalized = instagramEntry(row);
+                        if (normalized) {
+                            const key = normalized.username.toLowerCase();
+                            const prior = combined.get(key) || { ...normalized, is_following: false, is_follower: false };
+                            prior.is_following = Boolean(row.is_following ?? prior.is_following);
+                            prior.is_follower = Boolean(row.is_follower ?? prior.is_follower);
+                            combined.set(key, { ...prior, ...normalized });
+                        }
+                    });
+                }
+                if (!Array.isArray(data) && Array.isArray(data.followers)) {
+                    data.followers.forEach(row => add(row, 'followers'));
+                }
+                if (!Array.isArray(data) && Array.isArray(data.following)) {
+                    data.following.forEach(row => add(row, 'following'));
+                }
+                if (!Array.isArray(data) && Array.isArray(data.whitelist)) {
+                    // Preserved by caller from the source workspace.
+                }
+
+                report.push({
+                    filename: doc.name,
+                    status: 'success',
+                    follower_rows: followerRows.length,
+                    following_rows: followingRows.length
+                });
+            }
+
+            return { accounts: [...combined.values()], profile, report };
+        }
+
+        async function handleScannerArchive(input) {
+            const files = [...(input.files || [])];
+            if (!files.length) return;
+            const status = document.getElementById('scanner-import-status');
+            status.textContent = `Membaca ${files.length} file JSON…`;
+
+            try {
+                const documents = [];
+                for (const file of files) {
+                    const parsed = JSON.parse(await file.text());
+                    documents.push({ name: file.name, data: parsed });
+                }
+                const result = buildAccountRows(documents);
+                if (!result.accounts.length) {
+                    throw new Error('Tidak menemukan username Followers/Following. Pastikan file JSON relasi dari arsip Instagram dipilih, bukan file HTML atau CSV.');
+                }
+
+                accounts = result.accounts.map((user, index) => ({
+                    ...user,
+                    id: String(user.id || `archive-${index}-${user.username}`),
+                    full_name: user.full_name || '',
+                    profile_pic_url: user.profile_pic_url || '',
+                    is_private: Boolean(user.is_private),
+                    is_verified: Boolean(user.is_verified),
+                    followers_count: finiteOrNull(user.followers_count),
+                    following_count: finiteOrNull(user.following_count),
+                    posts_count: finiteOrNull(user.posts_count)
+                }));
+
+                workspacePayload = {
+                    source: 'Official Instagram Data Export',
+                    imported_at: new Date().toISOString(),
+                    source_files: result.report,
+                    profile: result.profile || null
+                };
+                const archiveWhitelist = documents.map(doc => doc.data?.whitelist || doc.data?.whitelisted_ids)
+                    .find(Array.isArray) || [];
+                whitelistedIds = new Set(archiveWhitelist.map(item => String(typeof item === 'object' ? (item.id || item.username) : item)));
+                const badge = document.getElementById('whitelist-badge');
+                if (badge) badge.innerText = whitelistedIds.size.toLocaleString('id-ID');
+                selectedIds.clear();
+                applyFilters();
+                updateAnalytics();
+                updateScannerSummary();
+                status.textContent = `${files.length} file diproses • ${accounts.length.toLocaleString('id-ID')} akun unik berhasil dimuat.`;
+                showToast(`${accounts.length.toLocaleString('id-ID')} akun berhasil diimpor dari arsip.`, 'success');
+            } catch (error) {
+                console.error('[InstaClean Archive Import]', error);
+                status.textContent = `Impor gagal: ${error.message}`;
+                showToast(error.message || 'Gagal membaca arsip Instagram.', 'error');
+            } finally {
+                input.value = '';
+            }
+        }
+
+        function updateScannerSummary() {
+            const followers = accounts.filter(user => user.is_follower).length;
+            const following = accounts.filter(user => user.is_following).length;
+            const mutual = accounts.filter(user => user.is_follower && user.is_following).length;
+            const notBack = accounts.filter(user => user.is_following && !user.is_follower).length;
+            const setText = (id, value) => {
+                const node = document.getElementById(id);
+                if (node) node.textContent = value.toLocaleString('id-ID');
+            };
+            setText('scan-followers-count', followers);
+            setText('scan-following-count', following);
+            setText('scan-mutual-count', mutual);
+            setText('scan-notback-count', notBack);
         }
 
         function parseAndLoadJSON(rawText) {
             try {
                 const parsed = JSON.parse(rawText);
-                if (!parsed || (typeof parsed !== 'object')) throw new Error("Struktur JSON tidak dikenali.");
-
+                const result = buildAccountRows([{ name: 'manual-import.json', data: parsed }]);
+                if (!result.accounts.length) throw new Error('Tidak menemukan data akun. JSON harus berisi accounts, followers, following, atau struktur arsip relasi Instagram.');
                 workspacePayload = Array.isArray(parsed) ? { legacy_array: true } : structuredCloneSafe(parsed);
-
-                const validRows = value => Array.isArray(value) ? value.filter(user => user && user.username) : [];
-                let rows = Array.isArray(parsed) ? parsed : validRows(parsed.accounts);
-
-                // Format arsip scanner yang menyimpan followers/following terpisah.
-                if (!rows.length && !Array.isArray(parsed)) {
-                    const combined = new Map();
-                    validRows(parsed.following).forEach(user => combined.set(String(user.id || user.username), {
-                        ...user, is_following: true, is_follower: false
-                    }));
-                    validRows(parsed.followers).forEach(user => {
-                        const key = String(user.id || user.username);
-                        if (combined.has(key)) combined.get(key).is_follower = true;
-                        else combined.set(key, { ...user, is_following: false, is_follower: true });
-                    });
-                    rows = [...combined.values()];
-                }
-                if (!rows.length && !Array.isArray(parsed) &&
-                    !Array.isArray(parsed.accounts) && !Array.isArray(parsed.followers) &&
-                    !Array.isArray(parsed.following)) {
-                    throw new Error("JSON harus berisi accounts[], followers[], atau following[].");
-                }
-                if (rows.some(user => !user || !user.username)) {
-                    throw new Error("Ada baris akun yang tidak memiliki username.");
-                }
-
-                accounts = rows.map((user, index) => ({
+                accounts = result.accounts.map((user, index) => ({
                     ...user,
                     id: String(user.id || `import-${index}-${user.username}`),
                     username: String(user.username),
@@ -1260,9 +1451,9 @@ Pemindaian real-time melalui endpoint privat tidak disediakan. Data yang tidak a
                     profile_pic_url: user.profile_pic_url || '',
                     is_private: Boolean(user.is_private),
                     is_verified: Boolean(user.is_verified),
-                    is_following: user.is_following !== undefined ? Boolean(user.is_following) : true,
-                    is_follower: user.is_follower !== undefined ? Boolean(user.is_follower) : false,
-                    followers_count: finiteOrNull(user.followers_count ?? user.follower_count),
+                    is_following: Boolean(user.is_following),
+                    is_follower: Boolean(user.is_follower),
+                    followers_count: finiteOrNull(user.followers_count),
                     following_count: finiteOrNull(user.following_count),
                     posts_count: finiteOrNull(user.posts_count)
                 }));
@@ -1272,14 +1463,45 @@ Pemindaian real-time melalui endpoint privat tidak disediakan. Data yang tidak a
                 whitelistedIds = new Set(whitelist.map(item => String(typeof item === 'object' ? (item.id || item.username) : item)));
                 selectedIds.clear();
                 document.getElementById('whitelist-badge').innerText = whitelistedIds.size.toLocaleString('id-ID');
-
                 applyFilters();
                 updateAnalytics();
+                updateScannerSummary();
                 closeModal('import-modal');
-                showToast(`Memuat ${accounts.length.toLocaleString('id-ID')} akun beserta metadata yang tersedia.`, "success");
+                showToast(`Memuat ${accounts.length.toLocaleString('id-ID')} akun dari JSON.`, 'success');
             } catch (err) {
-                console.error("[InstaClean Import]", err);
-                showToast(err.message || "Format JSON tidak valid!", "error");
+                console.error('[InstaClean Import]', err);
+                showToast(err.message || 'Format JSON tidak valid!', 'error');
+            }
+        }
+
+        async function processImportJSON() {
+            const fileInput = document.getElementById('import-file-selector');
+            const manualText = document.getElementById('import-textarea').value.trim();
+            if (fileInput.files && fileInput.files.length) {
+                try {
+                    const docs = [];
+                    for (const file of [...fileInput.files]) docs.push({ name: file.name, data: JSON.parse(await file.text()) });
+                    const result = buildAccountRows(docs);
+                    if (!result.accounts.length) throw new Error('Tidak menemukan data Followers/Following yang dapat dibaca.');
+                    workspacePayload = { source: 'JSON import', imported_at: new Date().toISOString(), source_files: result.report, profile: result.profile || null };
+                    accounts = result.accounts;
+                    const whitelistSource = docs.map(doc => doc.data?.whitelist).find(Array.isArray) || [];
+                    whitelistedIds = new Set(whitelistSource.map(item => String(typeof item === 'object' ? (item.id || item.username) : item)));
+                    selectedIds.clear();
+                    document.getElementById('whitelist-badge').innerText = whitelistedIds.size.toLocaleString('id-ID');
+                    applyFilters();
+                    updateAnalytics();
+                    updateScannerSummary();
+                    closeModal('import-modal');
+                    showToast(`Impor selesai: ${accounts.length.toLocaleString('id-ID')} akun unik.`, 'success');
+                } catch (err) {
+                    console.error('[InstaClean Import]', err);
+                    showToast(err.message || 'Gagal mengimpor file.', 'error');
+                }
+            } else if (manualText) {
+                parseAndLoadJSON(manualText);
+            } else {
+                showToast('Pilih file atau tempel JSON!', 'error');
             }
         }
 
@@ -1325,8 +1547,9 @@ Pemindaian real-time melalui endpoint privat tidak disediakan. Data yang tidak a
                 metadata: {
                     ...(original.metadata || {}),
                     exported_at: new Date().toISOString(),
-                    application: "InstaClean Scanner",
-                    export_version: 2
+                    application: "InstaClean Unified Scanner",
+                    export_version: 3,
+                    source: original.source || "User-provided JSON workspace"
                 }
             };
 
