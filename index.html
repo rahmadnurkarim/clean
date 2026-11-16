@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>InstaClean Scanner — Account Audit & Manual Review</title>
+    <title>InstaClean Scanner — Account Audit & Safe Unfollow</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -99,41 +99,46 @@
 </head>
 <body class="font-sans antialiased selection:bg-amberBrand selection:text-black">
 
+    <!-- Toast Notification Container (Fixed Missing Element) -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2.5 pointer-events-none"></div>
+
     <!-- Global Progress Bar -->
     <div id="progress-bar-container" class="fixed top-0 left-0 right-0 z-50 h-1 bg-white/5 overflow-hidden hidden">
         <div id="global-progress" class="h-full bg-gradient-to-r from-amberBrand via-cyanBrand to-roseBrand transition-all duration-300" style="width: 0%"></div>
     </div>
 
     <header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-xl border-b border-white/10 w-full transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between flex-wrap gap-3">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:h-20 flex items-center justify-between flex-wrap gap-3">
             <div class="flex items-center gap-3.5">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amberBrand via-amber-500 to-cyanBrand flex items-center justify-center shadow-lg shadow-amberBrand/25 relative overflow-hidden group">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amberBrand via-amber-500 to-cyanBrand flex items-center justify-center shadow-lg shadow-amberBrand/25 relative overflow-hidden group shrink-0">
                     <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition duration-300"></div>
                     <i data-lucide="shield-check" class="w-6 h-6 text-black stroke-[2.5]"></i>
                 </div>
                 <div>
-                    <h1 class="font-serif font-bold text-xl tracking-tight text-textMain flex items-center gap-2">
-                        InstaClean <span class="font-sans text-[10px] uppercase font-extrabold tracking-widest bg-gradient-to-r from-amberBrand/20 to-cyanBrand/20 text-amberBrand px-2.5 py-0.5 rounded-full border border-amberBrand/30 shadow-sm">v4.0 SCANNER UPDATE</span>
+                    <h1 class="font-serif font-bold text-xl tracking-tight text-textMain flex items-center gap-2 flex-wrap">
+                        InstaClean <span class="font-sans text-[10px] uppercase font-extrabold tracking-widest bg-gradient-to-r from-amberBrand/20 to-cyanBrand/20 text-amberBrand px-2.5 py-0.5 rounded-full border border-amberBrand/30 shadow-sm">v4.2 ANTI-BLOCK</span>
                     </h1>
-                    <p class="text-[11px] text-mutedMain font-medium">Account Auditor & Manual Review</p>
+                    <p class="text-[11px] text-mutedMain font-medium">Account Auditor & Safe Console Unfollower</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-                <button onclick="openModal('bulk-edit-modal')" class="px-3.5 py-2 rounded-xl bg-amberBrand/10 border border-amberBrand/30 hover:bg-amberBrand/20 text-xs font-semibold text-amberBrand transition duration-150 flex items-center gap-2 shadow-sm">
+            <div class="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+                <button onclick="openModal('safety-modal')" class="px-3 py-2 rounded-xl bg-roseBrand/10 border border-roseBrand/30 hover:bg-roseBrand/20 text-xs font-semibold text-roseBrand transition duration-150 flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="shield" class="w-4 h-4"></i> Anti-Block
+                </button>
+                <button onclick="openModal('bulk-edit-modal')" class="px-3 py-2 rounded-xl bg-amberBrand/10 border border-amberBrand/30 hover:bg-amberBrand/20 text-xs font-semibold text-amberBrand transition duration-150 flex items-center gap-1.5 shadow-sm">
                     <i data-lucide="edit-3" class="w-4 h-4"></i> Edit Masal
                 </button>
-                <button onclick="openModal('import-modal')" class="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-cyanBrand/40 hover:bg-cyanBrand/10 text-xs font-semibold text-textMain transition duration-150 flex items-center gap-2 shadow-sm">
+                <button onclick="openModal('import-modal')" class="px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-cyanBrand/40 hover:bg-cyanBrand/10 text-xs font-semibold text-textMain transition duration-150 flex items-center gap-1.5 shadow-sm">
                     <i data-lucide="import" class="w-4 h-4 text-cyanBrand"></i> Impor JSON
                 </button>
-                <button onclick="exportWorkspaceJSON()" class="px-3.5 py-2 rounded-xl bg-greenBrand/10 border border-greenBrand/30 hover:bg-greenBrand/20 text-xs font-semibold text-greenBrand transition duration-150 flex items-center gap-2 shadow-sm">
-                    <i data-lucide="download" class="w-4 h-4"></i> Ekspor JSON
+                <button onclick="exportWorkspaceJSON()" class="px-3 py-2 rounded-xl bg-greenBrand/10 border border-greenBrand/30 hover:bg-greenBrand/20 text-xs font-semibold text-greenBrand transition duration-150 flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="download" class="w-4 h-4"></i> Ekspor
                 </button>
-                <button onclick="openModal('whitelist-modal')" class="relative px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-amberBrand/40 hover:bg-white/10 text-xs font-semibold text-textMain transition duration-150 flex items-center gap-2 shadow-sm">
+                <button onclick="openModal('whitelist-modal')" class="relative px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-amberBrand/40 hover:bg-white/10 text-xs font-semibold text-textMain transition duration-150 flex items-center gap-1.5 shadow-sm">
                     <i data-lucide="star" class="w-4 h-4 text-amberBrand fill-amberBrand"></i> Whitelist
                     <span id="whitelist-badge" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-amberBrand text-black text-[9px] font-extrabold rounded-full flex items-center justify-center border-2 border-surface shadow">0</span>
                 </button>
-
             </div>
         </div>
     </header>
@@ -144,13 +149,13 @@
                 <i data-lucide="users" class="w-4 h-4 text-amberBrand"></i> 1. Audit & Filter Akun
             </button>
             <button onclick="switchTab('scraper-tab')" id="btn-scraper-tab" class="tab-btn px-5 py-3.5 border-b-2 border-transparent font-medium text-sm text-mutedMain flex items-center gap-2 transition duration-200 hover:text-textMain shrink-0">
-                <i data-lucide="terminal" class="w-4 h-4"></i> 2. Scanner Terpadu
+                <i data-lucide="terminal" class="w-4 h-4 text-cyanBrand"></i> 2. Scanner Terpadu (Inspect)
             </button>
             <button onclick="switchTab('executor-tab')" id="btn-executor-tab" class="tab-btn px-5 py-3.5 border-b-2 border-transparent font-medium text-sm text-mutedMain flex items-center gap-2 transition duration-200 hover:text-textMain shrink-0">
-                <i data-lucide="shield-zap" class="w-4 h-4 text-roseBrand"></i> 3. Tinjauan Manual Akun
+                <i data-lucide="zap" class="w-4 h-4 text-roseBrand"></i> 3. Eksekutor Unfollow & Tinjauan
             </button>
             <button onclick="switchTab('analytics-tab')" id="btn-analytics-tab" class="tab-btn px-5 py-3.5 border-b-2 border-transparent font-medium text-sm text-mutedMain flex items-center gap-2 transition duration-200 hover:text-textMain shrink-0">
-                <i data-lucide="pie-chart" class="w-4 h-4 text-cyanBrand"></i> 4. Analistik & Wawasan
+                <i data-lucide="pie-chart" class="w-4 h-4 text-greenBrand"></i> 4. Analitik & Wawasan
             </button>
         </div>
     </nav>
@@ -263,31 +268,26 @@
                     <div class="bg-gradient-to-b from-black/50 to-surfaceSoft border border-amberBrand/30 rounded-xl p-4 space-y-3 relative overflow-hidden">
                         <div class="flex items-center justify-between">
                             <span class="text-[10px] font-extrabold text-amberBrand tracking-wider uppercase flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-amberBrand animate-ping"></span> Profile Sync Terpadu
+                                <span class="w-2 h-2 rounded-full bg-amberBrand animate-ping"></span> Scanner Inspect IG
                             </span>
-                            <span class="text-[9px] text-mutedMain">Real-Time Metrik</span>
+                            <span class="text-[9px] text-mutedMain">Ambil Data Akun</span>
                         </div>
                         <p class="text-[10px] text-mutedMain leading-relaxed">
-                            Sinkronisasi profil dijalankan bersama pemindaian Followers dan Following pada Tab 2. Nilai yang tidak tersedia tidak akan dibuat-buat.
+                            Gunakan skrip Scanner Terpadu pada Tab 2 di Console browser Instagram Anda untuk mengekstrak daftar Followers &amp; Following beserta ID akun.
                         </p>
-                        
-                        <div id="sync-terminal" class="hidden bg-black/90 rounded-lg p-2 font-mono text-[9px] text-greenBrand border border-white/10 max-h-[110px] overflow-y-auto space-y-0.5 shadow-inner">
-                            <p class="text-cyanBrand">> Menginisialisasi kueri Meta API...</p>
-                        </div>
-
                         <button id="btn-simulate-sync" onclick="startSimulatedApiSync()" class="w-full bg-amberBrand/10 hover:bg-amberBrand/20 border border-amberBrand/40 text-amberBrand hover:text-white transition font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 shadow">
-                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Buka Scanner Terpadu
+                            <i data-lucide="terminal" class="w-3.5 h-3.5"></i> Buka Scanner Inspect (Tab 2)
                         </button>
                     </div>
 
                     <!-- Action Banner -->
                     <div class="bg-black/30 p-3 rounded-xl border border-white/5 flex justify-between items-center">
-                        <span class="text-[11px] text-mutedMain font-medium">Terpilih Untuk Ditinjau:</span>
+                        <span class="text-[11px] text-mutedMain font-medium">Terpilih Untuk Unfollow:</span>
                         <strong id="stat-selected-count" class="text-sm text-amberBrand font-extrabold">0</strong>
                     </div>
 
                     <button onclick="generateExecutorScript()" class="w-full bg-gradient-to-r from-roseBrand via-amber-500 to-amberBrand hover:opacity-95 font-extrabold text-sm py-3.5 rounded-xl text-black flex items-center justify-center gap-2 shadow-lg shadow-roseBrand/20 transition duration-150 transform active:scale-[0.99]">
-                        <i data-lucide="shield-zap" class="w-4 h-4"></i> Buat Daftar Tinjauan (Step 3)
+                        <i data-lucide="zap" class="w-4 h-4"></i> Buat Skrip Unfollow &amp; Daftar (Step 3)
                     </button>
                 </div>
             </div>
@@ -297,7 +297,7 @@
                 
                 <!-- Table Controls Header -->
                 <div class="px-6 py-4 border-b border-white/10 flex flex-wrap items-center justify-between gap-4 bg-black/30">
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 flex-wrap">
                         <label class="relative flex items-center cursor-pointer select-none gap-2.5 text-xs font-semibold text-textMain">
                             <input type="checkbox" id="select-all-visible" onchange="toggleSelectAll(this)" class="sr-only peer">
                             <div class="w-5 h-5 bg-black/50 border border-white/20 peer-checked:border-amberBrand peer-checked:bg-amberBrand rounded-md flex items-center justify-center transition duration-150 shrink-0">
@@ -311,11 +311,14 @@
                         <p class="text-xs text-mutedMain">Menampilkan <span id="visible-count" class="font-bold text-textMain">0</span> dari <span id="total-count" class="font-bold text-textMain">0</span> total akun</p>
                     </div>
                     
-                    <div class="flex items-center gap-2">
-                        <button onclick="addSelectedToWhitelist()" class="px-2.5 py-1.5 rounded-lg bg-amberBrand/10 hover:bg-amberBrand/20 border border-amberBrand/30 text-amberBrand text-xs font-semibold flex items-center gap-1 transition">
-                            <i data-lucide="star" class="w-3.5 h-3.5 fill-amberBrand"></i> Whitelist Terpilih
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button onclick="selectOnlyNotFollowingBack()" class="px-2.5 py-1.5 rounded-lg bg-roseBrand/15 hover:bg-roseBrand/25 border border-roseBrand/30 text-roseBrand text-xs font-bold flex items-center gap-1 transition">
+                            <i data-lucide="user-minus" class="w-3.5 h-3.5"></i> Pilih Tidak Follback
                         </button>
-                        <button onclick="resetAllSelections()" class="px-2.5 py-1.5 rounded-lg bg-roseBrand/10 hover:bg-roseBrand/20 border border-roseBrand/30 text-roseBrand text-xs font-semibold flex items-center gap-1 transition">
+                        <button onclick="addSelectedToWhitelist()" class="px-2.5 py-1.5 rounded-lg bg-amberBrand/10 hover:bg-amberBrand/20 border border-amberBrand/30 text-amberBrand text-xs font-semibold flex items-center gap-1 transition">
+                            <i data-lucide="star" class="w-3.5 h-3.5 fill-amberBrand"></i> Whitelist
+                        </button>
+                        <button onclick="resetAllSelections()" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-mutedMain hover:text-textMain text-xs font-semibold flex items-center gap-1 transition">
                             <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
                         </button>
                     </div>
@@ -333,33 +336,32 @@
             <div class="glass-panel border-amberBrand/30 rounded-2xl p-6 shadow-2xl space-y-5 relative overflow-hidden">
                 <div>
                     <h4 class="font-serif font-bold text-lg text-amberBrand flex items-center gap-2">
-                        <i data-lucide="scan-search" class="w-5 h-5"></i> InstaClean Unified Scanner
+                        <i data-lucide="scan-search" class="w-5 h-5"></i> InstaClean Unified Scanner (Inspect Console)
                     </h4>
                     <p class="text-xs text-textMain leading-relaxed mt-2">
-                        Impor arsip resmi Instagram untuk menggabungkan Followers dan Following, menghitung relasi akun, lalu menyimpan seluruh workspace sebagai <strong>instaclean_data.json</strong>.
+                        Jalankan skrip pemindai di Console browser pada tab <strong>instagram.com</strong> untuk mengumpulkan daftar Followers dan Following lengkap dengan ID akun numerik (diperlukan untuk fitur Unfollow Console Anti-Block), atau impor arsip resmi Instagram.
                     </p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-amberBrand block mb-1">1. Dual Scanner</b><span class="text-mutedMain">Membaca seluruh bagian Followers dan Following, termasuk followers_1.json dan seterusnya.</span></div>
-                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-cyanBrand block mb-1">2. Profile Sync</b><span class="text-mutedMain">Mempertahankan informasi profil/metadata jika tersedia dalam file yang diimpor.</span></div>
-                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-greenBrand block mb-1">3. Single JSON</b><span class="text-mutedMain">Ekspor akun, relasi, whitelist, metadata, dan ringkasan dalam satu file.</span></div>
+                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-amberBrand block mb-1">1. Dual Scanner</b><span class="text-mutedMain">Memindai Following &amp; Followers dengan jeda aman serta pagination otomatis.</span></div>
+                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-cyanBrand block mb-1">2. Ekstraksi ID Akun</b><span class="text-mutedMain">Menyimpan ID numerik (`pk`/`id`) setiap akun agar dapat diproses oleh Eksekutor Unfollow.</span></div>
+                    <div class="bg-black/40 border border-white/10 rounded-xl p-4"><b class="text-greenBrand block mb-1">3. Single JSON</b><span class="text-mutedMain">Mengunduh otomatis file <code>instaclean_relations_[ID].json</code> siap impor.</span></div>
                 </div>
                 <div class="rounded-xl border border-amberBrand/25 bg-amberBrand/5 p-4 space-y-3">
                     <div class="flex items-center justify-between flex-wrap gap-2">
                         <div class="text-xs font-extrabold text-amberBrand">DUAL SCANNER FOLLOWERS &amp; FOLLOWING</div>
-                        <span class="text-[10px] text-mutedMain">Network → Fetch/XHR → Response → Copy response</span>
+                        <span class="text-[10px] text-mutedMain">F12 → Console → Paste → Enter</span>
                     </div>
-                    <p class="text-[11px] text-mutedMain leading-relaxed">Jalankan scanner terpadu ini dari Console pada tab instagram.com saat login ke akun sendiri. Scanner mencoba membaca daftar relasi melalui permintaan web Instagram yang terautentikasi, memproses cursor pagination, membandingkan jumlah dengan angka profil yang terbaca, lalu mengunduh JSON beserta status kelengkapan. Endpoint internal dapat berubah atau dibatasi Instagram; scanner tidak melewati login, verifikasi, atau rate limit.</p>
                     <div class="rounded-xl border border-white/10 bg-black/40 p-3 space-y-2">
                         <div class="flex items-center justify-between flex-wrap gap-2">
                             <span class="text-[11px] font-bold text-textMain">KODE SCRAPER LANGSUNG (JALANKAN DI TAB INSTAGRAM)</span>
-                            <button type="button" onclick="copyInspectConsoleCode()" class="px-3 py-1.5 rounded-lg bg-cyanBrand/15 border border-cyanBrand/30 text-cyanBrand text-[10px] font-bold">Salin Scanner Terpadu</button>
+                            <button type="button" onclick="copyToClipboard('inspect-console-code')" class="px-3 py-1.5 rounded-lg bg-cyanBrand/15 hover:bg-cyanBrand/25 border border-cyanBrand/30 text-cyanBrand text-[10px] font-bold flex items-center gap-1.5 transition">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin Scanner Terpadu
+                            </button>
                         </div>
-                        <p class="text-[10px] text-mutedMain">Kode ini memindai Following dan Followers secara berurutan, melanjutkan selama cursor berubah, mendeteksi halaman/cursor berulang, membandingkan jumlah dengan profil, lalu mengunduh JSON instaclean_relations_[ID].json. Kode menggunakan sesi login browser dan endpoint internal Instagram; jangan bagikan kode/hasil sesi kepada orang lain.</p>
-                        <pre id="inspect-console-code" class="max-h-64 overflow-auto whitespace-pre-wrap break-all text-[10px] leading-relaxed font-mono text-greenBrand select-all">/* =========================================================================
- * INSTACLEAN DUAL SCANNER — FOLLOWERS &amp; FOLLOWING
- * Jalankan di instagram.com saat login ke akun sendiri.
- * Menggunakan endpoint web internal; akses dapat berubah/dibatasi Instagram.
+                        <pre id="inspect-console-code" class="max-h-64 overflow-auto whitespace-pre-wrap break-all text-[10px] leading-relaxed font-mono text-greenBrand select-all bg-black/60 p-3 rounded-lg border border-white/5">/* =========================================================================
+ * INSTACLEAN DUAL SCANNER — FOLLOWERS &amp; FOLLOWING (SAFE MODE)
+ * Jalankan di Console (F12) pada tab instagram.com saat sudah login.
  * ========================================================================= */
 (async () =&gt; {
     const log = (msg, color = "#06b6d4") =&gt;
@@ -387,7 +389,7 @@
     if (csrf) headers["X-CSRFToken"] = csrf;
 
     async function requestPage(kind, cursor) {
-        const params = new URLSearchParams({ count: "200" });
+        const params = new URLSearchParams({ count: "100" });
         if (cursor) params.set("max_id", cursor);
         const url = `https://www.instagram.com/api/v1/friendships/${userId}/${kind}/?${params}`;
 
@@ -397,285 +399,204 @@
         const contentType = response.headers.get("content-type") || "";
         const finalUrl = response.url || url;
         const body = await response.text();
-        const preview = body.slice(0, 180).replace(/\s+/g, " ").trim();
-        const looksLikeHtml = /text\/html/i.test(contentType) ||
-            /^\s*(&lt;!doctype\s+html|&lt;html|&lt;head|&lt;body)/i.test(body) ||
-            /&lt;html[\s&gt;]/i.test(body.slice(0, 1000));
+        const looksLikeHtml = /text\/html/i.test(contentType) || /^\s*(&lt;!doctype|&lt;html)/i.test(body);
 
-        if (response.redirected || looksLikeHtml ||
-            /\/(accounts\/login|challenge|checkpoint)(\/|\?|$)/i.test(finalUrl)) {
-            throw new Error(`Instagram mengirim HTML/verifikasi (HTTP ${response.status}). Login atau selesaikan verifikasi secara normal. Cuplikan: ${preview || "(kosong)"}`);
+        if (response.redirected || looksLikeHtml || /\/(accounts\/login|challenge|checkpoint)/i.test(finalUrl)) {
+            throw new Error(`Instagram meminta verifikasi/login (HTTP ${response.status}).`);
         }
-        if (response.status === 401) throw new Error("HTTP 401: sesi tidak terautentikasi. Login ulang secara normal.");
-        if (response.status === 403) throw new Error("HTTP 403: permintaan ditolak Instagram. Hentikan pemindaian dan gunakan ekspor informasi resmi jika diperlukan.");
-        if (response.status === 429) throw new Error("HTTP 429: Instagram membatasi permintaan. Hentikan pemindaian dan jangan mengulanginya berulang kali.");
-        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText || "Permintaan gagal"}. Cuplikan: ${preview}`);
+        if (response.status === 429) throw new Error("HTTP 429: Terkena batas sementara (Rate Limit). Hentikan dan coba lagi nanti.");
+        if (!response.ok) throw new Error(`HTTP ${response.status}: Permintaan gagal.`);
 
-        let json;
-        try { json = JSON.parse(body); }
-        catch { throw new Error(`Respons bukan JSON (Content-Type: ${contentType || "tidak diketahui"}; HTTP ${response.status}). Cuplikan: ${preview}`); }
-
-        if (json.status &amp;&amp; json.status !== "ok") throw new Error(json.message || `Status Instagram: ${json.status}`);
-        if (!Array.isArray(json.users)) throw new Error(json.message || "Respons tidak berisi array users; format endpoint mungkin berubah.");
+        const json = JSON.parse(body);
+        if (json.status &amp;&amp; json.status !== "ok") throw new Error(json.message || `Status: ${json.status}`);
+        if (!Array.isArray(json.users)) throw new Error("Format respons tidak berisi daftar users.");
         return json;
-    }
-
-    function parseInstagramCount(text) {
-        const value = String(text || "").replace(/\s+/g, " ").trim().toLowerCase();
-        const match = value.match(/(?:^|[^\d])(\d[\d.,]*)(?:\s*)(k|rb|ribu|m|jt|juta)?(?:$|[^\p{L}])/iu);
-        if (!match) return null;
-        const raw = match[1];
-        const suffix = (match[2] || "").toLowerCase();
-        let number;
-        if (suffix) {
-            // Compact formats such as 2.8K / 2,8 rb.
-            number = Number(raw.replace(",", ".").replace(/[.](?=.*[.])/g, ""));
-            const multiplier = ({ k: 1000, rb: 1000, ribu: 1000, m: 1000000, jt: 1000000, juta: 1000000 })[suffix];
-            number *= multiplier;
-        } else {
-            // A separator followed by exactly three digits is a thousands separator.
-            // Otherwise treat a single separator as a decimal separator.
-            const parts = raw.split(/[.,]/);
-            if (parts.length > 1 && parts[parts.length - 1].length === 3) {
-                number = Number(raw.replace(/[.,]/g, ""));
-            } else if (parts.length === 2) {
-                number = Number(raw.replace(",", "."));
-            } else {
-                number = Number(raw.replace(/[.,]/g, ""));
-            }
-        }
-        return Number.isFinite(number) ? Math.round(number) : null;
-    }
-
-    function readProfileCount(kind) {
-        const needles = kind === "followers"
-            ? ["followers", "pengikut"]
-            : ["following", "diikuti"];
-        const candidates = [...document.querySelectorAll('a[href], button, [role="button"]')];
-        for (const element of candidates) {
-            const href = (element.getAttribute("href") || "").toLowerCase();
-            const text = [
-                element.innerText, element.textContent,
-                element.getAttribute("aria-label"),
-                element.getAttribute("title")
-            ].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
-            const haystack = `${href} ${text}`.toLowerCase();
-            if (!needles.some(needle => haystack.includes(needle))) continue;
-            const count = parseInstagramCount(text);
-            if (count !== null) return count;
-        }
-        return null;
     }
 
     async function scan(kind, label) {
         const collected = new Map();
         const seenCursors = new Set();
-        const seenPageSignatures = new Set();
-        let cursor = null, page = 0, terminalReason = "cursor_ended";
-        const expected = readProfileCount(kind);
+        let cursor = null, page = 0;
 
         while (true) {
             page++;
-            if (page > 1000) {
-                terminalReason = "safety_page_limit";
-                log(`${label}: batas pengaman 1.000 halaman tercapai.`, "#f59e0b");
-                break;
-            }
+            if (page &gt; 500) break;
             const data = await requestPage(kind, cursor);
             const users = Array.isArray(data.users) ? data.users : [];
-            const signature = users.map(u => String(u && (u.pk || u.id) || "")).join(",");
-            if (signature && seenPageSignatures.has(signature)) {
-                terminalReason = "repeated_page";
-                log(`${label}: halaman berulang terdeteksi; pemindaian dihentikan agar tidak membuat loop.`, "#f59e0b");
-                break;
-            }
-            if (signature) seenPageSignatures.add(signature);
 
-            let acceptedThisPage = 0;
             for (const u of users) {
-                const rawId = u && (u.pk || u.id);
+                const rawId = u &amp;&amp; (u.pk || u.id);
                 if (!u || !rawId || !u.username) continue;
                 const id = String(rawId);
-                if (!collected.has(id)) acceptedThisPage++;
                 collected.set(id, {
-                    id, username: u.username, full_name: u.full_name || "",
+                    id,
+                    username: u.username,
+                    full_name: u.full_name || "",
                     profile_pic_url: u.profile_pic_url || "",
-                    is_private: Boolean(u.is_private), is_verified: Boolean(u.is_verified)
+                    is_private: Boolean(u.is_private),
+                    is_verified: Boolean(u.is_verified)
                 });
             }
 
-            log(`${label}: halaman ${page}, ${acceptedThisPage} akun baru (${users.length} data diterima API); total unik ${collected.size}${expected !== null ? ` / ${expected} profil` : ""}.`);
-            const nextCursor = data.next_max_id || data.next_max_id_max || null;
+            log(`${label}: halaman ${page} selesai (total terkumpul: ${collected.size} akun)`);
+            const nextCursor = data.next_max_id || null;
+            if (!nextCursor || seenCursors.has(String(nextCursor)) || users.length === 0) break;
 
-            // Continue whenever Instagram supplies a new cursor, even if has_more is
-            // temporarily false. This avoids prematurely stopping on inconsistent flags.
-            if (!nextCursor) {
-                terminalReason = data.has_more ? "has_more_without_cursor" : "cursor_ended";
-                break;
-            }
-            if (String(nextCursor) === String(cursor) || seenCursors.has(String(nextCursor))) {
-                terminalReason = "cursor_repeated";
-                log(`${label}: cursor tidak bergerak/berulang; pemindaian dihentikan.`, "#f59e0b");
-                break;
-            }
-            if (users.length === 0) {
-                terminalReason = "empty_page_with_cursor";
-                log(`${label}: halaman kosong meskipun cursor tersedia; pemindaian dihentikan.`, "#f59e0b");
-                break;
-            }
             seenCursors.add(String(nextCursor));
             cursor = String(nextCursor);
-            await sleep(2200);
+            // Jeda acak 2.5 - 4.5 detik antar halaman agar aman dari blokir
+            await sleep(2500 + Math.floor(Math.random() * 2000));
         }
-
-        const complete = expected !== null &&
-            collected.size === expected &&
-            terminalReason === "cursor_ended";
-        if (expected === null) {
-            log(`${label}: angka total profil tidak terbaca. Hasil tidak dapat diverifikasi terhadap jumlah akun profil.`, "#f59e0b");
-        } else if (collected.size !== expected || terminalReason !== "cursor_ended") {
-            log(`${label}: PERINGATAN jumlah/status tidak cocok — profil ${expected}, hasil ${collected.size}. Status: ${terminalReason}.`, "#f59e0b");
-        } else {
-            log(`${label}: jumlah sesuai profil (${collected.size}).`, "#10b981");
-        }
-        return { users: [...collected.values()], expected, complete, terminalReason, pages: page };
+        return [...collected.values()];
     }
 
-    let followingList, followersList;
-    let followingResult, followersResult;
     try {
-        log("Memulai pemindaian Following…");
-        followingResult = await scan("following", "Following");
-        followingList = followingResult.users;
-        log(`Following berakhir: ${followingList.length} akun; ${followingResult.complete ? "jumlah sesuai" : "BELUM TERVERIFIKASI LENGKAP"}.`, followingResult.complete ? "#10b981" : "#f59e0b");
-        log("Memulai pemindaian Followers…");
-        followersResult = await scan("followers", "Followers");
-        followersList = followersResult.users;
-        log(`Followers berakhir: ${followersList.length} akun; ${followersResult.complete ? "jumlah sesuai" : "BELUM TERVERIFIKASI LENGKAP"}.`, followersResult.complete ? "#10b981" : "#f59e0b");
+        log("Memulai pemindaian Following...");
+        const followingList = await scan("following", "Following");
+        await sleep(3000);
+        log("Memulai pemindaian Followers...");
+        const followersList = await scan("followers", "Followers");
+
+        const followerIds = new Set(followersList.map(u =&gt; u.id));
+        const allUsers = new Map();
+        for (const u of followingList) {
+            allUsers.set(u.id, { ...u, is_following: true, is_follower: followerIds.has(u.id) });
+        }
+        for (const u of followersList) {
+            if (allUsers.has(u.id)) allUsers.get(u.id).is_follower = true;
+            else allUsers.set(u.id, { ...u, is_following: false, is_follower: true });
+        }
+
+        const accounts = [...allUsers.values()];
+        const summary = {
+            account_id: userId,
+            scanned_at: new Date().toISOString(),
+            following_count: followingList.length,
+            followers_count: followersList.length,
+            unique_relations: accounts.length,
+            accounts
+        };
+
+        const blob = new Blob([JSON.stringify(summary, null, 2)], { type: "application/json;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `instaclean_relations_${userId}.json`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        log(`SELESAI! ${accounts.length} akun disimpan ke instaclean_relations_${userId}.json`, "#10b981");
     } catch (error) {
-        log(`PEMINDAIAN GAGAL: ${error.message}`, "#ef4444");
-        console.error(error);
-        log("Tidak ada file hasil dibuat agar hasil parsial tidak dianggap lengkap.", "#f59e0b");
-        return;
+        log(`PEMINDAIAN DIHENTIKAN: ${error.message}`, "#ef4444");
     }
-
-    const followerIds = new Set(followersList.map(u =&gt; u.id));
-    const allUsers = new Map();
-    for (const u of followingList) {
-        allUsers.set(u.id, { ...u, is_following: true, is_follower: followerIds.has(u.id) });
-    }
-    for (const u of followersList) {
-        if (allUsers.has(u.id)) allUsers.get(u.id).is_follower = true;
-        else allUsers.set(u.id, { ...u, is_following: false, is_follower: true });
-    }
-
-    const accounts = [...allUsers.values()];
-    const summary = {
-        account_id: userId,
-        scanned_at: new Date().toISOString(),
-        following_count: followingList.length,
-        followers_count: followersList.length,
-        expected_followers_count: followersResult.expected,
-        expected_following_count: followingResult.expected,
-        profile_counts_source: "visible_current_instagram_profile",
-        counts_are_account_specific: true,
-        followers_complete: followersResult.complete,
-        following_complete: followingResult.complete,
-        followers_terminal_reason: followersResult.terminalReason,
-        following_terminal_reason: followingResult.terminalReason,
-        followers_pages: followersResult.pages,
-        following_pages: followingResult.pages,
-        scan_complete: followersResult.complete && followingResult.complete,
-        unique_relations: accounts.length,
-        accounts
-    };
-    const blob = new Blob([JSON.stringify(summary, null, 2)], { type: "application/json;charset=utf-8" });
-    const objectUrl = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = objectUrl;
-    link.download = `instaclean_relations_${userId}.json`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() =&gt; URL.revokeObjectURL(objectUrl), 5000);
-
-    if (summary.scan_complete) {
-        log(`SELESAI TERVERIFIKASI: ${accounts.length} relasi unik; ${followingList.length} Following dan ${followersList.length} Followers.`, "#10b981");
-    } else {
-        log(`HASIL PARSIAL: ${accounts.length} relasi unik; Following ${followingList.length}/${followingResult.expected ?? "?"}, Followers ${followersList.length}/${followersResult.expected ?? "?"}. Periksa metadata JSON sebelum analisis.`, "#f59e0b");
-    }
-    log("File JSON diunduh. Impor melalui menu Impor JSON InstaClean; status kelengkapan ikut tersimpan.", summary.scan_complete ? "#10b981" : "#f59e0b");
 })();</pre>
-                        <p class="text-[10px] text-mutedMain">Cara pakai: buka Instagram di browser dan login ke akun sendiri. Buka halaman profil Instagram sampai angka Followers dan Following terlihat. Buka Console (F12 → Console), tempel kode ini, lalu Enter. Pastikan angka Followers dan Following terlihat pada profil sebelum menjalankan kode. Scanner membaca angka profil untuk pemeriksaan jumlah. Jika hasil tidak cocok, JSON tetap diberi tanda scan_complete=false dan jangan gunakan sebagai hasil final. Hentikan jika Instagram menampilkan pembatasan atau verifikasi.</p>
+                        <p class="text-[10px] text-mutedMain">Cara pakai: Buka Instagram di browser dan login. Tekan <b>F12</b> → tab <b>Console</b> (ketik <code>allow pasting</code> jika diminta Chrome/Edge), tempel kode di atas, lalu tekan <b>Enter</b>. Setelah file <code>.json</code> terunduh otomatis, klik tombol <b>Impor JSON</b> di pojok kanan atas aplikasi ini.</p>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+                    <!-- Paste Manual JSON Inspect -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
                         <label class="block space-y-1.5">
-                            <span class="text-[11px] font-bold text-amberBrand">JSON FOLLOWERS</span>
-                            <textarea id="inspect-followers-json" rows="7" spellcheck="false" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-[10px] font-mono text-textMain focus:outline-none focus:border-amberBrand" placeholder="Tempel isi followers.json di sini..."></textarea>
+                            <span class="text-[11px] font-bold text-amberBrand">ATAU TEMPEL JSON FOLLOWERS</span>
+                            <textarea id="inspect-followers-json" rows="5" spellcheck="false" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-[10px] font-mono text-textMain focus:outline-none focus:border-amberBrand" placeholder="Tempel respons JSON followers di sini..."></textarea>
                         </label>
                         <label class="block space-y-1.5">
-                            <span class="text-[11px] font-bold text-cyanBrand">JSON FOLLOWING</span>
-                            <textarea id="inspect-following-json" rows="7" spellcheck="false" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-[10px] font-mono text-textMain focus:outline-none focus:border-cyanBrand" placeholder="Tempel isi following.json di sini..."></textarea>
+                            <span class="text-[11px] font-bold text-cyanBrand">ATAU TEMPEL JSON FOLLOWING</span>
+                            <textarea id="inspect-following-json" rows="5" spellcheck="false" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-[10px] font-mono text-textMain focus:outline-none focus:border-cyanBrand" placeholder="Tempel respons JSON following di sini..."></textarea>
                         </label>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <button onclick="processInspectJSON()" class="px-4 py-3 rounded-xl bg-amberBrand hover:bg-amber-500 text-black text-xs font-extrabold flex items-center gap-2"><i data-lucide="scan" class="w-4 h-4"></i> Proses JSON Inspect</button>
-                        <button onclick="clearInspectJSON()" class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-textMain text-xs font-bold">Bersihkan</button>
+                        <button onclick="processInspectJSON()" class="px-4 py-2.5 rounded-xl bg-amberBrand hover:bg-amber-500 text-black text-xs font-extrabold flex items-center gap-2 transition"><i data-lucide="scan" class="w-4 h-4"></i> Proses JSON Inspect</button>
+                        <button onclick="clearInspectJSON()" class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-textMain text-xs font-bold transition">Bersihkan</button>
                     </div>
                     <p id="inspect-import-status" class="text-[11px] text-mutedMain">Belum ada respons Inspect yang diproses.</p>
-                    <p class="text-[10px] text-mutedMain">Catatan: beberapa respons hanya memuat sebagian daftar atau struktur berbeda. Jika jumlah tidak sesuai, kumpulkan respons halaman/segmen lain yang tersedia dan tempelkan setelah menggabungkannya ke dalam satu JSON yang valid, atau gunakan ekspor resmi Instagram.</p>
                 </div>
 
                 <div class="rounded-xl border border-cyanBrand/25 bg-cyanBrand/5 p-4 space-y-3">
-                    <div class="text-xs font-bold text-cyanBrand">IMPOR ARSIP RESMI INSTAGRAM</div>
-                    <ol class="list-decimal pl-5 space-y-1.5 text-[11px] text-mutedMain leading-relaxed">
-                        <li>Buka Instagram → Pusat Akun (Accounts Center).</li>
-                        <li>Pilih Informasi dan izin Anda → Unduh informasi Anda.</li>
-                        <li>Pilih akun Instagram dan kategori <b>Followers and following</b>. Sertakan informasi profil bila diperlukan.</li>
-                        <li>Pilih format <b>JSON</b>, rentang waktu yang diinginkan, lalu buat unduhan.</li>
-                        <li>Ekstrak ZIP. Pilih semua file JSON Followers dan file Following yang relevan di bawah ini.</li>
-                    </ol>
+                    <div class="text-xs font-bold text-cyanBrand">IMPOR FILE JSON HASIL SCANNER / ARSIP RESMI INSTAGRAM</div>
                     <input type="file" id="scanner-archive-input" class="hidden" accept=".json,application/json" multiple onchange="handleScannerArchive(this)">
                     <div class="flex flex-wrap gap-2">
-                        <button onclick="document.getElementById('scanner-archive-input').click()" class="px-4 py-3 rounded-xl bg-cyanBrand hover:bg-cyan-500 text-black text-xs font-extrabold flex items-center gap-2">
-                            <i data-lucide="folder-open" class="w-4 h-4"></i> Pilih File Arsip JSON
+                        <button onclick="document.getElementById('scanner-archive-input').click()" class="px-4 py-2.5 rounded-xl bg-cyanBrand hover:bg-cyan-500 text-black text-xs font-extrabold flex items-center gap-2 transition">
+                            <i data-lucide="folder-open" class="w-4 h-4"></i> Pilih File JSON Hasil Scan / Arsip
                         </button>
-                        <button onclick="exportWorkspaceJSON()" class="px-4 py-3 rounded-xl bg-greenBrand/15 border border-greenBrand/30 hover:bg-greenBrand/25 text-greenBrand text-xs font-bold flex items-center gap-2">
+                        <button onclick="exportWorkspaceJSON()" class="px-4 py-2.5 rounded-xl bg-greenBrand/15 border border-greenBrand/30 hover:bg-greenBrand/25 text-greenBrand text-xs font-bold flex items-center gap-2 transition">
                             <i data-lucide="download" class="w-4 h-4"></i> Ekspor instaclean_data.json
                         </button>
                     </div>
-                    <p id="scanner-import-status" class="text-[11px] text-mutedMain">Belum ada arsip yang diimpor. Anda dapat memilih beberapa file sekaligus.</p>
+                    <p id="scanner-import-status" class="text-[11px] text-mutedMain">Belum ada file JSON yang diimpor. Anda dapat memilih file <code>instaclean_relations_*.json</code> atau arsip resmi Instagram.</p>
                 </div>
-                <p class="text-[10px] text-mutedMain leading-relaxed">
-                    Pemrosesan dilakukan lokal di browser. Aplikasi tidak meminta kata sandi, membaca cookie/sesi, mengakses endpoint privat, atau melakukan unfollow otomatis. Metrik profil yang tidak tersedia dalam arsip akan dibiarkan kosong.
-                </p>
             </div>
+
             <div class="glass-panel border-white/10 rounded-2xl p-5 space-y-3">
-                <h5 class="text-xs font-bold text-textMain">HASIL PEMINDAIAN</h5>
+                <h5 class="text-xs font-bold text-textMain">RINGKASAN HASIL PEMINDAIAN</h5>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div class="bg-black/30 rounded-xl p-3"><span class="text-[10px] text-mutedMain block">Followers</span><strong id="scan-followers-count" class="text-xl text-amberBrand">0</strong></div>
-                    <div class="bg-black/30 rounded-xl p-3"><span class="text-[10px] text-mutedMain block">Following</span><strong id="scan-following-count" class="text-xl text-cyanBrand">0</strong></div>
-                    <div class="bg-black/30 rounded-xl p-3"><span class="text-[10px] text-mutedMain block">Mutual</span><strong id="scan-mutual-count" class="text-xl text-greenBrand">0</strong></div>
-                    <div class="bg-black/30 rounded-xl p-3"><span class="text-[10px] text-mutedMain block">Tidak follow back</span><strong id="scan-notback-count" class="text-xl text-roseBrand">0</strong></div>
+                    <div class="bg-black/30 rounded-xl p-3 border border-white/5"><span class="text-[10px] text-mutedMain block">Followers</span><strong id="scan-followers-count" class="text-xl text-amberBrand">0</strong></div>
+                    <div class="bg-black/30 rounded-xl p-3 border border-white/5"><span class="text-[10px] text-mutedMain block">Following</span><strong id="scan-following-count" class="text-xl text-cyanBrand">0</strong></div>
+                    <div class="bg-black/30 rounded-xl p-3 border border-white/5"><span class="text-[10px] text-mutedMain block">Mutual</span><strong id="scan-mutual-count" class="text-xl text-greenBrand">0</strong></div>
+                    <div class="bg-black/30 rounded-xl p-3 border border-white/5"><span class="text-[10px] text-mutedMain block">Tidak follow back</span><strong id="scan-notback-count" class="text-xl text-roseBrand">0</strong></div>
                 </div>
             </div>
         </div>
 
-        <!-- ================= TAB 3: MANUAL ACCOUNT REVIEW ================= -->
+        <!-- ================= TAB 3: UNFOLLOW EXECUTOR & MANUAL REVIEW ================= -->
         <div id="executor-tab" class="hidden max-w-4xl mx-auto space-y-6">
+            
+            <!-- Safe Console Unfollow Script Card -->
             <div class="glass-panel border-roseBrand/40 rounded-2xl p-6 shadow-2xl space-y-4">
-                <h4 class="font-serif font-bold text-lg text-roseBrand flex items-center gap-2">
-                    <i data-lucide="shield-alert" class="w-5 h-5"></i> Tinjau Akun Sebelum Berhenti Mengikuti
-                </h4>
-                <p class="text-xs text-textMain leading-relaxed">
-                    Eksekusi unfollow otomatis dinonaktifkan. InstaClean hanya menyiapkan daftar akun terpilih beserta tautan profil agar Anda dapat meninjau setiap akun dan mengambil keputusan langsung di Instagram.
-                </p>
-                <div class="p-3.5 bg-black/40 border border-white/5 rounded-xl text-xs flex justify-between items-center">
-                    <span class="text-mutedMain">Akun terpilih untuk ditinjau:</span>
-                    <strong id="executor-target-count" class="text-cyanBrand font-extrabold text-sm">0 Akun</strong>
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <h4 class="font-serif font-bold text-lg text-roseBrand flex items-center gap-2">
+                        <i data-lucide="zap" class="w-5 h-5"></i> Skrip Unfollow Console IG (Proteksi Anti-Block)
+                    </h4>
+                    <button onclick="openModal('safety-modal')" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-bold text-amberBrand flex items-center gap-1.5 transition">
+                        <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Atur Jeda Anti-Block
+                    </button>
                 </div>
-                <div id="manual-review-list" class="space-y-2 max-h-[65vh] overflow-y-auto">
-                    <p class="text-xs text-mutedMain text-center py-8">Pilih akun pada tab Audit, lalu tekan “Buat Daftar Tinjauan”.</p>
+
+                <p class="text-xs text-textMain leading-relaxed">
+                    Skrip di bawah ini dibuat otomatis berdasarkan akun terpilih Anda. Menggunakan <b>jeda acak manusiawi</b>, <b>istirahat antar-batch</b>, dan <b>auto-stop instan</b> jika Instagram mendeteksi batas (HTTP 429/403/Checkpoint) agar akun Anda tetap aman dan tidak terblokir.
+                </p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                    <div class="p-3 bg-black/40 border border-white/5 rounded-xl">
+                        <span class="text-[10px] text-mutedMain block">Target Unfollow</span>
+                        <strong id="executor-target-count" class="text-cyanBrand font-extrabold text-sm">0 Akun</strong>
+                    </div>
+                    <div class="p-3 bg-black/40 border border-white/5 rounded-xl">
+                        <span class="text-[10px] text-mutedMain block">Jeda Acak</span>
+                        <strong id="display-delay-range" class="text-greenBrand font-extrabold text-sm">22 - 45 dtk</strong>
+                    </div>
+                    <div class="p-3 bg-black/40 border border-white/5 rounded-xl">
+                        <span class="text-[10px] text-mutedMain block">Ukuran Batch</span>
+                        <strong id="display-batch-size" class="text-amberBrand font-extrabold text-sm">5 Akun</strong>
+                    </div>
+                    <div class="p-3 bg-black/40 border border-white/5 rounded-xl">
+                        <span class="text-[10px] text-mutedMain block">Istirahat Batch</span>
+                        <strong id="display-break-time" class="text-violetBrand font-extrabold text-sm">3 Menit</strong>
+                    </div>
+                </div>
+
+                <div class="rounded-xl border border-roseBrand/30 bg-black/50 p-4 space-y-2.5">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <span class="text-[11px] font-bold text-roseBrand flex items-center gap-1.5">
+                            <i data-lucide="terminal" class="w-4 h-4"></i> KODE EKSEKUTOR UNFOLLOW (TEMPEL DI CONSOLE INSTAGRAM)
+                        </span>
+                        <button type="button" onclick="copyToClipboard('unfollow-console-code')" class="px-3.5 py-1.5 rounded-lg bg-roseBrand hover:bg-rose-600 text-white text-[11px] font-extrabold flex items-center gap-1.5 shadow transition">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin Skrip Unfollow
+                        </button>
+                    </div>
+                    <pre id="unfollow-console-code" class="max-h-72 overflow-auto whitespace-pre-wrap break-all text-[10px] leading-relaxed font-mono text-amberBrand select-all bg-black/80 p-3.5 rounded-lg border border-white/10">// Pilih minimal 1 akun di Tab 1 (Audit &amp; Filter), lalu klik tombol "Buat Skrip Unfollow &amp; Daftar (Step 3)".</pre>
+                    <p class="text-[10px] text-mutedMain leading-relaxed">
+                        <b>Cara Menjalankan:</b> Buka tab <b>instagram.com</b> (dalam keadaan login) → tekan <b>F12</b> → pilih tab <b>Console</b> → tempel skrip di atas → tekan <b>Enter</b>. Untuk menghentikan paksa kapan saja, ketik <code>window.__STOP_INSTACLEAN = true</code> lalu Enter, atau refresh halaman.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Manual Review List Card -->
+            <div class="glass-panel border-white/10 rounded-2xl p-6 shadow-2xl space-y-4">
+                <h4 class="font-serif font-bold text-base text-textMain flex items-center gap-2">
+                    <i data-lucide="external-link" class="w-4 h-4 text-cyanBrand"></i> Daftar Tinjauan Profil Manual
+                </h4>
+                <div id="manual-review-list" class="space-y-2 max-h-[45vh] overflow-y-auto">
+                    <p class="text-xs text-mutedMain text-center py-8">Pilih akun pada tab Audit, lalu tekan “Buat Skrip Unfollow &amp; Daftar”.</p>
                 </div>
             </div>
         </div>
@@ -753,23 +674,23 @@
                 <!-- Recommendation Insights Card -->
                 <div class="glass-panel rounded-2xl p-6 space-y-4">
                     <h4 class="font-bold text-sm text-textMain flex items-center gap-2">
-                        <i data-lucide="lightbulb" class="w-4 h-4 text-amberBrand"></i> Rekomendasi Audit Otomatis
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-amberBrand"></i> Rekomendasi Keamanan Anti-Block
                     </h4>
                     
                     <div class="space-y-3 text-xs">
                         <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex items-start gap-3">
-                            <i data-lucide="check-circle-2" class="w-4 h-4 text-greenBrand shrink-0 mt-0.5"></i>
+                            <i data-lucide="shield-check" class="w-4 h-4 text-greenBrand shrink-0 mt-0.5"></i>
                             <div>
-                                <strong class="text-textMain font-semibold block">Proteksi Akun Terverifikasi</strong>
-                                <p class="text-[11px] text-mutedMain">Gunakan filter centang biru untuk mengecualikan tokoh publik atau brand dari pembersihan massal.</p>
+                                <strong class="text-textMain font-semibold block">Batas Harian Aman (30 - 50 Akun / Hari)</strong>
+                                <p class="text-[11px] text-mutedMain">Jangan melakukan unfollow ratusan akun sekaligus dalam satu waktu. Bagi menjadi beberapa sesi kecil setiap hari.</p>
                             </div>
                         </div>
 
                         <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex items-start gap-3">
-                            <i data-lucide="alert-circle" class="w-4 h-4 text-amberBrand shrink-0 mt-0.5"></i>
+                            <i data-lucide="clock" class="w-4 h-4 text-amberBrand shrink-0 mt-0.5"></i>
                             <div>
-                                <strong class="text-textMain font-semibold block">Jeda Aman Anti Rate-Limit</strong>
-                                <p class="text-[11px] text-mutedMain">Selalu jalankan skrip eksekutor dengan batas maksimum 30-50 unfollow per sesi untuk menjaga kesehatan akun.</p>
+                                <strong class="text-textMain font-semibold block">Jeda Acak &amp; Istirahat Batch</strong>
+                                <p class="text-[11px] text-mutedMain">Skrip otomatis mengacak waktu tunggu 22-45 detik per akun serta beristirahat 3 menit setiap 5 akun untuk meniru perilaku manusia.</p>
                             </div>
                         </div>
                     </div>
@@ -780,6 +701,46 @@
     </main>
 
     <!-- ================= MODALS ================= -->
+
+    <!-- Anti-Block Safety Configuration Modal (Fixed Missing Modal) -->
+    <div id="safety-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-surfaceRaised border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h3 class="font-serif font-bold text-lg text-textMain flex items-center gap-2">
+                    <i data-lucide="shield" class="w-5 h-5 text-roseBrand"></i> Pengaturan Anti-Block Unfollow
+                </h3>
+                <button onclick="closeModal('safety-modal')" class="text-mutedMain hover:text-textMain"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <p class="text-xs text-mutedMain leading-relaxed">
+                Sesuaikan jeda waktu antar-unfollow agar pola permintaan menyerupai aktivitas manusia normal dan terhindar dari blokir sementara Instagram.
+            </p>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+                <div>
+                    <label class="font-semibold text-textMain block mb-1">Jeda Minimum (detik):</label>
+                    <input type="number" id="safety-min-delay" value="22" min="10" max="120" class="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-textMain focus:outline-none focus:border-amberBrand">
+                </div>
+                <div>
+                    <label class="font-semibold text-textMain block mb-1">Jeda Maksimum (detik):</label>
+                    <input type="number" id="safety-max-delay" value="45" min="15" max="180" class="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-textMain focus:outline-none focus:border-amberBrand">
+                </div>
+                <div>
+                    <label class="font-semibold text-textMain block mb-1">Akun per Batch:</label>
+                    <input type="number" id="safety-batch-size" value="5" min="2" max="20" class="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-textMain focus:outline-none focus:border-amberBrand">
+                </div>
+                <div>
+                    <label class="font-semibold text-textMain block mb-1">Istirahat Batch (menit):</label>
+                    <input type="number" id="safety-break-time" value="3" min="1" max="15" class="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-textMain focus:outline-none focus:border-amberBrand">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2.5 pt-3 border-t border-white/10">
+                <button onclick="closeModal('safety-modal')" class="px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-semibold rounded-xl text-textMain transition">Batal</button>
+                <button onclick="saveSafetyConfig()" class="px-4 py-2 bg-roseBrand hover:bg-rose-600 text-xs font-extrabold rounded-xl text-white transition shadow">Simpan Parameter</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Bulk Edit Modal -->
     <div id="bulk-edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 hidden p-4">
@@ -809,9 +770,12 @@
     <!-- Import JSON Modal -->
     <div id="import-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 hidden p-4">
         <div class="bg-surfaceRaised border border-white/10 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
-            <h3 class="font-serif font-bold text-lg text-textMain flex items-center gap-2">
-                <i data-lucide="import" class="w-5 h-5 text-cyanBrand"></i> Impor Berkas JSON Instagram
-            </h3>
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h3 class="font-serif font-bold text-lg text-textMain flex items-center gap-2">
+                    <i data-lucide="import" class="w-5 h-5 text-cyanBrand"></i> Impor Berkas JSON Instagram
+                </h3>
+                <button onclick="closeModal('import-modal')" class="text-mutedMain hover:text-textMain"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
             
             <div class="space-y-2">
                 <label class="text-xs font-semibold text-textMain block">Unggah Berkas JSON Anda:</label>
@@ -819,7 +783,7 @@
                 <div onclick="document.getElementById('import-file-selector').click()" class="border-2 border-dashed border-white/20 hover:border-cyanBrand/50 rounded-xl p-6 text-center cursor-pointer transition bg-black/30 group">
                     <i data-lucide="upload-cloud" class="w-10 h-10 text-mutedMain group-hover:text-cyanBrand mx-auto mb-2 transition"></i>
                     <span class="text-xs text-textMain font-semibold block">Klik untuk memilih satu atau beberapa file .json</span>
-                    <span class="text-[10px] text-mutedMain block mt-1" id="file-name-display">Pilih beberapa file JSON dari arsip resmi Instagram sekaligus</span>
+                    <span class="text-[10px] text-mutedMain block mt-1" id="file-name-display">Mendukung file hasil Scanner (instaclean_relations_*.json) &amp; arsip resmi IG</span>
                 </div>
             </div>
 
@@ -922,12 +886,13 @@
         window.getAvatarHTML = function(username, profilePicUrl, isWhitelisted, size) {
             isWhitelisted = !!isWhitelisted;
             size = size || 'normal';
-            var firstLetter = username ? username.charAt(0).toUpperCase() : '?';
+            var safeUser = String(username || '?').replace(/[<>"'&]/g, '');
+            var firstLetter = safeUser ? safeUser.charAt(0).toUpperCase() : '?';
             var dimensions = size === 'small' ? 'w-8 h-8 rounded-full text-xs' : 'w-11 h-11 rounded-full text-sm';
             
             var hash = 0;
-            for (var i = 0; i < username.length; i++) {
-                hash = username.charCodeAt(i) + ((hash << 5) - hash);
+            for (var i = 0; i < safeUser.length; i++) {
+                hash = safeUser.charCodeAt(i) + ((hash << 5) - hash);
             }
             var gradients = [
                 'linear-gradient(135deg, #FF512F 0%, #DD2476 100%)',
@@ -939,7 +904,7 @@
             var selectedGradient = gradients[Math.abs(hash) % gradients.length];
             
             var finalPicUrl = '';
-            var unavatarUrl = 'https://unavatar.io/instagram/' + username;
+            var unavatarUrl = 'https://unavatar.io/instagram/' + encodeURIComponent(safeUser);
             
             if (profilePicUrl && profilePicUrl.trim() !== '') {
                 var cleanUrl = profilePicUrl.replace(/^https?:\/\//i, '');
@@ -962,7 +927,7 @@
                    '<div class="instagram-ring p-[2px] rounded-full flex items-center justify-center shadow-md w-full h-full">' +
                    '<div class="relative w-full h-full bg-[#1e1d1a] rounded-full p-[1.5px] flex items-center justify-center">' +
                    '<div class="' + dimensions + ' flex items-center justify-center text-white font-extrabold uppercase" style="background: ' + selectedGradient + '; text-shadow: 0 1px 2px rgba(0,0,0,0.4);">' + firstLetter + '</div>' +
-                   '<img src="' + finalPicUrl + '" referrerpolicy="no-referrer" onerror="if(this.src !== \'' + backupUrl + '\') { this.src = \'' + backupUrl + '\'; } else { this.style.display=\'none\'; }" class="absolute inset-0 ' + dimensions + ' object-cover border border-[#1e1d1a] rounded-full" alt="' + username + '">' +
+                   '<img src="' + finalPicUrl + '" referrerpolicy="no-referrer" onerror="if(this.src !== \'' + backupUrl + '\') { this.src = \'' + backupUrl + '\'; } else { this.style.display=\'none\'; }" class="absolute inset-0 ' + dimensions + ' object-cover border border-[#1e1d1a] rounded-full" alt="' + safeUser + '">' +
                    '</div>' +
                    '</div>' +
                    badgeHTML +
@@ -970,17 +935,6 @@
         };
 
         var getAvatarHTML = window.getAvatarHTML;
-
-        const TARGET_ACCURATE_DATA = [
-            { id: "1", username: "pputriamalia20_", full_name: "putri amalia", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 2200, following_count: 854, posts_count: 14 },
-            { id: "2", username: "gp.lpg", full_name: "Graduation Photographer Lampung", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 4500, following_count: 120, posts_count: 231 },
-            { id: "3", username: "kkn_plp_waydadi2.2026", full_name: "KKN-PLP UNILA WAYDADI2 2026", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 1700, following_count: 42, posts_count: 89 },
-            { id: "4", username: "ini_megoyyy", full_name: "Mega Linda", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 1900, following_count: 1102, posts_count: 45 },
-            { id: "5", username: "tareemhijab", full_name: "Hijab and Distro ✨", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 2600, following_count: 1450, posts_count: 1420 },
-            { id: "6", username: "bouquetkawatbululampung_", full_name: "charadefleurs", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 1200, following_count: 412, posts_count: 51 },
-            { id: "7", username: "safitry_319", full_name: "safitry_319", profile_pic_url: "", is_verified: false, is_private: false, is_following: false, is_follower: true, followers_count: 3100, following_count: 650, posts_count: 12 },
-            { id: "8", username: "masbay__", full_name: "Bayu Prasetio", profile_pic_url: "", is_verified: false, is_private: false, is_following: true, is_follower: true, followers_count: 1604, following_count: 981, posts_count: 184 }
-        ];
 
         let accounts = [];
         let filteredAccounts = [];
@@ -993,8 +947,8 @@
         let safetyBatchSize = 5;
         let safetyBreakTime = 3;
 
-        // Workspace dimulai kosong. Data hanya berasal dari impor/hasil pengguna.
         let workspacePayload = {};
+
         window.onload = function() {
             if (window.lucide) lucide.createIcons();
             applyFilters();
@@ -1002,16 +956,17 @@
         };
 
         function startSimulatedApiSync() {
-            showToast("Gunakan Skrip Scanner Terpadu pada Tab 2 untuk mengambil data profil yang tersedia. Sinkronisasi demo tidak dijalankan.", "info");
+            showToast("Gunakan Skrip Scanner Terpadu pada Tab 2 untuk mengambil data akun dari Console Instagram.", "info");
             switchTab('scraper-tab');
         }
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
+            if (!container) return;
             const toast = document.createElement('div');
-            toast.className = `p-4 rounded-xl text-xs font-bold text-black shadow-2xl border transition duration-300 transform translate-y-4 opacity-0 flex items-center gap-2 max-w-xs pointer-events-auto ${
+            toast.className = `p-3.5 rounded-xl text-xs font-bold text-black shadow-2xl border transition duration-300 transform translate-y-4 opacity-0 flex items-center gap-2 max-w-xs pointer-events-auto ${
                 type === 'success' ? 'bg-greenBrand border-greenBrand/20' :
-                type === 'error' ? 'bg-roseBrand border-roseBrand/20' : 'bg-amberBrand border-amberBrand/20'
+                type === 'error' ? 'bg-roseBrand text-white border-roseBrand/20' : 'bg-amberBrand border-amberBrand/20'
             }`;
             
             let icon = 'info';
@@ -1020,7 +975,7 @@
 
             toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i> <span>${message}</span>`;
             container.appendChild(toast);
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
 
             setTimeout(() => {
                 toast.classList.remove('translate-y-4', 'opacity-0');
@@ -1056,12 +1011,13 @@
                 activeBtn.classList.remove('border-transparent', 'font-medium', 'text-mutedMain');
             }
 
-            document.getElementById('audit-tab').classList.add('hidden');
-            document.getElementById('scraper-tab').classList.add('hidden');
-            document.getElementById('executor-tab').classList.add('hidden');
-            document.getElementById('analytics-tab').classList.add('hidden');
+            ['audit-tab', 'scraper-tab', 'executor-tab', 'analytics-tab'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
 
-            document.getElementById(tabId).classList.remove('hidden');
+            const targetEl = document.getElementById(tabId);
+            if (targetEl) targetEl.classList.remove('hidden');
 
             if (tabId === 'analytics-tab') {
                 updateAnalytics();
@@ -1079,12 +1035,12 @@
             
             const minFollowersVal = document.getElementById('filter-min-followers').value;
             const maxFollowersVal = document.getElementById('filter-max-followers').value;
-            const minFollowers = minFollowersVal !== '' ? parseInt(minFollowersVal) : null;
-            const maxFollowers = maxFollowersVal !== '' ? parseInt(maxFollowersVal) : null;
+            const minFollowers = minFollowersVal !== '' ? parseInt(minFollowersVal, 10) : null;
+            const maxFollowers = maxFollowersVal !== '' ? parseInt(maxFollowersVal, 10) : null;
 
             filteredAccounts = accounts.filter(user => {
-                const matchSearch = user.username.toLowerCase().includes(searchQuery) || 
-                                    user.full_name.toLowerCase().includes(searchQuery);
+                const matchSearch = (user.username || '').toLowerCase().includes(searchQuery) || 
+                                    (user.full_name || '').toLowerCase().includes(searchQuery);
                 if (!matchSearch) return false;
 
                 let relationMatch = false;
@@ -1141,12 +1097,13 @@
                 else if (!u.is_following && u.is_follower) fans++;
             });
 
-            const total = accounts.length || 1;
-            const mutualPct = ((mutual / total) * 100).toFixed(1);
-            const egoisPct = ((notback / total) * 100).toFixed(1);
-            const fansPct = ((fans / total) * 100).toFixed(1);
+            const rawTotal = accounts.length;
+            const divisor = rawTotal || 1;
+            const mutualPct = ((mutual / divisor) * 100).toFixed(1);
+            const egoisPct = ((notback / divisor) * 100).toFixed(1);
+            const fansPct = ((fans / divisor) * 100).toFixed(1);
 
-            document.getElementById('ana-total').innerText = total.toLocaleString('id-ID');
+            document.getElementById('ana-total').innerText = rawTotal.toLocaleString('id-ID');
             document.getElementById('ana-mutual-pct').innerText = `${mutualPct}%`;
             document.getElementById('ana-mutual-count').innerText = `${mutual.toLocaleString('id-ID')} akun saling mengikuti`;
 
@@ -1169,25 +1126,25 @@
             const container = document.getElementById('accounts-container');
             container.innerHTML = '';
 
-            const sliceOfAccounts = filteredAccounts;
-
             if (filteredAccounts.length === 0) {
                 container.innerHTML = `
                     <div class="p-12 text-center text-mutedMain flex flex-col items-center justify-center gap-2">
                         <i data-lucide="users-round" class="w-12 h-12 stroke-[1.5] text-mutedMain/30"></i>
-                        <p class="text-sm font-semibold text-mutedMain">Tidak ada akun yang cocok dengan filter</p>
+                        <p class="text-sm font-semibold text-mutedMain">Tidak ada akun yang tampil</p>
+                        <p class="text-xs text-mutedMain/70">Silakan jalankan Scanner di Tab 2 atau Impor JSON terlebih dahulu.</p>
                     </div>
                 `;
-                lucide.createIcons();
+                if (window.lucide) lucide.createIcons();
+                syncSelectAllState();
                 return;
             }
 
-            sliceOfAccounts.forEach(user => {
+            filteredAccounts.forEach(user => {
                 const isSelected = selectedIds.has(user.id);
                 const isWhitelisted = whitelistedIds.has(user.id);
                 
                 const formatCount = (num) => {
-                    if (num === undefined || num === null) return '0';
+                    if (num === undefined || num === null) return '-';
                     if (num >= 1000000) return (num / 1000000).toFixed(1).replace('.0', '') + 'jt';
                     return num >= 1000 ? (num / 1000).toFixed(1).replace('.0', '') + 'k' : num;
                 };
@@ -1245,6 +1202,9 @@
                     </div>
 
                     <div class="flex items-center gap-1.5 shrink-0">
+                        <a href="https://www.instagram.com/${encodeURIComponent(user.username)}/" target="_blank" rel="noopener noreferrer" class="p-2 rounded-xl bg-white/5 border border-white/5 hover:border-cyanBrand/30 hover:bg-cyanBrand/10 transition" title="Buka Profil IG">
+                            <i data-lucide="external-link" class="w-4 h-4 text-mutedMain hover:text-cyanBrand"></i>
+                        </a>
                         <button onclick="openEditModal('${user.id}')" class="p-2 rounded-xl bg-white/5 border border-white/5 hover:border-amberBrand/30 hover:bg-amberBrand/10 transition" title="Edit Detail">
                             <i data-lucide="edit-3" class="w-4 h-4 text-mutedMain hover:text-amberBrand"></i>
                         </button>
@@ -1257,15 +1217,34 @@
                 container.appendChild(row);
             });
 
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
             syncSelectAllState();
+        }
+
+        function selectOnlyNotFollowingBack() {
+            let count = 0;
+            filteredAccounts.forEach(user => {
+                if (whitelistedIds.has(user.id)) return;
+                if (user.is_following && !user.is_follower) {
+                    selectedIds.add(user.id);
+                    count++;
+                }
+            });
+            updateStatistics();
+            renderAccounts();
+            showToast(`${count} akun Tidak Follback dipilih!`, count > 0 ? "success" : "info");
         }
 
         function renderBulkEditGrid() {
             const grid = document.getElementById('bulk-edit-grid');
             grid.innerHTML = '';
 
-            const editableSeed = accounts.slice(0, 15);
+            if (accounts.length === 0) {
+                grid.innerHTML = '<p class="text-xs text-mutedMain text-center py-8">Belum ada data akun untuk diedit.</p>';
+                return;
+            }
+
+            const editableSeed = accounts.slice(0, 25);
 
             editableSeed.forEach(user => {
                 const container = document.createElement('div');
@@ -1281,15 +1260,15 @@
                     <div class="flex items-center gap-2 flex-wrap">
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] text-mutedMain">Pengikut:</span>
-                            <input type="number" data-bulk-id="${user.id}" data-bulk-type="followers" value="${user.followers_count}" class="w-16 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
+                            <input type="number" data-bulk-id="${user.id}" data-bulk-type="followers" value="${user.followers_count || 0}" class="w-16 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
                         </div>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] text-mutedMain">Diikuti:</span>
-                            <input type="number" data-bulk-id="${user.id}" data-bulk-type="following" value="${user.following_count}" class="w-16 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
+                            <input type="number" data-bulk-id="${user.id}" data-bulk-type="following" value="${user.following_count || 0}" class="w-16 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
                         </div>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] text-mutedMain">Post:</span>
-                            <input type="number" data-bulk-id="${user.id}" data-bulk-type="posts" value="${user.posts_count}" class="w-14 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
+                            <input type="number" data-bulk-id="${user.id}" data-bulk-type="posts" value="${user.posts_count || 0}" class="w-14 bg-black/60 border border-white/10 rounded-lg py-1 px-1.5 text-[10px] text-textMain text-right font-mono focus:outline-none focus:border-amberBrand">
                         </div>
                     </div>
                 `;
@@ -1302,7 +1281,7 @@
             inputs.forEach(input => {
                 const id = input.getAttribute('data-bulk-id');
                 const type = input.getAttribute('data-bulk-type');
-                const userVal = parseInt(input.value) || 0;
+                const userVal = parseInt(input.value, 10) || 0;
                 
                 const userIndex = accounts.findIndex(u => u.id === id);
                 if (userIndex !== -1) {
@@ -1345,9 +1324,9 @@
 
             const newUsername = document.getElementById('edit-username').value.trim();
             const newFullName = document.getElementById('edit-fullname').value.trim();
-            const newFollowersCount = parseInt(document.getElementById('edit-followers-count').value) || 0;
-            const newFollowingCount = parseInt(document.getElementById('edit-following-count').value) || 0;
-            const newPostsCount = parseInt(document.getElementById('edit-posts-count').value) || 0;
+            const newFollowersCount = parseInt(document.getElementById('edit-followers-count').value, 10) || 0;
+            const newFollowingCount = parseInt(document.getElementById('edit-following-count').value, 10) || 0;
+            const newPostsCount = parseInt(document.getElementById('edit-posts-count').value, 10) || 0;
             const relation = document.getElementById('edit-relation').value;
             const isVerified = document.getElementById('edit-verified').checked;
 
@@ -1380,10 +1359,19 @@
         }
 
         function saveSafetyConfig() {
-            safetyMinDelay = parseInt(document.getElementById('safety-min-delay').value) || 20;
-            safetyMaxDelay = parseInt(document.getElementById('safety-max-delay').value) || 45;
-            safetyBatchSize = parseInt(document.getElementById('safety-batch-size').value) || 5;
-            safetyBreakTime = parseInt(document.getElementById('safety-break-time').value) || 3;
+            let minVal = parseInt(document.getElementById('safety-min-delay').value, 10) || 22;
+            let maxVal = parseInt(document.getElementById('safety-max-delay').value, 10) || 45;
+            if (minVal < 10) minVal = 10;
+            if (maxVal < minVal) maxVal = minVal + 5;
+
+            safetyMinDelay = minVal;
+            safetyMaxDelay = maxVal;
+            safetyBatchSize = Math.max(1, parseInt(document.getElementById('safety-batch-size').value, 10) || 5);
+            safetyBreakTime = Math.max(1, parseInt(document.getElementById('safety-break-time').value, 10) || 3);
+
+            document.getElementById('display-delay-range').textContent = `${safetyMinDelay} - ${safetyMaxDelay} dtk`;
+            document.getElementById('display-batch-size').textContent = `${safetyBatchSize} Akun`;
+            document.getElementById('display-break-time').textContent = `${safetyBreakTime} Menit`;
 
             closeModal('safety-modal');
             showToast("Parameter keamanan Anti-Block diperbarui!", "success");
@@ -1438,6 +1426,7 @@
 
         function syncSelectAllState() {
             const selectAllCheck = document.getElementById('select-all-visible');
+            if (!selectAllCheck) return;
             if (filteredAccounts.length === 0) {
                 selectAllCheck.checked = false;
                 return;
@@ -1470,17 +1459,27 @@
         }
 
         function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
+            const modal = document.getElementById(id);
+            if (!modal) return;
+            modal.classList.remove('hidden');
             if (id === 'whitelist-modal') renderWhitelistModalList();
             if (id === 'bulk-edit-modal') renderBulkEditGrid();
+            if (id === 'safety-modal') {
+                document.getElementById('safety-min-delay').value = safetyMinDelay;
+                document.getElementById('safety-max-delay').value = safetyMaxDelay;
+                document.getElementById('safety-batch-size').value = safetyBatchSize;
+                document.getElementById('safety-break-time').value = safetyBreakTime;
+            }
         }
 
         function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.add('hidden');
         }
 
         function renderWhitelistModalList() {
             const list = document.getElementById('whitelist-modal-list');
+            if (!list) return;
             list.innerHTML = '';
 
             if (whitelistedIds.size === 0) {
@@ -1524,7 +1523,7 @@
             if (typeof username !== 'string' || !username.trim()) return null;
             const clean = username.trim().replace(/^@/, '');
             return {
-                id: String(entry.id || clean),
+                id: String(entry.pk || entry.id || clean),
                 username: clean,
                 full_name: entry.full_name || entry.name || '',
                 profile_url: listItem?.href || entry.profile_url || `https://www.instagram.com/${encodeURIComponent(clean)}/`,
@@ -1541,7 +1540,7 @@
         function findInstagramRelationshipArrays(data, relation) {
             const found = [];
             const wanted = relation === 'followers'
-                ? /^(relationships_followers|followers|followers_\\d+)$/i
+                ? /^(relationships_followers|followers|followers_\d+)$/i
                 : /^(relationships_following|following)$/i;
 
             function walk(node) {
@@ -1615,7 +1614,6 @@
                 followingRows.forEach(row => add(row, 'following'));
                 followerRows.forEach(row => add(row, 'followers'));
 
-                // Supports InstaClean workspace exports and common flat archive variants.
                 if (!Array.isArray(data) && Array.isArray(data.accounts)) {
                     data.accounts.forEach(row => {
                         const normalized = instagramEntry(row);
@@ -1627,15 +1625,6 @@
                             combined.set(key, { ...prior, ...normalized });
                         }
                     });
-                }
-                if (!Array.isArray(data) && Array.isArray(data.followers)) {
-                    data.followers.forEach(row => add(row, 'followers'));
-                }
-                if (!Array.isArray(data) && Array.isArray(data.following)) {
-                    data.following.forEach(row => add(row, 'following'));
-                }
-                if (!Array.isArray(data) && Array.isArray(data.whitelist)) {
-                    // Preserved by caller from the source workspace.
                 }
 
                 report.push({
@@ -1663,7 +1652,7 @@
                 }
                 const result = buildAccountRows(documents);
                 if (!result.accounts.length) {
-                    throw new Error('Tidak menemukan username Followers/Following. Pastikan file JSON relasi dari arsip Instagram dipilih, bukan file HTML atau CSV.');
+                    throw new Error('Tidak menemukan username Followers/Following dalam file JSON yang dipilih.');
                 }
 
                 accounts = result.accounts.map((user, index) => ({
@@ -1679,7 +1668,7 @@
                 }));
 
                 workspacePayload = {
-                    source: 'Official Instagram Data Export',
+                    source: 'JSON Scanner / Archive Import',
                     imported_at: new Date().toISOString(),
                     source_files: result.report,
                     profile: result.profile || null
@@ -1694,41 +1683,33 @@
                 updateAnalytics();
                 updateScannerSummary();
                 status.textContent = `${files.length} file diproses • ${accounts.length.toLocaleString('id-ID')} akun unik berhasil dimuat.`;
-                showToast(`${accounts.length.toLocaleString('id-ID')} akun berhasil diimpor dari arsip.`, 'success');
+                showToast(`${accounts.length.toLocaleString('id-ID')} akun berhasil dimpor!`, 'success');
             } catch (error) {
                 console.error('[InstaClean Archive Import]', error);
                 status.textContent = `Impor gagal: ${error.message}`;
-                showToast(error.message || 'Gagal membaca arsip Instagram.', 'error');
+                showToast(error.message || 'Gagal membaca file JSON.', 'error');
             } finally {
                 input.value = '';
             }
         }
 
-        function copyInspectConsoleCode() {
-            const node = document.getElementById('inspect-console-code');
-            const code = node ? node.textContent : '';
-            if (!code) return showToast('Kode Console tidak ditemukan.', 'error');
-            const fallback = () => {
-                const area = document.createElement('textarea'); area.value = code;
-                document.body.appendChild(area); area.select();
-                const ok = document.execCommand('copy'); area.remove();
-                showToast(ok ? 'Kode Console berhasil disalin.' : 'Blok kode lalu salin manual.', ok ? 'success' : 'error');
-            };
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(code).then(() => showToast('Kode Console berhasil disalin.', 'success')).catch(fallback);
-            } else fallback();
-        }
-
         function extractInspectUsernames(payload) {
             const found = new Map();
             const valid = value => typeof value === 'string' && /^[A-Za-z0-9._]{1,30}$/.test(value);
-            const add = value => {
+            const add = (value, extra = {}) => {
                 if (!valid(value)) return;
                 const key = value.toLowerCase();
-                if (!found.has(key)) found.set(key, {
-                    username: value,
-                    profile_url: `https://www.instagram.com/${value}/`
-                });
+                if (!found.has(key)) {
+                    found.set(key, {
+                        id: String(extra.pk || extra.id || `inspect-${key}`),
+                        username: value,
+                        full_name: extra.full_name || '',
+                        profile_pic_url: extra.profile_pic_url || '',
+                        is_verified: Boolean(extra.is_verified),
+                        is_private: Boolean(extra.is_private),
+                        profile_url: `https://www.instagram.com/${value}/`
+                    });
+                }
             };
             const visited = new WeakSet();
             const walk = (value, depth = 0) => {
@@ -1738,10 +1719,9 @@
                     value.forEach(item => walk(item, depth + 1));
                     return;
                 }
-                // Common Instagram GraphQL/JSON account objects.
-                if (valid(value.username)) add(value.username);
-                if (valid(value.user_name)) add(value.user_name);
-                if (valid(value.value) && (value.timestamp !== undefined || value.href || value.type === 'user')) add(value.value);
+                if (valid(value.username)) add(value.username, value);
+                if (valid(value.user_name)) add(value.user_name, value);
+                if (valid(value.value) && (value.timestamp !== undefined || value.href || value.type === 'user')) add(value.value, value);
                 if (Array.isArray(value.string_list_data)) {
                     value.string_list_data.forEach(item => {
                         if (item && valid(item.value)) add(item.value);
@@ -1769,15 +1749,18 @@
                 const followerRows = followerText ? extractInspectUsernames(JSON.parse(followerText)) : [];
                 const followingRows = followingText ? extractInspectUsernames(JSON.parse(followingText)) : [];
                 if (!followerRows.length && !followingRows.length) {
-                    throw new Error('Username tidak ditemukan. Pastikan yang ditempel adalah JSON Response daftar akun, bukan Request Headers atau Preview teks biasa.');
+                    throw new Error('Username tidak ditemukan. Pastikan yang ditempel adalah JSON Response daftar akun.');
                 }
                 const combined = new Map();
                 const addRows = (rows, relation) => rows.forEach(row => {
                     const key = row.username.toLowerCase();
                     const prior = combined.get(key) || {
-                        id: `inspect-${key}`, username: row.username, full_name: '', profile_pic_url: '',
-                        is_private: false, is_verified: false, followers_count: null, following_count: null,
-                        posts_count: null, is_follower: false, is_following: false
+                        ...row,
+                        followers_count: null,
+                        following_count: null,
+                        posts_count: null,
+                        is_follower: false,
+                        is_following: false
                     };
                     if (relation === 'followers') prior.is_follower = true;
                     if (relation === 'following') prior.is_following = true;
@@ -1786,30 +1769,26 @@
                 addRows(followerRows, 'followers');
                 addRows(followingRows, 'following');
 
-                // Merge with the current workspace instead of discarding existing imported records.
                 const existing = new Map((accounts || []).map(user => [String(user.username || '').toLowerCase(), { ...user }]));
                 for (const [key, row] of combined) {
                     const prior = existing.get(key) || row;
                     prior.username = row.username;
                     prior.is_follower = Boolean(prior.is_follower || row.is_follower);
                     prior.is_following = Boolean(prior.is_following || row.is_following);
-                    if (!prior.id) prior.id = row.id;
+                    if (!prior.id || String(prior.id).startsWith('inspect-')) prior.id = row.id;
                     existing.set(key, prior);
                 }
                 accounts = [...existing.values()].filter(user => user.username);
                 workspacePayload = {
                     ...(workspacePayload && !Array.isArray(workspacePayload) ? workspacePayload : {}),
                     source: 'Instagram Inspect Network Response',
-                    imported_at: new Date().toISOString(),
-                    inspect_counts: { followers: followerRows.length, following: followingRows.length }
+                    imported_at: new Date().toISOString()
                 };
                 selectedIds.clear();
                 applyFilters();
                 updateAnalytics();
                 updateScannerSummary();
-                const badge = document.getElementById('whitelist-badge');
-                if (badge) badge.innerText = whitelistedIds.size.toLocaleString('id-ID');
-                status.textContent = `Berhasil diproses: ${followerRows.length.toLocaleString('id-ID')} Followers • ${followingRows.length.toLocaleString('id-ID')} Following • ${accounts.length.toLocaleString('id-ID')} akun unik di workspace.`;
+                status.textContent = `Berhasil diproses: ${followerRows.length.toLocaleString('id-ID')} Followers • ${followingRows.length.toLocaleString('id-ID')} Following • ${accounts.length.toLocaleString('id-ID')} akun unik.`;
                 showToast('JSON Inspect berhasil digabungkan ke InstaClean.', 'success');
             } catch (error) {
                 console.error('[InstaClean Inspect Import]', error);
@@ -1843,7 +1822,7 @@
             try {
                 const parsed = JSON.parse(rawText);
                 const result = buildAccountRows([{ name: 'manual-import.json', data: parsed }]);
-                if (!result.accounts.length) throw new Error('Tidak menemukan data akun. JSON harus berisi accounts, followers, following, atau struktur arsip relasi Instagram.');
+                if (!result.accounts.length) throw new Error('Tidak menemukan data akun yang valid dalam JSON.');
                 workspacePayload = Array.isArray(parsed) ? { legacy_array: true } : structuredCloneSafe(parsed);
                 accounts = result.accounts.map((user, index) => ({
                     ...user,
@@ -1869,20 +1848,23 @@
                 updateAnalytics();
                 updateScannerSummary();
                 closeModal('import-modal');
-                showToast(`Memuat ${accounts.length.toLocaleString('id-ID')} akun dari JSON.`, 'success');
+                showToast(`Berhasil memuat ${accounts.length.toLocaleString('id-ID')} akun dari JSON.`, 'success');
             } catch (err) {
                 console.error('[InstaClean Import]', err);
                 showToast(err.message || 'Format JSON tidak valid!', 'error');
             }
         }
 
+        // Fixed Duplicate Function Bug
         async function processImportJSON() {
             const fileInput = document.getElementById('import-file-selector');
             const manualText = document.getElementById('import-textarea').value.trim();
             if (fileInput.files && fileInput.files.length) {
                 try {
                     const docs = [];
-                    for (const file of [...fileInput.files]) docs.push({ name: file.name, data: JSON.parse(await file.text()) });
+                    for (const file of [...fileInput.files]) {
+                        docs.push({ name: file.name, data: JSON.parse(await file.text()) });
+                    }
                     const result = buildAccountRows(docs);
                     if (!result.accounts.length) throw new Error('Tidak menemukan data Followers/Following yang dapat dibaca.');
                     workspacePayload = { source: 'JSON import', imported_at: new Date().toISOString(), source_files: result.report, profile: result.profile || null };
@@ -1895,6 +1877,7 @@
                     updateAnalytics();
                     updateScannerSummary();
                     closeModal('import-modal');
+                    fileInput.value = '';
                     showToast(`Impor selesai: ${accounts.length.toLocaleString('id-ID')} akun unik.`, 'success');
                 } catch (err) {
                     console.error('[InstaClean Import]', err);
@@ -1903,7 +1886,7 @@
             } else if (manualText) {
                 parseAndLoadJSON(manualText);
             } else {
-                showToast('Pilih file atau tempel JSON!', 'error');
+                showToast('Pilih file atau tempel JSON terlebih dahulu!', 'error');
             }
         }
 
@@ -1919,7 +1902,6 @@
         }
 
         function exportWorkspaceJSON() {
-            const byId = new Map(accounts.map(user => [String(user.id), user]));
             const currentAccounts = accounts.map(user => ({ ...user }));
             const following = currentAccounts.filter(user => user.is_following);
             const followers = currentAccounts.filter(user => user.is_follower);
@@ -1933,12 +1915,10 @@
                 profile: original.profile || null,
                 followers,
                 following,
-                unfollowers: Array.isArray(original.unfollowers) ? original.unfollowers : [],
                 not_following_back: notBack,
                 accounts: currentAccounts,
                 whitelist: [...whitelistedIds],
                 summary: {
-                    ...(original.summary || {}),
                     followers_count: followers.length,
                     following_count: following.length,
                     mutual_count: mutual.length,
@@ -1947,11 +1927,9 @@
                     unique_relations: currentAccounts.length
                 },
                 metadata: {
-                    ...(original.metadata || {}),
                     exported_at: new Date().toISOString(),
                     application: "InstaClean Unified Scanner",
-                    export_version: 3,
-                    source: original.source || "User-provided JSON workspace"
+                    export_version: 4
                 }
             };
 
@@ -1964,22 +1942,7 @@
             link.click();
             link.remove();
             setTimeout(() => URL.revokeObjectURL(url), 1000);
-            showToast(`Ekspor JSON disiapkan: ${currentAccounts.length.toLocaleString('id-ID')} akun.`, "success");
-        }
-
-        function processImportJSON() {
-            const fileInput = document.getElementById('import-file-selector');
-            const manualText = document.getElementById('import-textarea').value.trim();
-
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => parseAndLoadJSON(e.target.result);
-                reader.readAsText(fileInput.files[0]);
-            } else if (manualText) {
-                parseAndLoadJSON(manualText);
-            } else {
-                showToast("Pilih file atau tempel JSON!", "error");
-            }
+            showToast(`Ekspor JSON selesai: ${currentAccounts.length.toLocaleString('id-ID')} akun.`, "success");
         }
 
         function copyToClipboard(elementId) {
@@ -2027,6 +1990,131 @@
                 return;
             }
 
+            // Build target list for Console Script
+            const targetsPayload = selectedAccounts.map(u => ({
+                id: /^\d+$/.test(String(u.id)) ? String(u.id) : null,
+                username: u.username
+            }));
+
+            const scriptCode = `/* =========================================================================
+ * INSTACLEAN SAFE UNFOLLOW EXECUTOR — ANTI-BLOCK & RATE-LIMIT GUARD
+ * Jalankan di Console (F12) pada tab instagram.com saat sudah login.
+ * Untuk menghentikan paksa kapan saja: ketik window.__STOP_INSTACLEAN = true
+ * ========================================================================= */
+(async () => {
+    window.__STOP_INSTACLEAN = false;
+    const TARGETS = ${JSON.stringify(targetsPayload, null, 2)};
+    const MIN_DELAY_SEC = ${safetyMinDelay};
+    const MAX_DELAY_SEC = ${safetyMaxDelay};
+    const BATCH_SIZE = ${safetyBatchSize};
+    const BREAK_MINUTES = ${safetyBreakTime};
+
+    const log = (msg, color = "#06b6d4") =>
+        console.log(\`%c[InstaClean Unfollow] \${msg}\`, \`color:\${color};font-weight:bold\`);
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const randomDelayMs = () => (MIN_DELAY_SEC + Math.floor(Math.random() * (MAX_DELAY_SEC - MIN_DELAY_SEC + 1))) * 1000;
+
+    const getCookie = name => {
+        const escaped = name.replace(/[.*+?^$\{\}()|[\\]\\\\]/g, "\\\\$&");
+        const match = document.cookie.match(new RegExp(\`(?:^|; )\${escaped}=([^;]*)\`));
+        return match ? decodeURIComponent(match[1]) : null;
+    };
+
+    const csrf = getCookie("csrftoken");
+    const userId = getCookie("ds_user_id");
+    if (!csrf || !userId) {
+        log("Sesi login/CSRF token tidak ditemukan. Pastikan Anda sudah login di instagram.com.", "#ef4444");
+        return;
+    }
+
+    const baseHeaders = {
+        "Accept": "*/*",
+        "X-CSRFToken": csrf,
+        "X-IG-App-ID": "936619743392459",
+        "X-Requested-With": "XMLHttpRequest"
+    };
+
+    async function resolveUserId(username) {
+        const res = await fetch(\`https://www.instagram.com/api/v1/users/web_profile_info/?username=\${encodeURIComponent(username)}\`, {
+            method: "GET", credentials: "include", headers: baseHeaders
+        });
+        if (res.status === 429 || res.status === 403) throw new Error(\`HTTP_\${res.status}\`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data?.data?.user?.id || null;
+    }
+
+    async function unfollowById(targetId) {
+        const res = await fetch(\`https://www.instagram.com/api/v1/web/friendships/\${targetId}/unfollow/\`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                ...baseHeaders,
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        });
+        if (res.status === 429) throw new Error("HTTP_429_RATE_LIMIT");
+        if (res.status === 403) throw new Error("HTTP_403_FORBIDDEN");
+        if (res.redirected || /challenge|checkpoint|login/i.test(res.url || "")) throw new Error("CHECKPOINT_REQUIRED");
+        if (!res.ok) throw new Error(\`HTTP_\${res.status}\`);
+        const json = await res.json();
+        return json && json.status === "ok";
+    }
+
+    log(\`Memulai sesi aman untuk \${TARGETS.length} akun (Jeda: \${MIN_DELAY_SEC}-\${MAX_DELAY_SEC}s, Batch: \${BATCH_SIZE} akun)...\`, "#f59e0b");
+    let successCount = 0;
+
+    for (let i = 0; i < TARGETS.length; i++) {
+        if (window.__STOP_INSTACLEAN) {
+            log("Dihentikan manual oleh pengguna.", "#f59e0b");
+            break;
+        }
+
+        const target = TARGETS[i];
+        try {
+            let uid = target.id;
+            if (!uid) {
+                log(\`[\${i + 1}/\${TARGETS.length}] Mencari ID untuk @\${target.username}...\`);
+                uid = await resolveUserId(target.username);
+                await sleep(2000);
+            }
+
+            if (!uid) {
+                log(\`[\${i + 1}/\${TARGETS.length}] Gagal menemukan ID @\${target.username}, dilewati.\`, "#9ca3af");
+                continue;
+            }
+
+            const ok = await unfollowById(uid);
+            if (ok) {
+                successCount++;
+                log(\`[\${i + 1}/\${TARGETS.length}] BERHASIL unfollow @\${target.username} (Total: \${successCount})\`, "#10b981");
+            } else {
+                log(\`[\${i + 1}/\${TARGETS.length}] Respons tidak 'ok' untuk @\${target.username}\`, "#f59e0b");
+            }
+
+            if (i < TARGETS.length - 1) {
+                if ((i + 1) % BATCH_SIZE === 0) {
+                    const breakMs = BREAK_MINUTES * 60 * 1000;
+                    log(\`Batch \${BATCH_SIZE} akun selesai. Istirahat pengaman selama \${BREAK_MINUTES} menit agar tidak terblokir...\`, "#8b5cf6");
+                    await sleep(breakMs);
+                } else {
+                    const waitMs = randomDelayMs();
+                    log(\`Menunggu \${Math.round(waitMs / 1000)} detik sebelum akun berikutnya...\`, "#9ca3af");
+                    await sleep(waitMs);
+                }
+            }
+        } catch (err) {
+            log(\`BERHENTI OTOMATIS (PROTEKSI AKUN): \${err.message}. Jangan jalankan ulang selama beberapa jam!\`, "#ef4444");
+            break;
+        }
+    }
+
+    log(\`Sesi selesai! Total berhasil di-unfollow: \${successCount} dari \${TARGETS.length} akun.\`, "#10b981");
+})();`;
+
+            document.getElementById('unfollow-console-code').textContent = scriptCode;
+
+            // Populate Manual Review List
             const container = document.getElementById('manual-review-list');
             container.innerHTML = '';
             selectedAccounts.forEach(user => {
@@ -2045,15 +2133,16 @@
                 link.href = 'https://www.instagram.com/' + encodeURIComponent(user.username) + '/';
                 link.target = '_blank';
                 link.rel = 'noopener noreferrer';
-                link.className = "shrink-0 px-3 py-2 rounded-lg bg-roseBrand/10 border border-roseBrand/30 text-roseBrand text-[10px] font-bold hover:bg-roseBrand/20";
+                link.className = "shrink-0 px-3 py-2 rounded-lg bg-roseBrand/10 border border-roseBrand/30 text-roseBrand text-[10px] font-bold hover:bg-roseBrand/20 transition";
                 link.textContent = 'Buka Profil';
                 row.append(details, link);
                 container.appendChild(row);
             });
+
             document.getElementById('executor-target-count').textContent =
                 selectedAccounts.length.toLocaleString('id-ID') + ' Akun';
             switchTab('executor-tab');
-            showToast(`Daftar tinjauan berisi ${selectedAccounts.length.toLocaleString('id-ID')} akun. Tidak ada tindakan unfollow otomatis.`, "success");
+            showToast(`Skrip Unfollow Anti-Block siap untuk ${selectedAccounts.length.toLocaleString('id-ID')} akun!`, "success");
         }
     </script>
 </body>
