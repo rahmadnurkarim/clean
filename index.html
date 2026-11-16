@@ -2031,8 +2031,27 @@
         "Accept": "*/*",
         "X-CSRFToken": csrf,
         "X-IG-App-ID": "936619743392459",
+        "X-ASBD-ID": "129477",
+        "X-IG-WWW-Claim": sessionStorage.getItem("www-claim-v2") || "0",
         "X-Requested-With": "XMLHttpRequest"
     };
+
+    async function parseSafeJson(res) {
+        const text = await res.text();
+        const cleaned = text.replace(/^\s*for\s*\(\s*;\s*;\s*\)\s*;?\s*/, "").trim();
+        const lower = cleaned.toLowerCase();
+        if (lower.startsWith("<!doctype") || lower.startsWith("<html")) {
+            throw new Error("INSTAGRAM_RETURNED_HTML_SESSION_OR_ENDPOINT_BLOCKED");
+        }
+        if (!cleaned) {
+            return { status: res.ok ? "ok" : "empty" };
+        }
+        try {
+            return JSON.parse(cleaned);
+        } catch (e) {
+            throw new Error("INVALID_JSON_RESPONSE: " + cleaned.slice(0, 80));
+        }
+    }
 
     async function resolveUserId(username) {
         const res = await fetch(\`https://www.instagram.com/api/v1/users/web_profile_info/?username=\${encodeURIComponent(username)}\`, {
@@ -2040,25 +2059,59 @@
         });
         if (res.status === 429 || res.status === 403) throw new Error(\`HTTP_\${res.status}\`);
         if (!res.ok) return null;
-        const data = await res.json();
+        const data = await parseSafeJson(res);
         return data?.data?.user?.id || null;
     }
 
     async function unfollowById(targetId) {
-        const res = await fetch(\`https://www.instagram.com/api/v1/web/friendships/\${targetId}/unfollow/\`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
+        const endpoints = [
+            {
+                url: \`https://www.instagram.com/api/v1/friendships/destroy/\${targetId}/\`,
+                body: \`container_module=profile&nav_chain=&user_id=\${targetId}\`
+            },
+            {
+                url: \`https://www.instagram.com/web/friendships/\${targetId}/unfollow/\`,
+                body: ""
+            }
+        ];
+
+        for (let idx = 0; idx < endpoints.length; idx++) {
+            const reqHeaders = {
                 ...baseHeaders,
                 "Content-Type": "application/x-www-form-urlencoded"
+            };
+
+            const res = await fetch(endpoints[idx].url, {
+                method: "POST",
+                credentials: "include",
+                headers: reqHeaders,
+                body: endpoints[idx].body
+            });
+
+            if (res.status === 429) throw new Error("HTTP_429_RATE_LIMIT");
+            if (res.status === 403) throw new Error("HTTP_403_FORBIDDEN");
+            if (res.redirected || (res.url && (res.url.includes("challenge") || res.url.includes("checkpoint") || res.url.includes("login")))) {
+                throw new Error("CHECKPOINT_REQUIRED");
             }
-        });
-        if (res.status === 429) throw new Error("HTTP_429_RATE_LIMIT");
-        if (res.status === 403) throw new Error("HTTP_403_FORBIDDEN");
-        if (res.redirected || /challenge|checkpoint|login/i.test(res.url || "")) throw new Error("CHECKPOINT_REQUIRED");
-        if (!res.ok) throw new Error(\`HTTP_\${res.status}\`);
-        const json = await res.json();
-        return json && json.status === "ok";
+            
+            const contentType = (res.headers.get("content-type") || "").toLowerCase();
+            if (res.status === 404 || contentType.includes("text/html")) {
+                if (idx < endpoints.length - 1) continue;
+                return contentType.includes("text/html") ? "HTML_BLOCKED" : "NOT_FOUND";
+            }
+
+            if (!res.ok) throw new Error(\`HTTP_\${res.status}\`);
+            const json = await parseSafeJson(res);
+            if (json?.error === 1357004) {
+                if (idx < endpoints.length - 1) continue;
+                throw new Error("INSTAGRAM_CSRF_OR_SESSION_EXPIRED_REFRESH_PAGE");
+            }
+            if (json?.status === "ok" || json?.friendship_status?.following === false) {
+                return "OK";
+            }
+            if (idx < endpoints.length - 1) continue;
+        }
+        return "FAILED";
     }
 
     log(\`Memulai sesi aman untuk \${TARGETS.length} akun (Jeda: \${MIN_DELAY_SEC}-\${MAX_DELAY_SEC}s, Batch: \${BATCH_SIZE} akun)...\`, "#f59e0b");
@@ -2084,10 +2137,14 @@
                 continue;
             }
 
-            const ok = await unfollowById(uid);
-            if (ok) {
+            const status = await unfollowById(uid);
+            if (status === "OK") {
                 successCount++;
                 log(\`[\${i + 1}/\${TARGETS.length}] BERHASIL unfollow @\${target.username} (Total: \${successCount})\`, "#10b981");
+            } else if (status === "NOT_FOUND") {
+                log(\`[\${i + 1}/\${TARGETS.length}] Akun @\${target.username} tidak ditemukan / sudah terhapus (404), dilewati.\`, "#9ca3af");
+            } else if (status === "HTML_BLOCKED") {
+                throw new Error("Instagram mengembalikan halaman HTML (sesi perlu refresh atau klik manual di profil)");
             } else {
                 log(\`[\${i + 1}/\${TARGETS.length}] Respons tidak 'ok' untuk @\${target.username}\`, "#f59e0b");
             }
