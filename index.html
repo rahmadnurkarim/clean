@@ -346,18 +346,276 @@
                 </div>
                 <div class="rounded-xl border border-amberBrand/25 bg-amberBrand/5 p-4 space-y-3">
                     <div class="flex items-center justify-between flex-wrap gap-2">
-                        <div class="text-xs font-extrabold text-amberBrand">TEMPEL JSON DARI INSPECT ELEMENT</div>
+                        <div class="text-xs font-extrabold text-amberBrand">DUAL SCANNER FOLLOWERS &amp; FOLLOWING</div>
                         <span class="text-[10px] text-mutedMain">Network → Fetch/XHR → Response → Copy response</span>
                     </div>
-                    <p class="text-[11px] text-mutedMain leading-relaxed">Salin respons JSON Followers dan Following dari Network Instagram, lalu tempel masing-masing pada kotak yang sesuai. Proses berjalan lokal di browser. Tempel hanya isi Response JSON, bukan Request Headers, cookie, token, atau informasi sesi.</p>
+                    <p class="text-[11px] text-mutedMain leading-relaxed">Jalankan scanner terpadu ini dari Console pada tab instagram.com saat login ke akun sendiri. Scanner mencoba membaca daftar relasi melalui permintaan web Instagram yang terautentikasi, memproses cursor pagination, membandingkan jumlah dengan angka profil yang terbaca, lalu mengunduh JSON beserta status kelengkapan. Endpoint internal dapat berubah atau dibatasi Instagram; scanner tidak melewati login, verifikasi, atau rate limit.</p>
+                    <div class="rounded-xl border border-white/10 bg-black/40 p-3 space-y-2">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <span class="text-[11px] font-bold text-textMain">KODE SCRAPER LANGSUNG (JALANKAN DI TAB INSTAGRAM)</span>
+                            <button type="button" onclick="copyInspectConsoleCode()" class="px-3 py-1.5 rounded-lg bg-cyanBrand/15 border border-cyanBrand/30 text-cyanBrand text-[10px] font-bold">Salin Scanner Terpadu</button>
+                        </div>
+                        <p class="text-[10px] text-mutedMain">Kode ini memindai Following dan Followers secara berurutan, melanjutkan selama cursor berubah, mendeteksi halaman/cursor berulang, membandingkan jumlah dengan profil, lalu mengunduh JSON instaclean_relations_[ID].json. Kode menggunakan sesi login browser dan endpoint internal Instagram; jangan bagikan kode/hasil sesi kepada orang lain.</p>
+                        <pre id="inspect-console-code" class="max-h-64 overflow-auto whitespace-pre-wrap break-all text-[10px] leading-relaxed font-mono text-greenBrand select-all">/* =========================================================================
+ * INSTACLEAN DUAL SCANNER — FOLLOWERS &amp; FOLLOWING
+ * Jalankan di instagram.com saat login ke akun sendiri.
+ * Menggunakan endpoint web internal; akses dapat berubah/dibatasi Instagram.
+ * ========================================================================= */
+(async () =&gt; {
+    const log = (msg, color = "#06b6d4") =&gt;
+        console.log(`%c[InstaClean] ${msg}`, `color:${color};font-weight:bold`);
+    const sleep = ms =&gt; new Promise(resolve =&gt; setTimeout(resolve, ms));
+
+    const getCookie = name =&gt; {
+        const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&amp;");
+        const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
+        return match ? decodeURIComponent(match[1]) : null;
+    };
+
+    const userId = getCookie("ds_user_id");
+    const csrf = getCookie("csrftoken");
+    if (!userId) {
+        log("Cookie ds_user_id tidak ditemukan. Pastikan sudah login di instagram.com.", "#ef4444");
+        return;
+    }
+
+    const headers = {
+        "Accept": "application/json, text/plain, */*",
+        "X-IG-App-ID": "936619743392459",
+        "X-Requested-With": "XMLHttpRequest"
+    };
+    if (csrf) headers["X-CSRFToken"] = csrf;
+
+    async function requestPage(kind, cursor) {
+        const params = new URLSearchParams({ count: "200" });
+        if (cursor) params.set("max_id", cursor);
+        const url = `https://www.instagram.com/api/v1/friendships/${userId}/${kind}/?${params}`;
+
+        const response = await fetch(url, {
+            method: "GET", credentials: "include", headers, cache: "no-store"
+        });
+        const contentType = response.headers.get("content-type") || "";
+        const finalUrl = response.url || url;
+        const body = await response.text();
+        const preview = body.slice(0, 180).replace(/\s+/g, " ").trim();
+        const looksLikeHtml = /text\/html/i.test(contentType) ||
+            /^\s*(&lt;!doctype\s+html|&lt;html|&lt;head|&lt;body)/i.test(body) ||
+            /&lt;html[\s&gt;]/i.test(body.slice(0, 1000));
+
+        if (response.redirected || looksLikeHtml ||
+            /\/(accounts\/login|challenge|checkpoint)(\/|\?|$)/i.test(finalUrl)) {
+            throw new Error(`Instagram mengirim HTML/verifikasi (HTTP ${response.status}). Login atau selesaikan verifikasi secara normal. Cuplikan: ${preview || "(kosong)"}`);
+        }
+        if (response.status === 401) throw new Error("HTTP 401: sesi tidak terautentikasi. Login ulang secara normal.");
+        if (response.status === 403) throw new Error("HTTP 403: permintaan ditolak Instagram. Hentikan pemindaian dan gunakan ekspor informasi resmi jika diperlukan.");
+        if (response.status === 429) throw new Error("HTTP 429: Instagram membatasi permintaan. Hentikan pemindaian dan jangan mengulanginya berulang kali.");
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText || "Permintaan gagal"}. Cuplikan: ${preview}`);
+
+        let json;
+        try { json = JSON.parse(body); }
+        catch { throw new Error(`Respons bukan JSON (Content-Type: ${contentType || "tidak diketahui"}; HTTP ${response.status}). Cuplikan: ${preview}`); }
+
+        if (json.status &amp;&amp; json.status !== "ok") throw new Error(json.message || `Status Instagram: ${json.status}`);
+        if (!Array.isArray(json.users)) throw new Error(json.message || "Respons tidak berisi array users; format endpoint mungkin berubah.");
+        return json;
+    }
+
+    function parseInstagramCount(text) {
+        const value = String(text || "").replace(/\s+/g, " ").trim().toLowerCase();
+        const match = value.match(/(?:^|[^\d])(\d[\d.,]*)(?:\s*)(k|rb|ribu|m|jt|juta)?(?:$|[^\p{L}])/iu);
+        if (!match) return null;
+        const raw = match[1];
+        const suffix = (match[2] || "").toLowerCase();
+        let number;
+        if (suffix) {
+            // Compact formats such as 2.8K / 2,8 rb.
+            number = Number(raw.replace(",", ".").replace(/[.](?=.*[.])/g, ""));
+            const multiplier = ({ k: 1000, rb: 1000, ribu: 1000, m: 1000000, jt: 1000000, juta: 1000000 })[suffix];
+            number *= multiplier;
+        } else {
+            // A separator followed by exactly three digits is a thousands separator.
+            // Otherwise treat a single separator as a decimal separator.
+            const parts = raw.split(/[.,]/);
+            if (parts.length > 1 && parts[parts.length - 1].length === 3) {
+                number = Number(raw.replace(/[.,]/g, ""));
+            } else if (parts.length === 2) {
+                number = Number(raw.replace(",", "."));
+            } else {
+                number = Number(raw.replace(/[.,]/g, ""));
+            }
+        }
+        return Number.isFinite(number) ? Math.round(number) : null;
+    }
+
+    function readProfileCount(kind) {
+        const needles = kind === "followers"
+            ? ["followers", "pengikut"]
+            : ["following", "diikuti"];
+        const candidates = [...document.querySelectorAll('a[href], button, [role="button"]')];
+        for (const element of candidates) {
+            const href = (element.getAttribute("href") || "").toLowerCase();
+            const text = [
+                element.innerText, element.textContent,
+                element.getAttribute("aria-label"),
+                element.getAttribute("title")
+            ].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+            const haystack = `${href} ${text}`.toLowerCase();
+            if (!needles.some(needle => haystack.includes(needle))) continue;
+            const count = parseInstagramCount(text);
+            if (count !== null) return count;
+        }
+        return null;
+    }
+
+    async function scan(kind, label) {
+        const collected = new Map();
+        const seenCursors = new Set();
+        const seenPageSignatures = new Set();
+        let cursor = null, page = 0, terminalReason = "cursor_ended";
+        const expected = readProfileCount(kind);
+
+        while (true) {
+            page++;
+            if (page > 1000) {
+                terminalReason = "safety_page_limit";
+                log(`${label}: batas pengaman 1.000 halaman tercapai.`, "#f59e0b");
+                break;
+            }
+            const data = await requestPage(kind, cursor);
+            const users = Array.isArray(data.users) ? data.users : [];
+            const signature = users.map(u => String(u && (u.pk || u.id) || "")).join(",");
+            if (signature && seenPageSignatures.has(signature)) {
+                terminalReason = "repeated_page";
+                log(`${label}: halaman berulang terdeteksi; pemindaian dihentikan agar tidak membuat loop.`, "#f59e0b");
+                break;
+            }
+            if (signature) seenPageSignatures.add(signature);
+
+            let acceptedThisPage = 0;
+            for (const u of users) {
+                const rawId = u && (u.pk || u.id);
+                if (!u || !rawId || !u.username) continue;
+                const id = String(rawId);
+                if (!collected.has(id)) acceptedThisPage++;
+                collected.set(id, {
+                    id, username: u.username, full_name: u.full_name || "",
+                    profile_pic_url: u.profile_pic_url || "",
+                    is_private: Boolean(u.is_private), is_verified: Boolean(u.is_verified)
+                });
+            }
+
+            log(`${label}: halaman ${page}, ${acceptedThisPage} akun baru (${users.length} data diterima API); total unik ${collected.size}${expected !== null ? ` / ${expected} profil` : ""}.`);
+            const nextCursor = data.next_max_id || data.next_max_id_max || null;
+
+            // Continue whenever Instagram supplies a new cursor, even if has_more is
+            // temporarily false. This avoids prematurely stopping on inconsistent flags.
+            if (!nextCursor) {
+                terminalReason = data.has_more ? "has_more_without_cursor" : "cursor_ended";
+                break;
+            }
+            if (String(nextCursor) === String(cursor) || seenCursors.has(String(nextCursor))) {
+                terminalReason = "cursor_repeated";
+                log(`${label}: cursor tidak bergerak/berulang; pemindaian dihentikan.`, "#f59e0b");
+                break;
+            }
+            if (users.length === 0) {
+                terminalReason = "empty_page_with_cursor";
+                log(`${label}: halaman kosong meskipun cursor tersedia; pemindaian dihentikan.`, "#f59e0b");
+                break;
+            }
+            seenCursors.add(String(nextCursor));
+            cursor = String(nextCursor);
+            await sleep(2200);
+        }
+
+        const complete = expected !== null &&
+            collected.size === expected &&
+            terminalReason === "cursor_ended";
+        if (expected === null) {
+            log(`${label}: angka total profil tidak terbaca. Hasil tidak dapat diverifikasi terhadap jumlah akun profil.`, "#f59e0b");
+        } else if (collected.size !== expected || terminalReason !== "cursor_ended") {
+            log(`${label}: PERINGATAN jumlah/status tidak cocok — profil ${expected}, hasil ${collected.size}. Status: ${terminalReason}.`, "#f59e0b");
+        } else {
+            log(`${label}: jumlah sesuai profil (${collected.size}).`, "#10b981");
+        }
+        return { users: [...collected.values()], expected, complete, terminalReason, pages: page };
+    }
+
+    let followingList, followersList;
+    let followingResult, followersResult;
+    try {
+        log("Memulai pemindaian Following…");
+        followingResult = await scan("following", "Following");
+        followingList = followingResult.users;
+        log(`Following berakhir: ${followingList.length} akun; ${followingResult.complete ? "jumlah sesuai" : "BELUM TERVERIFIKASI LENGKAP"}.`, followingResult.complete ? "#10b981" : "#f59e0b");
+        log("Memulai pemindaian Followers…");
+        followersResult = await scan("followers", "Followers");
+        followersList = followersResult.users;
+        log(`Followers berakhir: ${followersList.length} akun; ${followersResult.complete ? "jumlah sesuai" : "BELUM TERVERIFIKASI LENGKAP"}.`, followersResult.complete ? "#10b981" : "#f59e0b");
+    } catch (error) {
+        log(`PEMINDAIAN GAGAL: ${error.message}`, "#ef4444");
+        console.error(error);
+        log("Tidak ada file hasil dibuat agar hasil parsial tidak dianggap lengkap.", "#f59e0b");
+        return;
+    }
+
+    const followerIds = new Set(followersList.map(u =&gt; u.id));
+    const allUsers = new Map();
+    for (const u of followingList) {
+        allUsers.set(u.id, { ...u, is_following: true, is_follower: followerIds.has(u.id) });
+    }
+    for (const u of followersList) {
+        if (allUsers.has(u.id)) allUsers.get(u.id).is_follower = true;
+        else allUsers.set(u.id, { ...u, is_following: false, is_follower: true });
+    }
+
+    const accounts = [...allUsers.values()];
+    const summary = {
+        account_id: userId,
+        scanned_at: new Date().toISOString(),
+        following_count: followingList.length,
+        followers_count: followersList.length,
+        expected_followers_count: followersResult.expected,
+        expected_following_count: followingResult.expected,
+        profile_counts_source: "visible_current_instagram_profile",
+        counts_are_account_specific: true,
+        followers_complete: followersResult.complete,
+        following_complete: followingResult.complete,
+        followers_terminal_reason: followersResult.terminalReason,
+        following_terminal_reason: followingResult.terminalReason,
+        followers_pages: followersResult.pages,
+        following_pages: followingResult.pages,
+        scan_complete: followersResult.complete && followingResult.complete,
+        unique_relations: accounts.length,
+        accounts
+    };
+    const blob = new Blob([JSON.stringify(summary, null, 2)], { type: "application/json;charset=utf-8" });
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = `instaclean_relations_${userId}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() =&gt; URL.revokeObjectURL(objectUrl), 5000);
+
+    if (summary.scan_complete) {
+        log(`SELESAI TERVERIFIKASI: ${accounts.length} relasi unik; ${followingList.length} Following dan ${followersList.length} Followers.`, "#10b981");
+    } else {
+        log(`HASIL PARSIAL: ${accounts.length} relasi unik; Following ${followingList.length}/${followingResult.expected ?? "?"}, Followers ${followersList.length}/${followersResult.expected ?? "?"}. Periksa metadata JSON sebelum analisis.`, "#f59e0b");
+    }
+    log("File JSON diunduh. Impor melalui menu Impor JSON InstaClean; status kelengkapan ikut tersimpan.", summary.scan_complete ? "#10b981" : "#f59e0b");
+})();</pre>
+                        <p class="text-[10px] text-mutedMain">Cara pakai: buka Instagram di browser dan login ke akun sendiri. Buka halaman profil Instagram sampai angka Followers dan Following terlihat. Buka Console (F12 → Console), tempel kode ini, lalu Enter. Pastikan angka Followers dan Following terlihat pada profil sebelum menjalankan kode. Scanner membaca angka profil untuk pemeriksaan jumlah. Jika hasil tidak cocok, JSON tetap diberi tanda scan_complete=false dan jangan gunakan sebagai hasil final. Hentikan jika Instagram menampilkan pembatasan atau verifikasi.</p>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <label class="block space-y-1.5">
                             <span class="text-[11px] font-bold text-amberBrand">JSON FOLLOWERS</span>
-                            <textarea id="inspect-followers-json" rows="7" spellcheck="false" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-[10px] font-mono text-textMain focus:outline-none focus:border-amberBrand" placeholder="Tempel JSON response Followers di sini..."></textarea>
+                            <textarea id="inspect-followers-json" rows="7" spellcheck="false" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-[10px] font-mono text-textMain focus:outline-none focus:border-amberBrand" placeholder="Tempel isi followers.json di sini..."></textarea>
                         </label>
                         <label class="block space-y-1.5">
                             <span class="text-[11px] font-bold text-cyanBrand">JSON FOLLOWING</span>
-                            <textarea id="inspect-following-json" rows="7" spellcheck="false" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-[10px] font-mono text-textMain focus:outline-none focus:border-cyanBrand" placeholder="Tempel JSON response Following di sini..."></textarea>
+                            <textarea id="inspect-following-json" rows="7" spellcheck="false" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-[10px] font-mono text-textMain focus:outline-none focus:border-cyanBrand" placeholder="Tempel isi following.json di sini..."></textarea>
                         </label>
                     </div>
                     <div class="flex flex-wrap gap-2">
@@ -1444,6 +1702,21 @@
             } finally {
                 input.value = '';
             }
+        }
+
+        function copyInspectConsoleCode() {
+            const node = document.getElementById('inspect-console-code');
+            const code = node ? node.textContent : '';
+            if (!code) return showToast('Kode Console tidak ditemukan.', 'error');
+            const fallback = () => {
+                const area = document.createElement('textarea'); area.value = code;
+                document.body.appendChild(area); area.select();
+                const ok = document.execCommand('copy'); area.remove();
+                showToast(ok ? 'Kode Console berhasil disalin.' : 'Blok kode lalu salin manual.', ok ? 'success' : 'error');
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(() => showToast('Kode Console berhasil disalin.', 'success')).catch(fallback);
+            } else fallback();
         }
 
         function extractInspectUsernames(payload) {
